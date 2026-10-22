@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNet-VGG16 Surface Crack Inspection Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0d14;
+      --card-bg: rgba(18, 24, 38, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #00d2ff;
+      --accent-blue: #3a7bd5;
+      --accent-red: #ff3366;
+      --accent-green: #00e676;
+      --accent-purple: #8a2be2;
+      --text-main: #f0f4f8;
+      --text-muted: #8a99ad;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 10% 20%, #10192e 0%, #080c14 90%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 16px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(10, 13, 20, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+    }
+
+    .brand-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: #fff;
+      stroke-width: 2.5;
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-text span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 4px;
+      border-radius: 30px;
+      border: 1px solid var(--card-border);
+    }
+
+    .nav-tab {
+      padding: 7px 18px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .nav-tab.active {
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.25), rgba(58, 123, 213, 0.25));
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 210, 255, 0.4);
+      box-shadow: 0 0 12px rgba(0, 210, 255, 0.2);
+    }
+
+    .model-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 210, 255, 0.08);
+      border: 1px solid rgba(0, 210, 255, 0.25);
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    main {
+      flex: 1;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 36px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 1080px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Sidebar: Controls & Upload */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Dropzone */
+    .dropzone {
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 26px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent-cyan);
+      background: rgba(0, 210, 255, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .dropzone svg {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 10px;
+      stroke: var(--accent-cyan);
+      stroke-width: 1.8;
+      fill: none;
+    }
+
+    .dropzone p {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .dropzone span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      display: block;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    /* Samples Selector */
+    .sample-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .sample-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 8px 6px;
+      font-size: 0.73rem;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .sample-btn:hover {
+      background: rgba(0, 210, 255, 0.12);
+      border-color: var(--accent-cyan);
+      transform: scale(1.02);
+    }
+
+    .sample-btn span {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    /* Settings & Controls */
+    .control-group {
+      margin-bottom: 16px;
+    }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .control-val {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+
+    select {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      color: var(--text-main);
+      font-size: 0.82rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    select:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--accent-cyan);
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.82rem;
+      color: var(--text-main);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-group input {
+      accent-color: var(--accent-cyan);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    /* Buttons */
+    .btn-cam-toggle {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #00e676, #00b0ff);
+      border: none;
+      border-radius: var(--radius-md);
+      color: #030d1a;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(0, 230, 118, 0.3);
+    }
+
+    .btn-cam-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0, 230, 118, 0.5);
+    }
+
+    .btn-cam-toggle.btn-stop {
+      background: linear-gradient(135deg, #ff3366, #ff007f);
+      box-shadow: 0 4px 20px rgba(255, 51, 102, 0.4);
+      color: #fff;
+    }
+
+    .btn-freeze {
+      width: 100%;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-freeze:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-run {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      border: none;
+      border-radius: var(--radius-md);
+      color: #030d1a;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(0, 210, 255, 0.3);
+      margin-top: 10px;
+    }
+
+    .btn-run:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0, 210, 255, 0.5);
+    }
+
+    /* Right Section */
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Metrics Bar */
+    .metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .metrics-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .metric-card span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-card h3 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-main);
+    }
+
+    .verdict-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+
+    .verdict-crack {
+      background: rgba(255, 51, 102, 0.18);
+      border: 1px solid rgba(255, 51, 102, 0.45);
+      color: #ff557f;
+      animation: alertPulse 1.5s infinite;
+    }
+
+    @keyframes alertPulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(255, 51, 102, 0.2); }
+      50% { box-shadow: 0 0 20px rgba(255, 51, 102, 0.5); }
+    }
+
+    .verdict-clean {
+      background: rgba(0, 230, 118, 0.15);
+      border: 1px solid rgba(0, 230, 118, 0.4);
+      color: #00e676;
+    }
+
+    /* Viewport Card */
+    .viewport-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      position: relative;
+    }
+
+    .view-tabs {
+      display: flex;
+      gap: 10px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .view-tab {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .view-tab:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .view-tab.active {
+      color: var(--accent-cyan);
+      background: rgba(0, 210, 255, 0.1);
+      border-color: rgba(0, 210, 255, 0.3);
+    }
+
+    /* Display box */
+    .display-container {
+      position: relative;
+      width: 100%;
+      min-height: 480px;
+      background: #05070a;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .main-img {
+      max-width: 100%;
+      max-height: 560px;
+      object-fit: contain;
+      display: block;
+      border-radius: 6px;
+    }
+
+    /* Live HUD badge */
+    .live-hud {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #fff;
+      z-index: 20;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-red);
+      box-shadow: 0 0 10px var(--accent-red);
+      animation: pulse 1.2s infinite;
+    }
+
+    /* Split viewer */
+    .split-viewer {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-height: 560px;
+      overflow: hidden;
+      display: none;
+      user-select: none;
+    }
+
+    .split-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+    }
+
+    .split-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+      border-right: 2px solid var(--accent-cyan);
+      box-shadow: 2px 0 15px rgba(0, 210, 255, 0.5);
+    }
+
+    .split-handle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 15px var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: ew-resize;
+      z-index: 10;
+    }
+
+    .split-handle svg {
+      width: 18px;
+      height: 18px;
+      fill: #030d1a;
+    }
+
+    /* Empty state */
+    .placeholder-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      color: var(--text-muted);
+      padding: 40px;
+      text-align: center;
+    }
+
+    .placeholder-state svg {
+      width: 56px;
+      height: 56px;
+      stroke: rgba(255, 255, 255, 0.15);
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    /* Error guide banner */
+    .camera-error-banner {
+      display: none;
+      background: rgba(255, 51, 102, 0.12);
+      border: 1px solid rgba(255, 51, 102, 0.4);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      color: #ff99aa;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .camera-error-banner strong {
+      color: #fff;
+    }
+
+    .spinner {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(0, 210, 255, 0.15);
+      border-radius: 50%;
+      border-top-color: var(--accent-cyan);
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden elements for camera processing -->
+  <video id="videoElement" autoplay playsinline muted style="display: none;"></video>
+  <canvas id="captureCanvas" style="display: none;"></canvas>
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="brand-text">
+        <h1>UNet-VGG16 Crack Inspection Studio</h1>
+        <span>Surface Defect AI Engine • IoU 65.44%</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="nav-tabs">
+        <button class="nav-tab active" id="tabCameraMode" onclick="setAppMode('camera')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Live Camera Studio
+        </button>
+        <button class="nav-tab" id="tabImageMode" onclick="setAppMode('image')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Image & Batch Mode
+        </button>
+      </div>
+
+      <div class="model-badge">
+        <span class="badge-dot"></span>
+        <span id="deviceBadge">Loading...</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+
+      <!-- Camera Controls Panel -->
+      <div class="card" id="cameraControlsCard">
+        <h2>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Live Camera Controls
+        </h2>
+
+        <div class="control-group">
+          <button class="btn-cam-toggle" id="btnToggleCam" onclick="toggleCamera()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span id="btnToggleCamText">Open Live Camera</span>
+          </button>
+          <button class="btn-freeze" id="btnFreeze" onclick="toggleFreeze()" style="display: none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            <span id="freezeBtnText">Freeze Frame</span>
+          </button>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Video Device</span>
+          </div>
+          <select id="cameraSelect" onchange="changeCamera()">
+            <option value="">Default Webcam</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Live View Mode</span>
+          </div>
+          <select id="camViewMode" onchange="updateCamViewMode(this.value)">
+            <option value="overlay">Real-Time Overlay</option>
+            <option value="side_by_side">Side-by-Side (Camera | Overlay)</option>
+            <option value="heatmap">Confidence Heatmap</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Sensitivity / Threshold</span>
+            <span class="control-val" id="camThreshVal">0.45</span>
+          </div>
+          <input type="range" id="camThreshSlider" min="0.10" max="0.90" step="0.05" value="0.45" oninput="updateCamThresh(this.value)">
+        </div>
+
+        <div class="control-group">
+          <label class="checkbox-group">
+            <input type="checkbox" id="claheChk">
+            <span>CLAHE Auto-Contrast (Uneven Lighting)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Image Upload Panel (shown in image mode) -->
+      <div class="card" id="imageControlsCard" style="display: none;">
+        <h2>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          Select or Upload Image
+        </h2>
+
+        <div class="dropzone" id="dropzone">
+          <svg viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242M12 12v9m-4-4l4-4 4 4"/></svg>
+          <p>Click or Drag Image Here</p>
+          <span>Supports JPG, PNG, WEBP</span>
+        </div>
+        <input type="file" id="fileInput" accept="image/*">
+
+        <div style="margin-top: 16px;">
+          <div class="control-label"><span>Quick Test Samples</span></div>
+          <div class="sample-grid" id="sampleGrid"></div>
+        </div>
+
+        <div class="control-group" style="margin-top: 16px;">
+          <div class="control-label">
+            <span>Detection Threshold</span>
+            <span class="control-val" id="imgThreshVal">0.50</span>
+          </div>
+          <input type="range" id="imgThreshSlider" min="0.05" max="0.95" step="0.05" value="0.50" oninput="updateImgThresh(this.value)">
+        </div>
+
+        <button class="btn-run" id="btnRunImg" onclick="runImageInference()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Analyze Crack Defect
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Right Content Area -->
+    <div class="content-area">
+
+      <!-- Camera Permission Error Banner -->
+      <div class="camera-error-banner" id="camErrorBanner">
+        <strong>⚠️ Camera Access Notice:</strong>
+        <p id="camErrorMsg" style="margin-top: 4px;"></p>
+        <p style="margin-top: 6px; font-size: 0.8rem; color: #fff;">
+          <strong>Quick fix:</strong> Click the camera/lock icon in your browser URL bar, set Camera to <em>Allow</em>, and refresh. (Browsers allow webcams on <code>http://localhost:5050</code> or <code>http://127.0.0.1:5050</code>).
+        </p>
+      </div>
+
+      <!-- Metrics Bar -->
+      <div class="metrics-bar">
+        <div class="metric-card">
+          <span>Inspection Verdict</span>
+          <div id="verdictContainer">
+            <span class="verdict-badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">Awaiting Input</span>
+          </div>
+        </div>
+        <div class="metric-card">
+          <span>Surface Affected</span>
+          <h3 id="statCoverage">--</h3>
+        </div>
+        <div class="metric-card">
+          <span>Peak Confidence</span>
+          <h3 id="statConfidence">--</h3>
+        </div>
+        <div class="metric-card">
+          <span id="latencyLabel">Inference Latency</span>
+          <h3 id="statLatency">--</h3>
+        </div>
+      </div>
+
+      <!-- Viewport Display Card -->
+      <div class="viewport-card">
+
+        <!-- Image Mode Tabs (visible in image mode) -->
+        <div class="view-tabs" id="imageViewTabs" style="display: none;">
+          <button class="view-tab active" onclick="switchImageView('comparison')">3-Panel Comparison</button>
+          <button class="view-tab" onclick="switchImageView('overlay')">Crack Overlay</button>
+          <button class="view-tab" onclick="switchImageView('heatmap')">Confidence Heatmap</button>
+          <button class="view-tab" onclick="switchImageView('mask')">Binary Mask</button>
+          <button class="view-tab" onclick="switchImageView('original')">Original Photo</button>
+          <button class="view-tab" onclick="switchImageView('split')">Before / After Split</button>
+        </div>
+
+        <div class="display-container" id="displayBox">
+          <div class="live-hud" id="liveHud" style="display: none;">
+            <span class="live-dot"></span>
+            <span id="hudFps">15.0 FPS</span>
+            <span>•</span>
+            <span id="hudInfer">95 ms</span>
+          </div>
+
+          <div class="placeholder-state" id="camPlaceholder">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <div>
+              <h3>Live Camera is Standby</h3>
+              <p style="font-size: 0.85rem; margin-top: 4px;">Click the <strong>"Open Live Camera"</strong> button on the left to start live inspection.</p>
+            </div>
+          </div>
+
+          <div class="placeholder-state" id="imgPlaceholder" style="display: none;">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <div>
+              <h3>No Image Analyzed Yet</h3>
+              <p style="font-size: 0.85rem; margin-top: 4px;">Upload an image or pick a sample from the left.</p>
+            </div>
+          </div>
+
+          <div class="spinner" id="spinner"></div>
+
+          <!-- Video live frame image -->
+          <img id="cameraOutput" class="main-img" style="display: none;" alt="Live camera detection">
+
+          <!-- Static image result -->
+          <img id="mainImg" class="main-img" style="display: none;" alt="Inspection result">
+
+          <!-- Split viewer -->
+          <div class="split-viewer" id="splitViewer">
+            <img id="splitOriginal" class="split-img" alt="Original">
+            <div class="split-overlay" id="splitOverlay">
+              <img id="splitOverlayImg" class="split-img" alt="Overlay">
+            </div>
+            <div class="split-handle" id="splitHandle">
+              <svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let appMode = 'camera'; // 'camera' or 'image'
+
+    // Camera variables
+    let video = document.getElementById('videoElement');
+    let canvas = document.getElementById('captureCanvas');
+    let ctx = canvas.getContext('2d');
+    let stream = null;
+    let isCameraRunning = false;
+    let isFrozen = false;
+    let inFlight = false;
+    let camThreshold = 0.45;
+    let camViewMode = 'overlay';
+    let lastFrameTime = performance.now();
+    let frameTimes = [];
+
+    // Image variables
+    let currentImage = null;
+    let currentThreshold = 0.50;
+    let currentImageView = 'comparison';
+    let lastImageResult = null;
+
+    async function init() {
+      try {
+        const res = await fetch('/api/info');
+        const data = await res.json();
+        document.getElementById('deviceBadge').innerText = `${data.device.toUpperCase()} • Epoch ${data.epoch || '4'}`;
+
+        // Populate samples
+        const grid = document.getElementById('sampleGrid');
+        grid.innerHTML = '';
+        data.samples.forEach(s => {
+          const btn = document.createElement('button');
+          btn.className = 'sample-btn';
+          btn.innerHTML = `<strong>${s.label}</strong><span>${s.type}</span>`;
+          btn.onclick = () => loadSample(s.name);
+          grid.appendChild(btn);
+        });
+
+        // List cameras
+        await populateCameras();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function populateCameras() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(d => d.kind === 'videoinput');
+        const select = document.getElementById('cameraSelect');
+        select.innerHTML = '';
+        if (videoDevices.length === 0) {
+          select.innerHTML = '<option value="">Default Camera</option>';
+        } else {
+          videoDevices.forEach((dev, idx) => {
+            const opt = document.createElement('option');
+            opt.value = dev.deviceId;
+            opt.text = dev.label || `Camera ${idx + 1}`;
+            select.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.warn('enumerateDevices error:', err);
+      }
+    }
+
+    function setAppMode(mode) {
+      appMode = mode;
+      document.getElementById('tabCameraMode').classList.toggle('active', mode === 'camera');
+      document.getElementById('tabImageMode').classList.toggle('active', mode === 'image');
+
+      if (mode === 'camera') {
+        document.getElementById('cameraControlsCard').style.display = 'block';
+        document.getElementById('imageControlsCard').style.display = 'none';
+        document.getElementById('imageViewTabs').style.display = 'none';
+        document.getElementById('mainImg').style.display = 'none';
+        document.getElementById('splitViewer').style.display = 'none';
+        document.getElementById('imgPlaceholder').style.display = 'none';
+
+        if (isCameraRunning) {
+          document.getElementById('cameraOutput').style.display = 'block';
+          document.getElementById('liveHud').style.display = 'flex';
+          document.getElementById('camPlaceholder').style.display = 'none';
+        } else {
+          document.getElementById('cameraOutput').style.display = 'none';
+          document.getElementById('liveHud').style.display = 'none';
+          document.getElementById('camPlaceholder').style.display = 'flex';
+        }
+      } else {
+        // Stop camera if running
+        if (isCameraRunning) toggleCamera();
+        document.getElementById('cameraControlsCard').style.display = 'none';
+        document.getElementById('imageControlsCard').style.display = 'block';
+        document.getElementById('imageViewTabs').style.display = 'flex';
+        document.getElementById('cameraOutput').style.display = 'none';
+        document.getElementById('liveHud').style.display = 'none';
+        document.getElementById('camPlaceholder').style.display = 'none';
+
+        if (lastImageResult) {
+          renderCurrentImageView();
+        } else {
+          document.getElementById('imgPlaceholder').style.display = 'flex';
+        }
+      }
+    }
+
+    // -------------------------------------------------------------
+    // LIVE CAMERA SYSTEM
+    // -------------------------------------------------------------
+    async function startCamera() {
+      const banner = document.getElementById('camErrorBanner');
+      banner.style.display = 'none';
+
+      const selectedDeviceId = document.getElementById('cameraSelect').value;
+      const constraints = {
+        video: {
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          facingMode: "environment"
+        }
+      };
+
+      if (selectedDeviceId) {
+        constraints.video.deviceId = { exact: selectedDeviceId };
+      }
+
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error("navigator.mediaDevices.getUserMedia is not supported by your browser in this context.");
+        }
+
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = stream;
+        await video.play();
+
+        isCameraRunning = true;
+        document.getElementById('btnToggleCam').classList.add('btn-stop');
+        document.getElementById('btnToggleCamText').innerText = "Stop Camera";
+        document.getElementById('btnFreeze').style.display = 'flex';
+        document.getElementById('camPlaceholder').style.display = 'none';
+        document.getElementById('cameraOutput').style.display = 'block';
+        document.getElementById('liveHud').style.display = 'flex';
+
+        // Re-enumerate to get friendly camera labels
+        populateCameras();
+
+        requestAnimationFrame(cameraProcessLoop);
+      } catch (err) {
+        console.error("Camera Error:", err);
+        banner.style.display = 'block';
+        document.getElementById('camErrorMsg').innerText = `${err.name}: ${err.message}`;
+        document.getElementById('btnToggleCam').classList.remove('btn-stop');
+        document.getElementById('btnToggleCamText').innerText = "Open Live Camera";
+        isCameraRunning = false;
+      }
+    }
+
+    function toggleCamera() {
+      if (isCameraRunning) {
+        if (stream) {
+          stream.getTracks().forEach(t => t.stop());
+          stream = null;
+        }
+        video.srcObject = null;
+        isCameraRunning = false;
+        document.getElementById('btnToggleCam').classList.remove('btn-stop');
+        document.getElementById('btnToggleCamText').innerText = "Open Live Camera";
+        document.getElementById('btnFreeze').style.display = 'none';
+        document.getElementById('cameraOutput').style.display = 'none';
+        document.getElementById('liveHud').style.display = 'none';
+        document.getElementById('camPlaceholder').style.display = 'flex';
+        document.getElementById('verdictContainer').innerHTML = `<span class="verdict-badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">Camera Standby</span>`;
+      } else {
+        startCamera();
+      }
+    }
+
+    function changeCamera() {
+      if (isCameraRunning) {
+        toggleCamera();
+        setTimeout(startCamera, 300);
+      }
+    }
+
+    function toggleFreeze() {
+      isFrozen = !isFrozen;
+      document.getElementById('freezeBtnText').innerText = isFrozen ? "Resume Live Feed" : "Freeze Frame";
+    }
+
+    function updateCamThresh(val) {
+      camThreshold = parseFloat(val);
+      document.getElementById('camThreshVal').innerText = camThreshold.toFixed(2);
+    }
+
+    function updateCamViewMode(val) {
+      camViewMode = val;
+    }
+
+    async function cameraProcessLoop() {
+      if (!isCameraRunning) return;
+
+      if (!isFrozen && !inFlight && video.videoWidth > 0) {
+        inFlight = true;
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Low latency compressed JPEG
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.65);
+        const useClahe = document.getElementById('claheChk').checked;
+
+        try {
+          const resp = await fetch("/api/predict_frame", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              image: dataUrl,
+              threshold: camThreshold,
+              use_clahe: useClahe,
+              view_mode: camViewMode
+            })
+          });
+
+          const result = await resp.json();
+          if (result.success && isCameraRunning) {
+            document.getElementById('cameraOutput').src = result.image;
+
+            // Verdict
+            const verdictBox = document.getElementById('verdictContainer');
+            if (result.crack_detected) {
+              verdictBox.innerHTML = `<span class="verdict-badge verdict-crack">CRACK DETECTED (${result.crack_percentage}%)</span>`;
+            } else {
+              verdictBox.innerHTML = `<span class="verdict-badge verdict-clean">SURFACE SOUND / CLEAN</span>`;
+            }
+
+            document.getElementById('statCoverage').innerText = `${result.crack_percentage}%`;
+            document.getElementById('statConfidence').innerText = `${(result.peak_probability * 100).toFixed(1)}%`;
+            document.getElementById('statLatency').innerText = `${result.inference_time_ms} ms`;
+            document.getElementById('hudInfer').innerText = `${result.inference_time_ms} ms`;
+
+            // Calculate FPS
+            const now = performance.now();
+            const delta = now - lastFrameTime;
+            lastFrameTime = now;
+            frameTimes.push(1000 / delta);
+            if (frameTimes.length > 10) frameTimes.shift();
+            const avgFps = frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length;
+            document.getElementById('hudFps').innerText = `${avgFps.toFixed(1)} FPS`;
+          }
+        } catch (err) {
+          console.error("Frame inference error:", err);
+        } finally {
+          inFlight = false;
+        }
+      }
+
+      if (isCameraRunning) {
+        requestAnimationFrame(cameraProcessLoop);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // IMAGE & BATCH MODE
+    // -------------------------------------------------------------
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropzone.onclick = () => fileInput.click();
+    fileInput.onchange = (e) => {
+      if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
+    };
+
+    dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('dragover'); };
+    dropzone.ondragleave = () => dropzone.classList.remove('dragover');
+    dropzone.ondrop = (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    };
+
+    function handleFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        currentImage = { type: 'data', data: e.target.result, name: file.name };
+        dropzone.querySelector('p').innerText = file.name;
+        runImageInference();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function loadSample(sampleName) {
+      currentImage = { type: 'sample', name: sampleName };
+      dropzone.querySelector('p').innerText = sampleName;
+      runImageInference();
+    }
+
+    function updateImgThresh(val) {
+      currentThreshold = parseFloat(val);
+      document.getElementById('imgThreshVal').innerText = currentThreshold.toFixed(2);
+      if (currentImage && lastImageResult) runImageInference();
+    }
+
+    async function runImageInference() {
+      if (!currentImage) return;
+
+      const spinner = document.getElementById('spinner');
+      const placeholder = document.getElementById('imgPlaceholder');
+      const mainImg = document.getElementById('mainImg');
+      const splitViewer = document.getElementById('splitViewer');
+      const btnRun = document.getElementById('btnRunImg');
+
+      spinner.style.display = 'block';
+      placeholder.style.display = 'none';
+      mainImg.style.display = 'none';
+      splitViewer.style.display = 'none';
+      btnRun.disabled = true;
+
+      try {
+        const payload = {
+          mode: 'tiled',
+          threshold: currentThreshold,
+          image: currentImage
+        };
+
+        const res = await fetch('/api/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        lastImageResult = data;
+
+        // Update metrics
+        const verdictBox = document.getElementById('verdictContainer');
+        if (data.crack_detected) {
+          verdictBox.innerHTML = `<span class="verdict-badge verdict-crack">CRACK DETECTED (${data.crack_percentage}%)</span>`;
+        } else {
+          verdictBox.innerHTML = `<span class="verdict-badge verdict-clean">SURFACE SOUND / CLEAN</span>`;
+        }
+        document.getElementById('statCoverage').innerText = `${data.crack_percentage}%`;
+        document.getElementById('statConfidence').innerText = `${(data.peak_probability * 100).toFixed(1)}%`;
+        document.getElementById('statLatency').innerText = `${data.inference_time_ms} ms`;
+
+        renderCurrentImageView();
+      } catch (err) {
+        alert('Inference error: ' + err.message);
+      } finally {
+        spinner.style.display = 'none';
+        btnRun.disabled = false;
+      }
+    }
+
+    function switchImageView(viewName) {
+      currentImageView = viewName;
+      document.querySelectorAll('#imageViewTabs .view-tab').forEach(t => {
+        t.classList.toggle('active', t.getAttribute('onclick').includes(viewName));
+      });
+      renderCurrentImageView();
+    }
+
+    function renderCurrentImageView() {
+      if (!lastImageResult) return;
+
+      const mainImg = document.getElementById('mainImg');
+      const splitViewer = document.getElementById('splitViewer');
+
+      if (currentImageView === 'split') {
+        mainImg.style.display = 'none';
+        splitViewer.style.display = 'block';
+        document.getElementById('splitOriginal').src = lastImageResult.images.original;
+        document.getElementById('splitOverlayImg').src = lastImageResult.images.overlay;
+        return;
+      }
+
+      splitViewer.style.display = 'none';
+      mainImg.style.display = 'block';
+
+      let imgSrc = lastImageResult.images.comparison;
+      if (currentImageView === 'overlay') imgSrc = lastImageResult.images.overlay;
+      else if (currentImageView === 'heatmap') imgSrc = lastImageResult.images.heatmap;
+      else if (currentImageView === 'mask') imgSrc = lastImageResult.images.mask;
+      else if (currentImageView === 'original') imgSrc = lastImageResult.images.original;
+
+      mainImg.src = imgSrc;
+    }
+
+    // Split Viewer Dragging
+    const splitViewer = document.getElementById('splitViewer');
+    const splitOverlay = document.getElementById('splitOverlay');
+    const splitHandle = document.getElementById('splitHandle');
+    let isDragging = false;
+
+    splitHandle.onmousedown = () => isDragging = true;
+    window.onmouseup = () => isDragging = false;
+    splitViewer.onmousemove = (e) => {
+      if (!isDragging) return;
+      const rect = splitViewer.getBoundingClientRect();
+      const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+      const pct = (x / rect.width) * 100;
+      splitOverlay.style.width = pct + '%';
+      splitHandle.style.left = pct + '%';
+    };
+
+    window.onload = init;
+  </script>
+</body>
+</html>

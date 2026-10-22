@@ -1,0 +1,28 @@
+# Virtual Environment
+.venv
+.venv/
+env/
+venv/
+ENV/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Model Weights (>100MB exceeds GitHub push limit; host on GitHub Releases)
+*.pt
+*.pth
+*.onnx
+*.bin
+
+# Local Inference Outputs & Snapshots
+predictions/
+snapshots/
+quick_test_output.jpg
+
+# System & IDE Metadata
+.DS_Store
+.idea/
+.vscode/

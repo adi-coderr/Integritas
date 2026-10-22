@@ -1,0 +1,80 @@
+{
+  "model_metadata": {
+    "weights_path": "model_unet_vgg_16_best.pt",
+    "file_size_mb": 111.81,
+    "device": "mps",
+    "epoch": 4,
+    "valid_iou": 0.6543620356491634,
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "total_params": 29306465
+  },
+  "file_size_mb": 111.8144121170044,
+  "file_md5": "e12355c1cba0c57c6e143220d16664fe",
+  "total_parameters": 29306465,
+  "in_memory_mb": 111.79529190063477,
+  "device": "mps",
+  "benchmark": {
+    "input_resolution": "448x448",
+    "avg_latency_ms": 190.52,
+    "fps": 5.2
+  },
+  "test_image_results": [
+    {
+      "filename": "pure_crack_01.jpg",
+      "description": "Severe Surface Crack",
+      "expected_crack": true,
+      "detected": true,
+      "max_confidence": 0.9999285936355591,
+      "mean_confidence": 0.01291221845895052,
+      "crack_pixels": 2526,
+      "crack_percentage": 1.2585698341836735,
+      "status": "PASSED [OK]"
+    },
+    {
+      "filename": "pure_crack_05.jpg",
+      "description": "Horizontal Crack",
+      "expected_crack": true,
+      "detected": true,
+      "max_confidence": 0.9999829530715942,
+      "mean_confidence": 0.10084575414657593,
+      "crack_pixels": 20319,
+      "crack_percentage": 10.12386399872449,
+      "status": "PASSED [OK]"
+    },
+    {
+      "filename": "crack_with_moss_01.jpg",
+      "description": "Weathered Crack with Moss",
+      "expected_crack": true,
+      "detected": true,
+      "max_confidence": 0.9999222755432129,
+      "mean_confidence": 0.008652742952108383,
+      "crack_pixels": 1710,
+      "crack_percentage": 0.8520009566326531,
+      "status": "PASSED [OK]"
+    },
+    {
+      "filename": "like_crack_01.jpg",
+      "description": "Crack-Like Distractor",
+      "expected_crack": false,
+      "detected": true,
+      "max_confidence": 0.9864686727523804,
+      "mean_confidence": 0.005176302511245012,
+      "crack_pixels": 807,
+      "crack_percentage": 0.4020846619897959,
+      "status": "WARNING (Uncertain)"
+    },
+    {
+      "filename": "noncrack_01.jpg",
+      "description": "Clean Smooth Concrete",
+      "expected_crack": false,
+      "detected": true,
+      "max_confidence": 0.9814380407333374,
+      "mean_confidence": 0.011411732994019985,
+      "crack_pixels": 1441,
+      "crack_percentage": 0.7179727359693877,
+      "status": "WARNING (Uncertain)"
+    }
+  ],
+  "verdict": "VERIFIED_WORKING"
+}
