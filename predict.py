@@ -41,6 +41,9 @@ except ImportError:
 
 from unet_model import get_default_device, load_unet16_model
 
+# Cap PyTorch to 2 CPU threads to preserve 75%+ of laptop CPU capacity for macOS UI
+torch.set_num_threads(2)
+
 # ImageNet normalization parameters
 _MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 _STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
@@ -123,14 +126,16 @@ class CrackPredictor:
         work_size: int = 896,
         overlap: float = 0.20,
         batch_size: Optional[int] = None,
+        gentle_delay: float = 0.015,
     ) -> np.ndarray:
         """
         High-fidelity tiled inference for large photos.
         Slices image into overlapping 448x448 patches, predicts each, and averages
-        overlapping regions. Uses lightweight batch size on Apple Silicon to prevent laptop freezing.
+        overlapping regions. Uses single-tile batching and gentle pacing micro-pauses
+        to keep laptops (like MacBook Air) completely cool and smooth without freezing.
         """
         if batch_size is None:
-            batch_size = 1 if self.device.type == "mps" else 4
+            batch_size = 1
 
         orig_h, orig_w = img_rgb.shape[:2]
 
@@ -167,7 +172,7 @@ class CrackPredictor:
         acc_probs = np.zeros((big_h, big_w), dtype=np.float32)
         weight_acc = np.zeros((big_h, big_w), dtype=np.float32)
 
-        # Batch inference
+        # Batch inference with gentle pacing
         for i in range(0, len(coords), batch_size):
             chunk = coords[i : i + batch_size]
             patches = [work_img[y : y + INPUT_SIZE, x : x + INPUT_SIZE] for y, x in chunk]
@@ -175,6 +180,10 @@ class CrackPredictor:
             for (y, x), patch_prob in zip(chunk, batch_probs):
                 acc_probs[y : y + INPUT_SIZE, x : x + INPUT_SIZE] += patch_prob
                 weight_acc[y : y + INPUT_SIZE, x : x + INPUT_SIZE] += 1.0
+
+            # Gentle breathing pause to yield CPU time back to macOS WindowServer
+            if gentle_delay > 0:
+                time.sleep(gentle_delay)
 
         # Average overlaps
         weight_acc = np.maximum(weight_acc, 1e-6)
@@ -267,23 +276,24 @@ class CrackPredictor:
         use_tta: bool = False,
         work_size: int = 896,
         overlap: float = 0.20,
+        gentle_delay: float = 0.015,
     ) -> Dict[str, Any]:
         """
         High-precision deep scan on a captured photo.
-        Runs overlapping tiled inference with minimal unified memory overhead to keep
-        laptops (like MacBook Air) completely cool and smooth without freezing.
+        Runs overlapping tiled inference with minimal unified memory overhead and
+        gentle pacing to keep laptops (like MacBook Air) completely cool and smooth without freezing.
         """
         t0 = time.perf_counter()
         img_rgb = load_rgb_image(image_input)
         h, w = img_rgb.shape[:2]
 
-        # 1. High-fidelity tiled inference (lightweight tile batching)
-        prob_map = self.predict_tiled(img_rgb, work_size=work_size, overlap=overlap)
+        # 1. High-fidelity tiled inference (lightweight tile batching with gentle pacing)
+        prob_map = self.predict_tiled(img_rgb, work_size=work_size, overlap=overlap, gentle_delay=gentle_delay)
 
         # 2. Test-Time Augmentation (TTA) with horizontal flip if requested
         if use_tta:
             img_flipped = np.ascontiguousarray(np.fliplr(img_rgb))
-            prob_flipped = self.predict_tiled(img_flipped, work_size=work_size, overlap=overlap)
+            prob_flipped = self.predict_tiled(img_flipped, work_size=work_size, overlap=overlap, gentle_delay=gentle_delay)
             prob_map = (prob_map + np.fliplr(prob_flipped)) * 0.5
 
         if self.device.type == "mps":

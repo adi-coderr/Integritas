@@ -42,18 +42,18 @@ except ImportError:
 from predict import CrackPredictor, INPUT_SIZE
 
 app = Flask(__name__, template_folder="templates")
-predictor: CrackPredictor | None = None
+predictors: dict[str, CrackPredictor] = {}
 SAMPLE_DIR = Path(__file__).resolve().parent / "sample_images"
 _frame_count = 0
 
 
-def get_predictor() -> CrackPredictor:
-    global predictor
-    if predictor is None:
-        print("[App] Initializing UNet-VGG16 predictor...")
-        predictor = CrackPredictor("model_unet_vgg_16_best.pt")
-        print(f"[App] Model ready on device: {predictor.device}")
-    return predictor
+def get_predictor(device: str = "cpu") -> CrackPredictor:
+    global predictors
+    if device not in predictors:
+        print(f"[App] Initializing UNet-VGG16 predictor on {device.upper()}...")
+        predictors[device] = CrackPredictor("model_unet_vgg_16_best.pt", device=device)
+        print(f"[App] Model ready on device: {device.upper()}")
+    return predictors[device]
 
 
 def apply_clahe_contrast(img_bgr: np.ndarray) -> np.ndarray:
@@ -137,7 +137,9 @@ def predict_frame():
     orig_h, orig_w = frame_bgr.shape[:2]
     frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
 
-    pred = get_predictor()
+    engine = data.get("engine", "gentle")
+    device_name = "cpu" if engine == "gentle" else "mps"
+    pred = get_predictor(device_name)
     # Fast 448x448 inference
     prob_map = pred.predict_full(frame_rgb)
 
@@ -234,8 +236,17 @@ def run_deep_scan():
     else:
         return jsonify({"error": "No valid image provided"}), 400
 
-    pred = get_predictor()
-    scan_res = pred.deep_scan(img_rgb, threshold=threshold, use_tta=False, work_size=896)
+    engine = data.get("engine", "gentle")
+    device_name = "cpu" if engine == "gentle" else "mps"
+    pred = get_predictor(device_name)
+    gentle_delay = 0.02 if engine == "gentle" else 0.005
+    scan_res = pred.deep_scan(
+        img_rgb,
+        threshold=threshold,
+        use_tta=False,
+        work_size=896,
+        gentle_delay=gentle_delay,
+    )
 
     # Render visualizations
     annotated_rgb = pred.render_pinpoint_overlay(img_rgb, scan_res)
