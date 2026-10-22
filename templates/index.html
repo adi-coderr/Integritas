@@ -3,35 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNet-VGG16 Surface Crack Inspection Studio</title>
+  <title>UNet-VGG16 Deep Crack Inspection Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0a0d14;
-      --card-bg: rgba(18, 24, 38, 0.7);
+      --bg-dark: #080b11;
+      --card-bg: rgba(16, 22, 34, 0.78);
       --card-border: rgba(255, 255, 255, 0.08);
       --accent-cyan: #00d2ff;
       --accent-blue: #3a7bd5;
+      --accent-purple: #7b2cbf;
       --accent-red: #ff3366;
       --accent-green: #00e676;
-      --accent-purple: #8a2be2;
+      --accent-yellow: #ffb703;
       --text-main: #f0f4f8;
       --text-muted: #8a99ad;
-      --radius-lg: 16px;
-      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-md: 9px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: radial-gradient(circle at 10% 20%, #10192e 0%, #080c14 90%);
+      background: radial-gradient(circle at 10% 20%, #10192e 0%, #070a10 90%);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
@@ -39,11 +36,11 @@
     }
 
     header {
-      padding: 16px 36px;
+      padding: 14px 32px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(10, 13, 20, 0.85);
+      background: rgba(8, 11, 17, 0.88);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--card-border);
       position: sticky;
@@ -51,664 +48,216 @@
       z-index: 100;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    .brand { display: flex; align-items: center; gap: 12px; }
     .brand-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 38px; height: 38px; border-radius: 9px;
       background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
     }
+    .brand-icon svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2.5; }
+    .brand-text h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.3px; }
+    .brand-text span { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
 
-    .brand-icon svg {
-      width: 22px;
-      height: 22px;
-      fill: none;
-      stroke: #fff;
-      stroke-width: 2.5;
-    }
-
-    .brand-text h1 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-    }
-
-    .brand-text span {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
+    .header-right { display: flex; align-items: center; gap: 12px; }
     .nav-tabs {
-      display: flex;
-      background: rgba(0, 0, 0, 0.35);
-      padding: 4px;
-      border-radius: 30px;
-      border: 1px solid var(--card-border);
+      display: flex; background: rgba(0, 0, 0, 0.4);
+      padding: 3px; border-radius: 30px; border: 1px solid var(--card-border);
     }
-
     .nav-tab {
-      padding: 7px 18px;
-      border-radius: 20px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s;
+      padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+      color: var(--text-muted); border: none; background: transparent; cursor: pointer;
+      display: flex; align-items: center; gap: 6px; transition: all 0.2s;
     }
-
     .nav-tab.active {
       background: linear-gradient(135deg, rgba(0, 210, 255, 0.25), rgba(58, 123, 213, 0.25));
-      color: var(--accent-cyan);
-      border: 1px solid rgba(0, 210, 255, 0.4);
-      box-shadow: 0 0 12px rgba(0, 210, 255, 0.2);
+      color: var(--accent-cyan); border: 1px solid rgba(0, 210, 255, 0.4);
     }
 
     .model-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(0, 210, 255, 0.08);
-      border: 1px solid rgba(0, 210, 255, 0.25);
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 0.8rem;
-      color: var(--accent-cyan);
-      font-family: 'JetBrains Mono', monospace;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.25);
+      padding: 6px 12px; border-radius: 30px; font-size: 0.78rem;
+      color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace;
     }
-
     .badge-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--accent-green);
-      box-shadow: 0 0 8px var(--accent-green);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green);
     }
 
     main {
-      flex: 1;
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 24px 36px;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 380px 1fr;
-      gap: 28px;
+      flex: 1; max-width: 1440px; margin: 0 auto;
+      padding: 20px 32px; width: 100%;
+      display: flex; flex-direction: column; gap: 20px;
     }
 
-    @media (max-width: 1080px) {
-      main {
-        grid-template-columns: 1fr;
-      }
+    /* Top Metrics HUD */
+    .metrics-bar {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    }
+    .metric-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius-md); padding: 14px 18px; backdrop-filter: blur(16px);
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .metric-card span { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .metric-card h3 { font-size: 1.35rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+    .verdict-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 20px; font-size: 0.75rem;
+      font-weight: 700; text-transform: uppercase; width: fit-content;
+    }
+    .verdict-crack { background: rgba(255, 51, 102, 0.18); border: 1px solid rgba(255, 51, 102, 0.45); color: #ff557f; }
+    .verdict-clean { background: rgba(0, 230, 118, 0.15); border: 1px solid rgba(0, 230, 118, 0.4); color: #00e676; }
+
+    /* Action Control Bar */
+    .action-panel {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg); padding: 18px 24px; backdrop-filter: blur(20px);
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
     }
 
-    /* Left Sidebar: Controls & Upload */
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    .btn-capture {
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+      border: none; border-radius: var(--radius-md);
+      color: #030d1a; font-size: 0.95rem; font-weight: 800; cursor: pointer;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 4px 20px rgba(0, 210, 255, 0.4);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .btn-capture:hover { transform: translateY(-2px); box-shadow: 0 6px 26px rgba(0, 210, 255, 0.6); }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: 22px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .card h2 {
-      font-size: 0.92rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Dropzone */
-    .dropzone {
-      border: 2px dashed rgba(255, 255, 255, 0.15);
-      border-radius: var(--radius-md);
-      padding: 26px 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .dropzone:hover, .dropzone.dragover {
-      border-color: var(--accent-cyan);
-      background: rgba(0, 210, 255, 0.05);
-      transform: translateY(-2px);
-    }
-
-    .dropzone svg {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 10px;
-      stroke: var(--accent-cyan);
-      stroke-width: 1.8;
-      fill: none;
-    }
-
-    .dropzone p {
-      font-size: 0.88rem;
-      font-weight: 500;
-      color: var(--text-main);
-    }
-
-    .dropzone span {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-      display: block;
-    }
-
-    #fileInput {
-      display: none;
-    }
-
-    /* Samples Selector */
-    .sample-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .sample-btn {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 8px 6px;
-      font-size: 0.73rem;
-      color: var(--text-main);
-      cursor: pointer;
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border);
+      color: var(--text-main); font-weight: 600; padding: 10px 18px; border-radius: var(--radius-md);
+      cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem;
       transition: all 0.2s;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
     }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
 
-    .sample-btn:hover {
-      background: rgba(0, 210, 255, 0.12);
-      border-color: var(--accent-cyan);
-      transform: scale(1.02);
-    }
-
-    .sample-btn span {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-    }
-
-    /* Settings & Controls */
-    .control-group {
-      margin-bottom: 16px;
-    }
-
-    .control-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.82rem;
-      color: var(--text-main);
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .control-val {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--accent-cyan);
-      font-weight: 600;
-    }
+    .control-item { display: flex; align-items: center; gap: 8px; }
+    .control-item label { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
 
     select {
-      width: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 10px 12px;
-      color: var(--text-main);
-      font-size: 0.82rem;
-      outline: none;
-      cursor: pointer;
-    }
-
-    select:focus {
-      border-color: var(--accent-cyan);
+      background: rgba(0, 0, 0, 0.4); border: 1px solid var(--card-border);
+      border-radius: var(--radius-md); padding: 8px 12px; color: var(--text-main);
+      font-size: 0.8rem; outline: none; cursor: pointer;
     }
 
     input[type="range"] {
-      width: 100%;
-      height: 6px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      outline: none;
-      -webkit-appearance: none;
+      width: 120px; height: 5px; border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1); outline: none; -webkit-appearance: none;
     }
-
     input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--accent-cyan);
-      cursor: pointer;
-      box-shadow: 0 0 10px var(--accent-cyan);
-      transition: transform 0.1s;
+      -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+      background: var(--accent-cyan); cursor: pointer; box-shadow: 0 0 8px var(--accent-cyan);
     }
 
-    input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.15);
+    /* Inspection Main Display Grid */
+    .inspection-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    @media (max-width: 1024px) {
+      .inspection-grid { grid-template-columns: 1fr; }
     }
 
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.82rem;
-      color: var(--text-main);
-      cursor: pointer;
-      user-select: none;
+    .display-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg); padding: 18px; backdrop-filter: blur(20px);
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .display-header {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.88rem; font-weight: 600;
     }
 
-    .checkbox-group input {
-      accent-color: var(--accent-cyan);
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-    }
-
-    /* Buttons */
-    .btn-cam-toggle {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #00e676, #00b0ff);
-      border: none;
-      border-radius: var(--radius-md);
-      color: #030d1a;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 4px 20px rgba(0, 230, 118, 0.3);
-    }
-
-    .btn-cam-toggle:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(0, 230, 118, 0.5);
-    }
-
-    .btn-cam-toggle.btn-stop {
-      background: linear-gradient(135deg, #ff3366, #ff007f);
-      box-shadow: 0 4px 20px rgba(255, 51, 102, 0.4);
-      color: #fff;
-    }
-
-    .btn-freeze {
-      width: 100%;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      color: var(--text-main);
-      font-size: 0.84rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .btn-freeze:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.25);
-    }
-
-    .btn-run {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-      border: none;
-      border-radius: var(--radius-md);
-      color: #030d1a;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 4px 20px rgba(0, 210, 255, 0.3);
-      margin-top: 10px;
-    }
-
-    .btn-run:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(0, 210, 255, 0.5);
-    }
-
-    /* Right Section */
-    .content-area {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    /* Metrics Bar */
-    .metrics-bar {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-
-    @media (max-width: 768px) {
-      .metrics-bar {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    .metric-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      backdrop-filter: blur(16px);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .metric-card span {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .metric-card h3 {
-      font-size: 1.45rem;
-      font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-main);
-    }
-
-    .verdict-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      width: fit-content;
-    }
-
-    .verdict-crack {
-      background: rgba(255, 51, 102, 0.18);
-      border: 1px solid rgba(255, 51, 102, 0.45);
-      color: #ff557f;
-      animation: alertPulse 1.5s infinite;
-    }
-
-    @keyframes alertPulse {
-      0%, 100% { box-shadow: 0 0 10px rgba(255, 51, 102, 0.2); }
-      50% { box-shadow: 0 0 20px rgba(255, 51, 102, 0.5); }
-    }
-
-    .verdict-clean {
-      background: rgba(0, 230, 118, 0.15);
-      border: 1px solid rgba(0, 230, 118, 0.4);
-      color: #00e676;
-    }
-
-    /* Viewport Card */
-    .viewport-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      backdrop-filter: blur(20px);
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      position: relative;
-    }
-
-    .view-tabs {
-      display: flex;
-      gap: 10px;
-      border-bottom: 1px solid var(--card-border);
-      padding-bottom: 14px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .view-tab {
-      background: transparent;
-      border: 1px solid transparent;
-      padding: 8px 16px;
-      border-radius: 30px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .view-tab:hover {
-      color: var(--text-main);
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .view-tab.active {
-      color: var(--accent-cyan);
-      background: rgba(0, 210, 255, 0.1);
-      border-color: rgba(0, 210, 255, 0.3);
-    }
-
-    /* Display box */
-    .display-container {
-      position: relative;
-      width: 100%;
-      min-height: 480px;
-      background: #05070a;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .viewport {
+      position: relative; width: 100%; aspect-ratio: 4 / 3;
+      background: #05070a; border-radius: var(--radius-md);
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
-
-    .main-img {
-      max-width: 100%;
-      max-height: 560px;
-      object-fit: contain;
-      display: block;
-      border-radius: 6px;
+    video, img.viewport-img {
+      width: 100%; height: 100%; object-fit: contain; display: block;
     }
 
-    /* Live HUD badge */
-    .live-hud {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 0.75rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: #fff;
-      z-index: 20;
-    }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--accent-red);
-      box-shadow: 0 0 10px var(--accent-red);
-      animation: pulse 1.2s infinite;
-    }
-
-    /* Split viewer */
+    /* Before/After Split Viewer */
     .split-viewer {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      max-height: 560px;
-      overflow: hidden;
-      display: none;
-      user-select: none;
+      position: relative; width: 100%; height: 100%; overflow: hidden;
+      user-select: none; display: none;
     }
-
-    .split-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-      pointer-events: none;
+    .split-layer {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     }
-
+    .split-layer img { width: 100%; height: 100%; object-fit: contain; display: block; }
     .split-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 50%;
-      height: 100%;
-      overflow: hidden;
-      border-right: 2px solid var(--accent-cyan);
+      position: absolute; top: 0; left: 0; width: 50%; height: 100%;
+      overflow: hidden; border-right: 2px solid var(--accent-cyan);
       box-shadow: 2px 0 15px rgba(0, 210, 255, 0.5);
     }
-
     .split-handle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--accent-cyan);
-      box-shadow: 0 0 15px var(--accent-cyan);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: ew-resize;
-      z-index: 10;
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--accent-cyan); box-shadow: 0 0 12px var(--accent-cyan);
+      display: flex; align-items: center; justify-content: center;
+      cursor: ew-resize; z-index: 10;
     }
+    .split-handle svg { width: 16px; height: 16px; fill: #030d1a; }
 
-    .split-handle svg {
-      width: 18px;
-      height: 18px;
-      fill: #030d1a;
+    /* Detected Cracks Table */
+    .crack-table {
+      width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left;
     }
-
-    /* Empty state */
-    .placeholder-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      color: var(--text-muted);
-      padding: 40px;
-      text-align: center;
+    .crack-table th {
+      padding: 10px 12px; background: rgba(0, 0, 0, 0.3); color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--card-border);
     }
-
-    .placeholder-state svg {
-      width: 56px;
-      height: 56px;
-      stroke: rgba(255, 255, 255, 0.15);
-      stroke-width: 1.5;
-      fill: none;
+    .crack-table td {
+      padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     }
+    .crack-table tr:hover { background: rgba(255, 255, 255, 0.02); }
 
-    /* Error guide banner */
-    .camera-error-banner {
-      display: none;
-      background: rgba(255, 51, 102, 0.12);
-      border: 1px solid rgba(255, 51, 102, 0.4);
-      border-radius: var(--radius-md);
-      padding: 16px 20px;
-      color: #ff99aa;
-      font-size: 0.85rem;
-      margin-bottom: 16px;
-      line-height: 1.5;
+    .tag-severe { color: #ff557f; font-weight: 700; }
+    .tag-moderate { color: #ffb703; font-weight: 600; }
+    .tag-minor { color: #00d2ff; }
+
+    /* Spinner / Scanning Animation */
+    .scanning-overlay {
+      position: absolute; inset: 0; background: rgba(5, 7, 10, 0.85);
+      backdrop-filter: blur(10px); display: none; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px; z-index: 50;
     }
-
-    .camera-error-banner strong {
-      color: #fff;
-    }
-
-    .spinner {
-      display: none;
-      width: 44px;
-      height: 44px;
-      border: 3px solid rgba(0, 210, 255, 0.15);
-      border-radius: 50%;
-      border-top-color: var(--accent-cyan);
+    .scan-spinner {
+      width: 48px; height: 48px; border: 3px solid rgba(0, 210, 255, 0.15);
+      border-radius: 50%; border-top-color: var(--accent-cyan);
       animation: spin 0.8s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    /* Dropzone for Uploads */
+    .dropzone {
+      border: 2px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-md);
+      padding: 24px; text-align: center; cursor: pointer; background: rgba(255, 255, 255, 0.02);
+      transition: all 0.2s;
     }
+    .dropzone:hover { border-color: var(--accent-cyan); background: rgba(0, 210, 255, 0.05); }
+
+    .sample-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px;
+    }
+    .sample-btn {
+      background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border);
+      border-radius: var(--radius-md); padding: 8px; font-size: 0.74rem; color: var(--text-main);
+      cursor: pointer; text-align: center;
+    }
+    .sample-btn:hover { border-color: var(--accent-cyan); background: rgba(0, 210, 255, 0.1); }
   </style>
 </head>
 <body>
 
-  <!-- Hidden elements for camera processing -->
-  <video id="videoElement" autoplay playsinline muted style="display: none;"></video>
-  <canvas id="captureCanvas" style="display: none;"></canvas>
+  <canvas id="hiddenCanvas" style="display: none;"></canvas>
 
   <header>
     <div class="brand">
@@ -716,20 +265,20 @@
         <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       </div>
       <div class="brand-text">
-        <h1>UNet-VGG16 Crack Inspection Studio</h1>
-        <span>Surface Defect AI Engine • IoU 65.44%</span>
+        <h1>UNet-VGG16 Deep Crack Inspection Studio</h1>
+        <span>High-Precision Sub-Millimeter Flaw Pinpointing</span>
       </div>
     </div>
 
     <div class="header-right">
       <div class="nav-tabs">
-        <button class="nav-tab active" id="tabCameraMode" onclick="setAppMode('camera')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          Live Camera Studio
+        <button class="nav-tab active" id="tabCamera" onclick="switchMode('camera')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Camera Viewfinder & Deep Scan
         </button>
-        <button class="nav-tab" id="tabImageMode" onclick="setAppMode('image')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          Image & Batch Mode
+        <button class="nav-tab" id="tabUpload" onclick="switchMode('upload')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Upload Photo & Samples
         </button>
       </div>
 
@@ -741,221 +290,196 @@
   </header>
 
   <main>
-    <!-- Left Sidebar -->
-    <div class="sidebar">
-
-      <!-- Camera Controls Panel -->
-      <div class="card" id="cameraControlsCard">
-        <h2>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          Live Camera Controls
-        </h2>
-
-        <div class="control-group">
-          <button class="btn-cam-toggle" id="btnToggleCam" onclick="toggleCamera()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            <span id="btnToggleCamText">Open Live Camera</span>
-          </button>
-          <button class="btn-freeze" id="btnFreeze" onclick="toggleFreeze()" style="display: none;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-            <span id="freezeBtnText">Freeze Frame</span>
-          </button>
+    <!-- Top Metrics HUD -->
+    <div class="metrics-bar">
+      <div class="metric-card">
+        <span>Inspection Verdict</span>
+        <div id="verdictContainer">
+          <span class="verdict-badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">Ready to Scan</span>
         </div>
+      </div>
+      <div class="metric-card">
+        <span>Detected Crack Instances</span>
+        <h3 id="statInstances">--</h3>
+      </div>
+      <div class="metric-card">
+        <span>Damaged Surface Area</span>
+        <h3 id="statCoverage">--</h3>
+      </div>
+      <div class="metric-card">
+        <span>Scan Latency (Multi-Tile)</span>
+        <h3 id="statLatency">--</h3>
+      </div>
+    </div>
 
-        <div class="control-group">
-          <div class="control-label">
-            <span>Video Device</span>
-          </div>
-          <select id="cameraSelect" onchange="changeCamera()">
+    <!-- Action Toolbar -->
+    <div class="action-panel">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="btn-capture" id="btnDeepScan" onclick="triggerDeepScan()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span id="btnDeepScanText">📸 Capture & Deep Scan</span>
+        </button>
+
+        <button class="btn-secondary" id="btnResumeCam" onclick="resumeCamera()" style="display: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Resume Viewfinder
+        </button>
+
+        <button class="btn-secondary" id="btnDownload" onclick="downloadAnnotatedResult()" style="display: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Download Report
+        </button>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+        <div class="control-item">
+          <label>Camera:</label>
+          <select id="cameraSelect" onchange="changeCameraDevice()">
             <option value="">Default Webcam</option>
           </select>
         </div>
 
-        <div class="control-group">
-          <div class="control-label">
-            <span>Live View Mode</span>
-          </div>
-          <select id="camViewMode" onchange="updateCamViewMode(this.value)">
-            <option value="overlay">Real-Time Overlay</option>
-            <option value="side_by_side">Side-by-Side (Camera | Overlay)</option>
-            <option value="heatmap">Confidence Heatmap</option>
-          </select>
+        <div class="control-item">
+          <label>Threshold:</label>
+          <input type="range" id="threshSlider" min="0.10" max="0.90" step="0.05" value="0.45" oninput="updateThresh(this.value)">
+          <span id="threshVal" style="font-family: monospace; font-size: 0.8rem; color: var(--accent-cyan);">0.45</span>
         </div>
 
-        <div class="control-group">
-          <div class="control-label">
-            <span>Sensitivity / Threshold</span>
-            <span class="control-val" id="camThreshVal">0.45</span>
-          </div>
-          <input type="range" id="camThreshSlider" min="0.10" max="0.90" step="0.05" value="0.45" oninput="updateCamThresh(this.value)">
-        </div>
-
-        <div class="control-group">
-          <label class="checkbox-group">
+        <div class="control-item">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-main); font-size: 0.8rem;">
             <input type="checkbox" id="claheChk">
-            <span>CLAHE Auto-Contrast (Uneven Lighting)</span>
+            <span>CLAHE Auto-Contrast</span>
           </label>
         </div>
       </div>
-
-      <!-- Image Upload Panel (shown in image mode) -->
-      <div class="card" id="imageControlsCard" style="display: none;">
-        <h2>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-          Select or Upload Image
-        </h2>
-
-        <div class="dropzone" id="dropzone">
-          <svg viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242M12 12v9m-4-4l4-4 4 4"/></svg>
-          <p>Click or Drag Image Here</p>
-          <span>Supports JPG, PNG, WEBP</span>
-        </div>
-        <input type="file" id="fileInput" accept="image/*">
-
-        <div style="margin-top: 16px;">
-          <div class="control-label"><span>Quick Test Samples</span></div>
-          <div class="sample-grid" id="sampleGrid"></div>
-        </div>
-
-        <div class="control-group" style="margin-top: 16px;">
-          <div class="control-label">
-            <span>Detection Threshold</span>
-            <span class="control-val" id="imgThreshVal">0.50</span>
-          </div>
-          <input type="range" id="imgThreshSlider" min="0.05" max="0.95" step="0.05" value="0.50" oninput="updateImgThresh(this.value)">
-        </div>
-
-        <button class="btn-run" id="btnRunImg" onclick="runImageInference()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Analyze Crack Defect
-        </button>
-      </div>
-
     </div>
 
-    <!-- Right Content Area -->
-    <div class="content-area">
+    <!-- View Section -->
+    <div id="cameraViewSection">
+      <div class="inspection-grid">
 
-      <!-- Camera Permission Error Banner -->
-      <div class="camera-error-banner" id="camErrorBanner">
-        <strong>⚠️ Camera Access Notice:</strong>
-        <p id="camErrorMsg" style="margin-top: 4px;"></p>
-        <p style="margin-top: 6px; font-size: 0.8rem; color: #fff;">
-          <strong>Quick fix:</strong> Click the camera/lock icon in your browser URL bar, set Camera to <em>Allow</em>, and refresh. (Browsers allow webcams on <code>http://localhost:5050</code> or <code>http://127.0.0.1:5050</code>).
-        </p>
-      </div>
-
-      <!-- Metrics Bar -->
-      <div class="metrics-bar">
-        <div class="metric-card">
-          <span>Inspection Verdict</span>
-          <div id="verdictContainer">
-            <span class="verdict-badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">Awaiting Input</span>
-          </div>
-        </div>
-        <div class="metric-card">
-          <span>Surface Affected</span>
-          <h3 id="statCoverage">--</h3>
-        </div>
-        <div class="metric-card">
-          <span>Peak Confidence</span>
-          <h3 id="statConfidence">--</h3>
-        </div>
-        <div class="metric-card">
-          <span id="latencyLabel">Inference Latency</span>
-          <h3 id="statLatency">--</h3>
-        </div>
-      </div>
-
-      <!-- Viewport Display Card -->
-      <div class="viewport-card">
-
-        <!-- Image Mode Tabs (visible in image mode) -->
-        <div class="view-tabs" id="imageViewTabs" style="display: none;">
-          <button class="view-tab active" onclick="switchImageView('comparison')">3-Panel Comparison</button>
-          <button class="view-tab" onclick="switchImageView('overlay')">Crack Overlay</button>
-          <button class="view-tab" onclick="switchImageView('heatmap')">Confidence Heatmap</button>
-          <button class="view-tab" onclick="switchImageView('mask')">Binary Mask</button>
-          <button class="view-tab" onclick="switchImageView('original')">Original Photo</button>
-          <button class="view-tab" onclick="switchImageView('split')">Before / After Split</button>
-        </div>
-
-        <div class="display-container" id="displayBox">
-          <div class="live-hud" id="liveHud" style="display: none;">
-            <span class="live-dot"></span>
-            <span id="hudFps">15.0 FPS</span>
-            <span>•</span>
-            <span id="hudInfer">95 ms</span>
+        <!-- Left: Live Viewfinder / Original Image -->
+        <div class="display-card">
+          <div class="display-header">
+            <span>1. Camera Viewfinder</span>
+            <span id="camStatusTag" style="font-size: 0.72rem; color: var(--accent-green);">● LIVE</span>
           </div>
 
-          <div class="placeholder-state" id="camPlaceholder">
-            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            <div>
-              <h3>Live Camera is Standby</h3>
-              <p style="font-size: 0.85rem; margin-top: 4px;">Click the <strong>"Open Live Camera"</strong> button on the left to start live inspection.</p>
+          <div class="viewport">
+            <video id="webcamVideo" autoplay playsinline muted></video>
+            <img id="frozenFrameImg" class="viewport-img" style="display: none;" alt="Captured frame">
+            <div id="camIdleOverlay" style="text-align: center; color: var(--text-muted); padding: 20px;">
+              <p>Initializing camera...</p>
             </div>
           </div>
+        </div>
 
-          <div class="placeholder-state" id="imgPlaceholder" style="display: none;">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <div>
-              <h3>No Image Analyzed Yet</h3>
-              <p style="font-size: 0.85rem; margin-top: 4px;">Upload an image or pick a sample from the left.</p>
-            </div>
+        <!-- Right: Pinpointed Cracks & Deep Analysis -->
+        <div class="display-card">
+          <div class="display-header">
+            <span>2. High-Precision Pinpointed Output</span>
+            <span id="displayModeTag" style="font-size: 0.72rem; color: var(--accent-cyan); font-family: monospace;">TTA OVERLAPPING TILES</span>
           </div>
 
-          <div class="spinner" id="spinner"></div>
-
-          <!-- Video live frame image -->
-          <img id="cameraOutput" class="main-img" style="display: none;" alt="Live camera detection">
-
-          <!-- Static image result -->
-          <img id="mainImg" class="main-img" style="display: none;" alt="Inspection result">
-
-          <!-- Split viewer -->
-          <div class="split-viewer" id="splitViewer">
-            <img id="splitOriginal" class="split-img" alt="Original">
-            <div class="split-overlay" id="splitOverlay">
-              <img id="splitOverlayImg" class="split-img" alt="Overlay">
+          <div class="viewport">
+            <!-- Scanning Spinner Overlay -->
+            <div class="scanning-overlay" id="scanningOverlay">
+              <div class="scan-spinner"></div>
+              <strong style="color: #fff; font-size: 0.9rem;">Deep Neural Scan In Progress...</strong>
+              <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; max-width: 320px;">
+                Slicing into overlapping 448x448 patches with Test-Time Augmentation (TTA) to pinpoint hairline cracks without downscale loss.
+              </p>
             </div>
-            <div class="split-handle" id="splitHandle">
-              <svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+
+            <!-- Pinpointed image with bounding boxes -->
+            <img id="pinpointResultImg" class="viewport-img" style="display: none;" alt="Pinpointed result">
+
+            <!-- Split Reveal Viewer -->
+            <div class="split-viewer" id="splitViewer">
+              <div class="split-layer">
+                <img id="splitOriginal" alt="Original">
+              </div>
+              <div class="split-overlay" id="splitOverlay">
+                <img id="splitOverlayImg" alt="Overlay">
+              </div>
+              <div class="split-handle" id="splitHandle">
+                <svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+              </div>
+            </div>
+
+            <div id="resultPlaceholder" style="text-align: center; color: var(--text-muted); padding: 30px;">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 8px; opacity: 0.4;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+              <p>Aim your camera at the wall and click <strong>"Capture & Deep Scan"</strong>.</p>
+              <p style="font-size: 0.75rem; margin-top: 4px;">The model will take ~1 second to pinpoint every crack with exact coordinates.</p>
             </div>
           </div>
         </div>
 
       </div>
 
+      <!-- Detected Crack Inventory Breakdown Table -->
+      <div class="display-card" id="crackTableCard" style="display: none; margin-top: 20px;">
+        <div class="display-header">
+          <span style="font-size: 0.95rem;">📋 Pinpointed Crack Locations & Severity Inventory</span>
+          <span id="crackCountBadge" style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 700;"></span>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="crack-table">
+            <thead>
+              <tr>
+                <th>Crack ID</th>
+                <th>Wall Region</th>
+                <th>Bounding Box (X, Y, W, H)</th>
+                <th>Damaged Area</th>
+                <th>Confidence</th>
+                <th>Structural Severity</th>
+              </tr>
+            </thead>
+            <tbody id="crackTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload & Samples Mode -->
+    <div id="uploadViewSection" style="display: none;">
+      <div class="display-card">
+        <div class="display-header">
+          <span>Upload Image or Select Benchmark Sample</span>
+        </div>
+
+        <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+          <p style="font-weight: 600;">Click or Drop Wall / Concrete Photo Here</p>
+          <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block;">High-resolution photos will be processed in full detail</span>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+
+        <div style="margin-top: 18px;">
+          <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Benchmark Test Samples:</span>
+          <div class="sample-grid" id="sampleGrid"></div>
+        </div>
+      </div>
     </div>
   </main>
 
   <script>
-    let appMode = 'camera'; // 'camera' or 'image'
-
-    // Camera variables
-    let video = document.getElementById('videoElement');
-    let canvas = document.getElementById('captureCanvas');
-    let ctx = canvas.getContext('2d');
     let stream = null;
-    let isCameraRunning = false;
     let isFrozen = false;
-    let inFlight = false;
-    let camThreshold = 0.45;
-    let camViewMode = 'overlay';
-    let lastFrameTime = performance.now();
-    let frameTimes = [];
+    let currentThreshold = 0.45;
+    let currentScanResult = null;
+    let appMode = 'camera';
 
-    // Image variables
-    let currentImage = null;
-    let currentThreshold = 0.50;
-    let currentImageView = 'comparison';
-    let lastImageResult = null;
+    const video = document.getElementById('webcamVideo');
+    const canvas = document.getElementById('hiddenCanvas');
+    const ctx = canvas.getContext('2d');
 
     async function init() {
       try {
         const res = await fetch('/api/info');
         const data = await res.json();
-        document.getElementById('deviceBadge').innerText = `${data.device.toUpperCase()} • Epoch ${data.epoch || '4'}`;
+        document.getElementById('deviceBadge').innerText = `${data.device.toUpperCase()} • Epoch ${data.epoch}`;
 
         // Populate samples
         const grid = document.getElementById('sampleGrid');
@@ -963,377 +487,260 @@
         data.samples.forEach(s => {
           const btn = document.createElement('button');
           btn.className = 'sample-btn';
-          btn.innerHTML = `<strong>${s.label}</strong><span>${s.type}</span>`;
-          btn.onclick = () => loadSample(s.name);
+          btn.innerHTML = `<strong>${s.label}</strong><br><span style="color:#888;">${s.type}</span>`;
+          btn.onclick = () => runSampleDeepScan(s.name);
           grid.appendChild(btn);
         });
 
-        // List cameras
-        await populateCameras();
+        // Enumerate video devices
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const videoDevs = devices.filter(d => d.kind === 'videoinput');
+          const sel = document.getElementById('cameraSelect');
+          sel.innerHTML = '';
+          videoDevs.forEach((d, idx) => {
+            const opt = document.createElement('option');
+            opt.value = d.deviceId;
+            opt.text = d.label || `Camera ${idx + 1}`;
+            sel.appendChild(opt);
+          });
+        }
+
+        // Start viewfinder automatically
+        startViewfinder();
       } catch (err) {
         console.error(err);
       }
     }
 
-    async function populateCameras() {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+    async function startViewfinder() {
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(d => d.kind === 'videoinput');
-        const select = document.getElementById('cameraSelect');
-        select.innerHTML = '';
-        if (videoDevices.length === 0) {
-          select.innerHTML = '<option value="">Default Camera</option>';
-        } else {
-          videoDevices.forEach((dev, idx) => {
-            const opt = document.createElement('option');
-            opt.value = dev.deviceId;
-            opt.text = dev.label || `Camera ${idx + 1}`;
-            select.appendChild(opt);
-          });
-        }
-      } catch (err) {
-        console.warn('enumerateDevices error:', err);
-      }
-    }
-
-    function setAppMode(mode) {
-      appMode = mode;
-      document.getElementById('tabCameraMode').classList.toggle('active', mode === 'camera');
-      document.getElementById('tabImageMode').classList.toggle('active', mode === 'image');
-
-      if (mode === 'camera') {
-        document.getElementById('cameraControlsCard').style.display = 'block';
-        document.getElementById('imageControlsCard').style.display = 'none';
-        document.getElementById('imageViewTabs').style.display = 'none';
-        document.getElementById('mainImg').style.display = 'none';
-        document.getElementById('splitViewer').style.display = 'none';
-        document.getElementById('imgPlaceholder').style.display = 'none';
-
-        if (isCameraRunning) {
-          document.getElementById('cameraOutput').style.display = 'block';
-          document.getElementById('liveHud').style.display = 'flex';
-          document.getElementById('camPlaceholder').style.display = 'none';
-        } else {
-          document.getElementById('cameraOutput').style.display = 'none';
-          document.getElementById('liveHud').style.display = 'none';
-          document.getElementById('camPlaceholder').style.display = 'flex';
-        }
-      } else {
-        // Stop camera if running
-        if (isCameraRunning) toggleCamera();
-        document.getElementById('cameraControlsCard').style.display = 'none';
-        document.getElementById('imageControlsCard').style.display = 'block';
-        document.getElementById('imageViewTabs').style.display = 'flex';
-        document.getElementById('cameraOutput').style.display = 'none';
-        document.getElementById('liveHud').style.display = 'none';
-        document.getElementById('camPlaceholder').style.display = 'none';
-
-        if (lastImageResult) {
-          renderCurrentImageView();
-        } else {
-          document.getElementById('imgPlaceholder').style.display = 'flex';
-        }
-      }
-    }
-
-    // -------------------------------------------------------------
-    // LIVE CAMERA SYSTEM
-    // -------------------------------------------------------------
-    async function startCamera() {
-      const banner = document.getElementById('camErrorBanner');
-      banner.style.display = 'none';
-
-      const selectedDeviceId = document.getElementById('cameraSelect').value;
-      const constraints = {
-        video: {
-          width: { ideal: 640 },
-          height: { ideal: 480 },
-          facingMode: "environment"
-        }
-      };
-
-      if (selectedDeviceId) {
-        constraints.video.deviceId = { exact: selectedDeviceId };
-      }
-
-      try {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          throw new Error("navigator.mediaDevices.getUserMedia is not supported by your browser in this context.");
-        }
+        const deviceId = document.getElementById('cameraSelect').value;
+        const constraints = {
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: 'environment'
+          }
+        };
+        if (deviceId) constraints.video.deviceId = { exact: deviceId };
 
         stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
         await video.play();
 
-        isCameraRunning = true;
-        document.getElementById('btnToggleCam').classList.add('btn-stop');
-        document.getElementById('btnToggleCamText').innerText = "Stop Camera";
-        document.getElementById('btnFreeze').style.display = 'flex';
-        document.getElementById('camPlaceholder').style.display = 'none';
-        document.getElementById('cameraOutput').style.display = 'block';
-        document.getElementById('liveHud').style.display = 'flex';
-
-        // Re-enumerate to get friendly camera labels
-        populateCameras();
-
-        requestAnimationFrame(cameraProcessLoop);
+        document.getElementById('camIdleOverlay').style.display = 'none';
+        document.getElementById('camStatusTag').innerText = "● LIVE VIEWFINDER";
+        document.getElementById('camStatusTag').style.color = "var(--accent-green)";
       } catch (err) {
-        console.error("Camera Error:", err);
-        banner.style.display = 'block';
-        document.getElementById('camErrorMsg').innerText = `${err.name}: ${err.message}`;
-        document.getElementById('btnToggleCam').classList.remove('btn-stop');
-        document.getElementById('btnToggleCamText').innerText = "Open Live Camera";
-        isCameraRunning = false;
+        document.getElementById('camIdleOverlay').innerHTML = `<p style="color:#ff557f;">⚠️ Camera Access: ${err.message}</p><p style="font-size:0.75rem; margin-top:4px;">Please click Allow Camera in your browser.</p>`;
       }
     }
 
-    function toggleCamera() {
-      if (isCameraRunning) {
-        if (stream) {
-          stream.getTracks().forEach(t => t.stop());
-          stream = null;
-        }
-        video.srcObject = null;
-        isCameraRunning = false;
-        document.getElementById('btnToggleCam').classList.remove('btn-stop');
-        document.getElementById('btnToggleCamText').innerText = "Open Live Camera";
-        document.getElementById('btnFreeze').style.display = 'none';
-        document.getElementById('cameraOutput').style.display = 'none';
-        document.getElementById('liveHud').style.display = 'none';
-        document.getElementById('camPlaceholder').style.display = 'flex';
-        document.getElementById('verdictContainer').innerHTML = `<span class="verdict-badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">Camera Standby</span>`;
-      } else {
-        startCamera();
-      }
+    function changeCameraDevice() {
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      startViewfinder();
     }
 
-    function changeCamera() {
-      if (isCameraRunning) {
-        toggleCamera();
-        setTimeout(startCamera, 300);
-      }
-    }
-
-    function toggleFreeze() {
-      isFrozen = !isFrozen;
-      document.getElementById('freezeBtnText').innerText = isFrozen ? "Resume Live Feed" : "Freeze Frame";
-    }
-
-    function updateCamThresh(val) {
-      camThreshold = parseFloat(val);
-      document.getElementById('camThreshVal').innerText = camThreshold.toFixed(2);
-    }
-
-    function updateCamViewMode(val) {
-      camViewMode = val;
-    }
-
-    async function cameraProcessLoop() {
-      if (!isCameraRunning) return;
-
-      if (!isFrozen && !inFlight && video.videoWidth > 0) {
-        inFlight = true;
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Low latency compressed JPEG
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.65);
-        const useClahe = document.getElementById('claheChk').checked;
-
-        try {
-          const resp = await fetch("/api/predict_frame", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              image: dataUrl,
-              threshold: camThreshold,
-              use_clahe: useClahe,
-              view_mode: camViewMode
-            })
-          });
-
-          const result = await resp.json();
-          if (result.success && isCameraRunning) {
-            document.getElementById('cameraOutput').src = result.image;
-
-            // Verdict
-            const verdictBox = document.getElementById('verdictContainer');
-            if (result.crack_detected) {
-              verdictBox.innerHTML = `<span class="verdict-badge verdict-crack">CRACK DETECTED (${result.crack_percentage}%)</span>`;
-            } else {
-              verdictBox.innerHTML = `<span class="verdict-badge verdict-clean">SURFACE SOUND / CLEAN</span>`;
-            }
-
-            document.getElementById('statCoverage').innerText = `${result.crack_percentage}%`;
-            document.getElementById('statConfidence').innerText = `${(result.peak_probability * 100).toFixed(1)}%`;
-            document.getElementById('statLatency').innerText = `${result.inference_time_ms} ms`;
-            document.getElementById('hudInfer').innerText = `${result.inference_time_ms} ms`;
-
-            // Calculate FPS
-            const now = performance.now();
-            const delta = now - lastFrameTime;
-            lastFrameTime = now;
-            frameTimes.push(1000 / delta);
-            if (frameTimes.length > 10) frameTimes.shift();
-            const avgFps = frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length;
-            document.getElementById('hudFps').innerText = `${avgFps.toFixed(1)} FPS`;
-          }
-        } catch (err) {
-          console.error("Frame inference error:", err);
-        } finally {
-          inFlight = false;
-        }
-      }
-
-      if (isCameraRunning) {
-        requestAnimationFrame(cameraProcessLoop);
-      }
-    }
-
-    // -------------------------------------------------------------
-    // IMAGE & BATCH MODE
-    // -------------------------------------------------------------
-    const dropzone = document.getElementById('dropzone');
-    const fileInput = document.getElementById('fileInput');
-
-    dropzone.onclick = () => fileInput.click();
-    fileInput.onchange = (e) => {
-      if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
-    };
-
-    dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('dragover'); };
-    dropzone.ondragleave = () => dropzone.classList.remove('dragover');
-    dropzone.ondrop = (e) => {
-      e.preventDefault();
-      dropzone.classList.remove('dragover');
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-    };
-
-    function handleFile(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        currentImage = { type: 'data', data: e.target.result, name: file.name };
-        dropzone.querySelector('p').innerText = file.name;
-        runImageInference();
-      };
-      reader.readAsDataURL(file);
-    }
-
-    async function loadSample(sampleName) {
-      currentImage = { type: 'sample', name: sampleName };
-      dropzone.querySelector('p').innerText = sampleName;
-      runImageInference();
-    }
-
-    function updateImgThresh(val) {
+    function updateThresh(val) {
       currentThreshold = parseFloat(val);
-      document.getElementById('imgThreshVal').innerText = currentThreshold.toFixed(2);
-      if (currentImage && lastImageResult) runImageInference();
-    }
-
-    async function runImageInference() {
-      if (!currentImage) return;
-
-      const spinner = document.getElementById('spinner');
-      const placeholder = document.getElementById('imgPlaceholder');
-      const mainImg = document.getElementById('mainImg');
-      const splitViewer = document.getElementById('splitViewer');
-      const btnRun = document.getElementById('btnRunImg');
-
-      spinner.style.display = 'block';
-      placeholder.style.display = 'none';
-      mainImg.style.display = 'none';
-      splitViewer.style.display = 'none';
-      btnRun.disabled = true;
-
-      try {
-        const payload = {
-          mode: 'tiled',
-          threshold: currentThreshold,
-          image: currentImage
-        };
-
-        const res = await fetch('/api/predict', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-        lastImageResult = data;
-
-        // Update metrics
-        const verdictBox = document.getElementById('verdictContainer');
-        if (data.crack_detected) {
-          verdictBox.innerHTML = `<span class="verdict-badge verdict-crack">CRACK DETECTED (${data.crack_percentage}%)</span>`;
-        } else {
-          verdictBox.innerHTML = `<span class="verdict-badge verdict-clean">SURFACE SOUND / CLEAN</span>`;
-        }
-        document.getElementById('statCoverage').innerText = `${data.crack_percentage}%`;
-        document.getElementById('statConfidence').innerText = `${(data.peak_probability * 100).toFixed(1)}%`;
-        document.getElementById('statLatency').innerText = `${data.inference_time_ms} ms`;
-
-        renderCurrentImageView();
-      } catch (err) {
-        alert('Inference error: ' + err.message);
-      } finally {
-        spinner.style.display = 'none';
-        btnRun.disabled = false;
+      document.getElementById('threshVal').innerText = currentThreshold.toFixed(2);
+      if (currentScanResult) {
+        // Re-run deep scan on current captured frame
+        runDeepScanOnDataUrl(currentScanResult.images.original);
       }
     }
 
-    function switchImageView(viewName) {
-      currentImageView = viewName;
-      document.querySelectorAll('#imageViewTabs .view-tab').forEach(t => {
-        t.classList.toggle('active', t.getAttribute('onclick').includes(viewName));
-      });
-      renderCurrentImageView();
-    }
-
-    function renderCurrentImageView() {
-      if (!lastImageResult) return;
-
-      const mainImg = document.getElementById('mainImg');
-      const splitViewer = document.getElementById('splitViewer');
-
-      if (currentImageView === 'split') {
-        mainImg.style.display = 'none';
-        splitViewer.style.display = 'block';
-        document.getElementById('splitOriginal').src = lastImageResult.images.original;
-        document.getElementById('splitOverlayImg').src = lastImageResult.images.overlay;
+    async function triggerDeepScan() {
+      if (!video || video.videoWidth === 0) {
+        alert("Camera viewfinder is not ready yet.");
         return;
       }
 
-      splitViewer.style.display = 'none';
-      mainImg.style.display = 'block';
+      // 1. Capture full uncompressed resolution frame
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
 
-      let imgSrc = lastImageResult.images.comparison;
-      if (currentImageView === 'overlay') imgSrc = lastImageResult.images.overlay;
-      else if (currentImageView === 'heatmap') imgSrc = lastImageResult.images.heatmap;
-      else if (currentImageView === 'mask') imgSrc = lastImageResult.images.mask;
-      else if (currentImageView === 'original') imgSrc = lastImageResult.images.original;
+      // 2. Freeze viewfinder immediately (stops GPU/CPU video load)
+      document.getElementById('frozenFrameImg').src = dataUrl;
+      document.getElementById('frozenFrameImg').style.display = 'block';
+      video.style.display = 'none';
+      document.getElementById('camStatusTag').innerText = "⏸ FRAME CAPTURED";
+      document.getElementById('camStatusTag').style.color = "var(--accent-cyan)";
+      document.getElementById('btnResumeCam').style.display = 'flex';
 
-      mainImg.src = imgSrc;
+      runDeepScanOnDataUrl(dataUrl);
     }
 
-    // Split Viewer Dragging
-    const splitViewer = document.getElementById('splitViewer');
-    const splitOverlay = document.getElementById('splitOverlay');
-    const splitHandle = document.getElementById('splitHandle');
-    let isDragging = false;
+    async function runDeepScanOnDataUrl(dataUrl) {
+      const overlay = document.getElementById('scanningOverlay');
+      const placeholder = document.getElementById('resultPlaceholder');
+      const resultImg = document.getElementById('pinpointResultImg');
+      const splitViewer = document.getElementById('splitViewer');
+      const btnScan = document.getElementById('btnDeepScan');
 
-    splitHandle.onmousedown = () => isDragging = true;
-    window.onmouseup = () => isDragging = false;
-    splitViewer.onmousemove = (e) => {
-      if (!isDragging) return;
-      const rect = splitViewer.getBoundingClientRect();
-      const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-      const pct = (x / rect.width) * 100;
-      splitOverlay.style.width = pct + '%';
-      splitHandle.style.left = pct + '%';
+      overlay.style.display = 'flex';
+      placeholder.style.display = 'none';
+      resultImg.style.display = 'none';
+      splitViewer.style.display = 'none';
+      btnScan.disabled = true;
+
+      const useClahe = document.getElementById('claheChk').checked;
+
+      try {
+        const resp = await fetch("/api/deep_scan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image: dataUrl,
+            threshold: currentThreshold,
+            use_clahe: useClahe
+          })
+        });
+
+        const data = await resp.json();
+        currentScanResult = data;
+
+        // Render UI
+        updateInspectionUI(data);
+      } catch (err) {
+        alert("Deep Scan Error: " + err.message);
+      } finally {
+        overlay.style.display = 'none';
+        btnScan.disabled = false;
+      }
+    }
+
+    function updateInspectionUI(data) {
+      // 1. Metrics HUD
+      const vBox = document.getElementById('verdictContainer');
+      if (data.crack_detected) {
+        vBox.innerHTML = `<span class="verdict-badge verdict-crack">⚠️ CRACK DETECTED (${data.crack_percentage}%)</span>`;
+      } else {
+        vBox.innerHTML = `<span class="verdict-badge verdict-clean">🟢 SOUND SURFACE</span>`;
+      }
+
+      document.getElementById('statInstances').innerText = `${data.num_crack_instances} Defect${data.num_crack_instances === 1 ? '' : 's'}`;
+      document.getElementById('statCoverage').innerText = `${data.crack_percentage}% (${data.crack_pixels.toLocaleString()} px)`;
+      document.getElementById('statLatency').innerText = `${data.inference_time_ms} ms`;
+
+      // 2. Images
+      const resultImg = document.getElementById('pinpointResultImg');
+      resultImg.src = data.images.annotated;
+      resultImg.style.display = 'block';
+
+      document.getElementById('btnDownload').style.display = 'flex';
+
+      // 3. Crack Inventory Table
+      const tableCard = document.getElementById('crackTableCard');
+      const tableBody = document.getElementById('crackTableBody');
+      tableBody.innerHTML = '';
+
+      if (data.cracks && data.cracks.length > 0) {
+        tableCard.style.display = 'block';
+        document.getElementById('crackCountBadge').innerText = `${data.cracks.length} DEFECTS PINPOINTED`;
+
+        data.cracks.forEach(c => {
+          const row = document.createElement('tr');
+          let sevClass = c.severity_code === 'high' ? 'tag-severe' : (c.severity_code === 'medium' ? 'tag-moderate' : 'tag-minor');
+          row.innerHTML = `
+            <td><strong style="color:var(--accent-cyan);">#${c.id}</strong></td>
+            <td><strong>${c.location}</strong></td>
+            <td style="font-family: monospace;">(${c.x}, ${c.y}) [${c.width} × ${c.height} px]</td>
+            <td>${c.area_pixels.toLocaleString()} px (${c.area_pct}%)</td>
+            <td><span style="font-family: monospace; font-weight:700;">${c.confidence}%</span></td>
+            <td><span class="${sevClass}">${c.severity}</span></td>
+          `;
+          tableBody.appendChild(row);
+        });
+      } else {
+        tableCard.style.display = 'none';
+      }
+    }
+
+    function resumeCamera() {
+      document.getElementById('frozenFrameImg').style.display = 'none';
+      video.style.display = 'block';
+      document.getElementById('camStatusTag').innerText = "● LIVE VIEWFINDER";
+      document.getElementById('camStatusTag').style.color = "var(--accent-green)";
+      document.getElementById('btnResumeCam').style.display = 'none';
+    }
+
+    function downloadAnnotatedResult() {
+      if (!currentScanResult) return;
+      const a = document.createElement('a');
+      a.href = currentScanResult.images.annotated;
+      a.download = `crack_deep_scan_${Date.now()}.jpg`;
+      a.click();
+    }
+
+    function switchMode(mode) {
+      appMode = mode;
+      document.getElementById('tabCamera').classList.toggle('active', mode === 'camera');
+      document.getElementById('tabUpload').classList.toggle('active', mode === 'upload');
+
+      document.getElementById('cameraViewSection').style.display = mode === 'camera' ? 'block' : 'none';
+      document.getElementById('uploadViewSection').style.display = mode === 'upload' ? 'block' : 'none';
+
+      if (mode === 'camera') {
+        if (!stream) startViewfinder();
+      }
+    }
+
+    async function runSampleDeepScan(sampleName) {
+      switchMode('camera'); // Switch to view results
+      document.getElementById('btnResumeCam').style.display = 'flex';
+      const overlay = document.getElementById('scanningOverlay');
+      overlay.style.display = 'flex';
+
+      try {
+        const resp = await fetch("/api/deep_scan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image: { type: "sample", name: sampleName },
+            threshold: currentThreshold
+          })
+        });
+        const data = await resp.json();
+        currentScanResult = data;
+
+        // Show sample in frozen window
+        document.getElementById('frozenFrameImg').src = data.images.original;
+        document.getElementById('frozenFrameImg').style.display = 'block';
+        video.style.display = 'none';
+        document.getElementById('camStatusTag').innerText = "SAMPLE: " + sampleName;
+
+        updateInspectionUI(data);
+      } catch (err) {
+        alert("Sample scan error: " + err.message);
+      } finally {
+        overlay.style.display = 'none';
+      }
+    }
+
+    // Drag and drop for upload section
+    const fileInput = document.getElementById('fileInput');
+    fileInput.onchange = (e) => {
+      if (e.target.files && e.target.files[0]) handleUploadedFile(e.target.files[0]);
     };
+
+    function handleUploadedFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        switchMode('camera');
+        document.getElementById('frozenFrameImg').src = e.target.result;
+        document.getElementById('frozenFrameImg').style.display = 'block';
+        video.style.display = 'none';
+        document.getElementById('camStatusTag').innerText = "UPLOADED: " + file.name;
+        document.getElementById('btnResumeCam').style.display = 'flex';
+
+        runDeepScanOnDataUrl(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
 
     window.onload = init;
   </script>

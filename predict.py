@@ -250,6 +250,176 @@ class CrackPredictor:
             "original_rgb": img_rgb,
         }
 
+    def deep_scan(
+        self,
+        image_input: Union[str, Path, np.ndarray, Image.Image],
+        threshold: float = 0.45,
+        min_blob_area: int = 35,
+        use_tta: bool = True,
+    ) -> Dict[str, Any]:
+        """
+        High-precision deep scan on a captured photo.
+        Takes extra compute time to run overlapping tiled inference and Test-Time Augmentation
+        (TTA), pinpointing the exact coordinates, locations, and severity of each crack.
+        """
+        t0 = time.perf_counter()
+        img_rgb = load_rgb_image(image_input)
+        h, w = img_rgb.shape[:2]
+
+        # 1. High-fidelity tiled inference with 30% overlap
+        prob_map = self.predict_tiled(img_rgb, work_size=1344, overlap=0.30, batch_size=4)
+
+        # 2. Test-Time Augmentation (TTA) with horizontal flip
+        if use_tta:
+            img_flipped = np.ascontiguousarray(np.fliplr(img_rgb))
+            prob_flipped = self.predict_tiled(img_flipped, work_size=1344, overlap=0.30, batch_size=4)
+            prob_map = (prob_map + np.fliplr(prob_flipped)) * 0.5
+
+        inference_time_ms = (time.perf_counter() - t0) * 1000
+
+        # 3. Precise thresholding & morphological filtering
+        raw_mask = (prob_map >= threshold).astype(np.uint8)
+        num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(
+            raw_mask, connectivity=8
+        )
+
+        clean_mask = np.zeros_like(raw_mask)
+        pinpointed_cracks = []
+
+        for i in range(1, num_labels):
+            area = int(stats[i, cv2.CC_STAT_AREA])
+            bx = int(stats[i, cv2.CC_STAT_LEFT])
+            by = int(stats[i, cv2.CC_STAT_TOP])
+            bw = int(stats[i, cv2.CC_STAT_WIDTH])
+            bh = int(stats[i, cv2.CC_STAT_HEIGHT])
+            cx = float(centroids[i][0])
+            cy = float(centroids[i][1])
+
+            extent = max(bw, bh)
+            aspect = extent / (min(bw, bh) + 1e-4)
+
+            # Drop tiny solitary noise specks unless they have crack-like elongated aspect ratio
+            if area >= min_blob_area or (area >= 15 and aspect >= 3.0):
+                clean_mask[labels == i] = 255
+                sub_prob = float(prob_map[labels == i].max())
+
+                # Location descriptor
+                v_pos = "Upper" if cy < h * 0.35 else ("Lower" if cy > h * 0.65 else "Center")
+                h_pos = "Left" if cx < w * 0.35 else ("Right" if cx > w * 0.65 else "Middle")
+                location_desc = f"{v_pos}-{h_pos} Section"
+
+                # Severity classification
+                if area > 1000 or extent > 250:
+                    severity = "Severe Structural Defect"
+                    severity_code = "high"
+                elif area > 250 or extent > 100:
+                    severity = "Moderate Fissure"
+                    severity_code = "medium"
+                else:
+                    severity = "Minor Hairline Crack"
+                    severity_code = "low"
+
+                pinpointed_cracks.append({
+                    "id": len(pinpointed_cracks) + 1,
+                    "x": bx,
+                    "y": by,
+                    "width": bw,
+                    "height": bh,
+                    "centroid": [round(cx, 1), round(cy, 1)],
+                    "area_pixels": area,
+                    "area_pct": round((area / (h * w)) * 100.0, 3),
+                    "confidence": round(sub_prob * 100.0, 1),
+                    "location": location_desc,
+                    "severity": severity,
+                    "severity_code": severity_code,
+                })
+
+        # Sort cracks by area descending (most critical first)
+        pinpointed_cracks.sort(key=lambda k: k["area_pixels"], reverse=True)
+        for idx, item in enumerate(pinpointed_cracks, 1):
+            item["id"] = idx
+
+        total_crack_pixels = int((clean_mask > 0).sum())
+        total_pixels = h * w
+        crack_percentage = round((total_crack_pixels / total_pixels) * 100.0, 2)
+        peak_prob = round(float(prob_map.max()), 4)
+
+        crack_detected = len(pinpointed_cracks) > 0 and peak_prob >= max(0.45, threshold)
+
+        return {
+            "crack_detected": crack_detected,
+            "crack_percentage": crack_percentage,
+            "crack_pixels": total_crack_pixels,
+            "total_pixels": total_pixels,
+            "peak_probability": peak_prob,
+            "num_crack_instances": len(pinpointed_cracks),
+            "cracks": pinpointed_cracks,
+            "inference_time_ms": round(inference_time_ms, 1),
+            "image_size": (w, h),
+            "threshold": threshold,
+            "prob_map": prob_map,
+            "binary_mask": clean_mask,
+            "original_rgb": img_rgb,
+        }
+
+    @staticmethod
+    def render_pinpoint_overlay(
+        img_rgb: np.ndarray,
+        scan_result: Dict[str, Any],
+        alpha: float = 0.50,
+    ) -> np.ndarray:
+        """
+        Renders highlighted cracks along with pinpoint bounding boxes and numbered callout badges.
+        """
+        overlay = img_rgb.copy()
+        mask = scan_result["binary_mask"]
+        mask_bool = mask > 0
+
+        # 1. Semi-transparent crack coloring
+        if np.any(mask_bool):
+            colored = np.zeros_like(img_rgb)
+            colored[:] = (255, 30, 60)  # Neon red
+            overlay[mask_bool] = (
+                (1.0 - alpha) * img_rgb[mask_bool] + alpha * colored[mask_bool]
+            ).astype(np.uint8)
+
+            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            cv2.drawContours(overlay, contours, -1, (255, 240, 0), 1, cv2.LINE_AA)
+
+        # 2. Draw pinpoint boxes and numbered badges
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        for crack in scan_result.get("cracks", []):
+            x, y, w, h = crack["x"], crack["y"], crack["width"], crack["height"]
+            cid = crack["id"]
+            conf = crack["confidence"]
+
+            # Padding around box
+            pad = 6
+            x0 = max(0, x - pad)
+            y0 = max(0, y - pad)
+            x1 = min(img_rgb.shape[1] - 1, x + w + pad)
+            y1 = min(img_rgb.shape[0] - 1, y + h + pad)
+
+            # Box color depends on severity
+            box_color = (255, 50, 80) if crack["severity_code"] == "high" else (
+                (255, 170, 0) if crack["severity_code"] == "medium" else (0, 220, 255)
+            )
+
+            cv2.rectangle(overlay, (x0, y0), (x1, y1), box_color, 2, cv2.LINE_AA)
+
+            # Callout badge text
+            badge_text = f"#{cid} Crack ({conf:.0f}%)"
+            (tw, th), _ = cv2.getTextSize(badge_text, font, 0.5, 1)
+            badge_y0 = max(0, y0 - th - 8)
+            badge_y1 = y0
+            badge_x1 = min(img_rgb.shape[1] - 1, x0 + tw + 12)
+
+            cv2.rectangle(overlay, (x0, badge_y0), (badge_x1, badge_y1), (15, 20, 28), -1)
+            cv2.rectangle(overlay, (x0, badge_y0), (badge_x1, badge_y1), box_color, 1)
+            cv2.putText(overlay, badge_text, (x0 + 6, badge_y1 - 5), font, 0.45, (255, 255, 255), 1, cv2.LINE_AA)
+
+        return overlay
+
     @staticmethod
     def render_overlay(
         img_rgb: np.ndarray,

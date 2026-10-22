@@ -16,8 +16,8 @@
   "device": "mps",
   "benchmark": {
     "input_resolution": "448x448",
-    "avg_latency_ms": 190.52,
-    "fps": 5.2
+    "avg_latency_ms": 188.77,
+    "fps": 5.3
   },
   "test_image_results": [
     {

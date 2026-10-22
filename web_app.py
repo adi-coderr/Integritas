@@ -44,6 +44,7 @@ from predict import CrackPredictor, INPUT_SIZE
 app = Flask(__name__, template_folder="templates")
 predictor: CrackPredictor | None = None
 SAMPLE_DIR = Path(__file__).resolve().parent / "sample_images"
+_frame_count = 0
 
 
 def get_predictor() -> CrackPredictor:
@@ -157,6 +158,12 @@ def predict_frame():
     max_prob = round(float(prob_map.max()), 4)
     has_crack = crack_pixels >= 40 and max_prob >= max(0.45, threshold)
 
+    global _frame_count
+    _frame_count += 1
+    if _frame_count % 10 == 1 or has_crack:
+        verdict_str = f"⚠️ CRACK DETECTED ({crack_pct}%)" if has_crack else "CLEAN"
+        print(f"[ML Model Stream] Frame #{_frame_count:<5} | {infer_ms:5.1f}ms | Conf: {max_prob*100:5.1f}% | Verdict: {verdict_str}")
+
     # Generate visual output according to view_mode
     if view_mode == "heatmap":
         prob_u8 = (np.clip(prob_map, 0.0, 1.0) * 255).astype(np.uint8)
@@ -193,6 +200,73 @@ def predict_frame():
         "crack_percentage": crack_pct,
         "peak_probability": max_prob,
         "inference_time_ms": round(infer_ms, 1),
+    })
+
+
+@app.route("/api/deep_scan", methods=["POST"])
+def run_deep_scan():
+    """
+    High-precision deep scan endpoint on captured photo or uploaded image.
+    Applies multi-tile overlapping inference + TTA to pinpoint exact crack locations.
+    """
+    data = request.get_json(force=True)
+    raw_data = data.get("image", "")
+    threshold = float(data.get("threshold", 0.45))
+    use_clahe = bool(data.get("use_clahe", False))
+
+    if isinstance(raw_data, dict) and raw_data.get("type") == "sample":
+        sample_name = raw_data.get("name")
+        img_path = SAMPLE_DIR / sample_name
+        if not img_path.is_file():
+            return jsonify({"error": f"Sample not found: {sample_name}"}), 404
+        img_rgb = np.array(Image.open(img_path).convert("RGB"))
+    elif isinstance(raw_data, str):
+        if "," in raw_data:
+            raw_data = raw_data.split(",", 1)[1]
+        img_bytes = base64.b64decode(raw_data)
+        nparr = np.frombuffer(img_bytes, np.uint8)
+        frame_bgr = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        if frame_bgr is None:
+            return jsonify({"error": "Invalid image payload"}), 400
+        if use_clahe:
+            frame_bgr = apply_clahe_contrast(frame_bgr)
+        img_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+    else:
+        return jsonify({"error": "No valid image provided"}), 400
+
+    pred = get_predictor()
+    scan_res = pred.deep_scan(img_rgb, threshold=threshold, use_tta=True)
+
+    # Render visualizations
+    annotated_rgb = pred.render_pinpoint_overlay(img_rgb, scan_res)
+    overlay_rgb = pred.render_overlay(img_rgb, scan_res["binary_mask"])
+    heatmap_rgb = pred.render_heatmap(scan_res["prob_map"])
+    panel_rgb = pred.render_diagnostic_panel(scan_res)
+
+    print(f"\n[Deep Scan] Image ({img_rgb.shape[1]}x{img_rgb.shape[0]}) -> "
+          f"Found {scan_res['num_crack_instances']} cracks | "
+          f"{scan_res['crack_percentage']}% damaged | "
+          f"Time: {scan_res['inference_time_ms']}ms")
+
+    return jsonify({
+        "success": True,
+        "crack_detected": bool(scan_res["crack_detected"]),
+        "crack_percentage": scan_res["crack_percentage"],
+        "crack_pixels": scan_res["crack_pixels"],
+        "total_pixels": scan_res["total_pixels"],
+        "peak_probability": scan_res["peak_probability"],
+        "num_crack_instances": scan_res["num_crack_instances"],
+        "cracks": scan_res["cracks"],
+        "inference_time_ms": scan_res["inference_time_ms"],
+        "threshold": threshold,
+        "images": {
+            "original": numpy_to_base64_jpeg(img_rgb),
+            "annotated": numpy_to_base64_jpeg(annotated_rgb),
+            "overlay": numpy_to_base64_jpeg(overlay_rgb),
+            "heatmap": numpy_to_base64_jpeg(heatmap_rgb),
+            "comparison": numpy_to_base64_jpeg(panel_rgb),
+            "mask": mask_to_base64_png(scan_res["binary_mask"]),
+        }
     })
 
 
