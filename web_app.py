@@ -235,7 +235,7 @@ def run_deep_scan():
         return jsonify({"error": "No valid image provided"}), 400
 
     pred = get_predictor()
-    scan_res = pred.deep_scan(img_rgb, threshold=threshold, use_tta=True)
+    scan_res = pred.deep_scan(img_rgb, threshold=threshold, use_tta=False, work_size=896)
 
     # Render visualizations
     annotated_rgb = pred.render_pinpoint_overlay(img_rgb, scan_res)

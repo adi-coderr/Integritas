@@ -83,7 +83,6 @@ class CrackPredictor:
         )
         self.model, self.metadata = load_unet16_model(weights_path, device=self.device)
 
-    @torch.no_grad()
     def _predict_batch_patches(self, patches: List[np.ndarray]) -> np.ndarray:
         """
         Runs batch prediction on a list of 448x448 RGB uint8 patches.
@@ -95,9 +94,16 @@ class CrackPredictor:
         x = np.stack(patches).astype(np.float32) / 255.0
         x = (x - _MEAN) / _STD
         tensor = torch.from_numpy(x).permute(0, 3, 1, 2).contiguous().to(self.device)
-        logits = self.model(tensor)
-        probs = torch.sigmoid(logits)[:, 0]
-        return probs.cpu().numpy()
+
+        with torch.inference_mode():
+            logits = self.model(tensor)
+            probs = torch.sigmoid(logits)[:, 0].cpu().numpy()
+
+        # Free Apple Silicon unified memory buffers immediately
+        if self.device.type == "mps":
+            torch.mps.empty_cache()
+
+        return probs
 
     def predict_full(self, img_rgb: np.ndarray) -> np.ndarray:
         """
@@ -114,15 +120,18 @@ class CrackPredictor:
     def predict_tiled(
         self,
         img_rgb: np.ndarray,
-        work_size: int = 1344,
-        overlap: float = 0.25,
-        batch_size: int = 4,
+        work_size: int = 896,
+        overlap: float = 0.20,
+        batch_size: Optional[int] = None,
     ) -> np.ndarray:
         """
         High-fidelity tiled inference for large photos.
         Slices image into overlapping 448x448 patches, predicts each, and averages
-        overlapping regions. Preserves fine hairline cracks without downscale loss.
+        overlapping regions. Uses lightweight batch size on Apple Silicon to prevent laptop freezing.
         """
+        if batch_size is None:
+            batch_size = 1 if self.device.type == "mps" else 4
+
         orig_h, orig_w = img_rgb.shape[:2]
 
         # Scale so longest side is at most work_size (never upscale)
@@ -255,25 +264,30 @@ class CrackPredictor:
         image_input: Union[str, Path, np.ndarray, Image.Image],
         threshold: float = 0.45,
         min_blob_area: int = 35,
-        use_tta: bool = True,
+        use_tta: bool = False,
+        work_size: int = 896,
+        overlap: float = 0.20,
     ) -> Dict[str, Any]:
         """
         High-precision deep scan on a captured photo.
-        Takes extra compute time to run overlapping tiled inference and Test-Time Augmentation
-        (TTA), pinpointing the exact coordinates, locations, and severity of each crack.
+        Runs overlapping tiled inference with minimal unified memory overhead to keep
+        laptops (like MacBook Air) completely cool and smooth without freezing.
         """
         t0 = time.perf_counter()
         img_rgb = load_rgb_image(image_input)
         h, w = img_rgb.shape[:2]
 
-        # 1. High-fidelity tiled inference with 30% overlap
-        prob_map = self.predict_tiled(img_rgb, work_size=1344, overlap=0.30, batch_size=4)
+        # 1. High-fidelity tiled inference (lightweight tile batching)
+        prob_map = self.predict_tiled(img_rgb, work_size=work_size, overlap=overlap)
 
-        # 2. Test-Time Augmentation (TTA) with horizontal flip
+        # 2. Test-Time Augmentation (TTA) with horizontal flip if requested
         if use_tta:
             img_flipped = np.ascontiguousarray(np.fliplr(img_rgb))
-            prob_flipped = self.predict_tiled(img_flipped, work_size=1344, overlap=0.30, batch_size=4)
+            prob_flipped = self.predict_tiled(img_flipped, work_size=work_size, overlap=overlap)
             prob_map = (prob_map + np.fliplr(prob_flipped)) * 0.5
+
+        if self.device.type == "mps":
+            torch.mps.empty_cache()
 
         inference_time_ms = (time.perf_counter() - t0) * 1000
 
