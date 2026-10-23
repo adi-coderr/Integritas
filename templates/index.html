@@ -839,6 +839,8 @@
   </style>
 </head>
 <body>
+  <!-- Hidden Persistent File Input (Directly on body to ensure 100% reliable change events in all browsers) -->
+  <input type="file" id="fileInput" accept="image/png, image/jpeg, image/jpg, image/webp, image/bmp" style="position: fixed; top: -200px; left: -200px; opacity: 0; pointer-events: none;" onchange="onFileInputChanged(this)">
 
   <header>
     <div class="brand">
@@ -930,6 +932,12 @@
         <button class="btn-capture" id="btnCapturePhoto" onclick="capturePhotoForDeepScan()" title="Capture full-resolution photo for multi-tile pinpoint accuracy">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           <span id="btnCaptureText">📸 Take Picture & Deep Scan</span>
+        </button>
+
+        <!-- Direct Upload Image Button -->
+        <button class="btn-capture" id="btnUploadImageTrigger" onclick="openImagePicker()" style="background: linear-gradient(135deg, rgba(0, 210, 255, 0.22), rgba(99, 102, 241, 0.32)); border: 1px solid var(--accent-cyan); color: #fff;" title="Upload an image file (JPG, PNG, WEBP) from your computer to run AI crack detection">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          <span>📁 Upload Image</span>
         </button>
 
         <!-- Live Stream Toggle -->
@@ -1042,11 +1050,21 @@
               </div>
             </div>
 
+            <!-- Drag and drop zone overlay for direct image upload -->
+            <div id="viewportDropOverlay" style="position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; background: rgba(5, 10, 24, 0.94); border: 2px dashed var(--accent-cyan); border-radius: var(--radius-md); z-index: 25; backdrop-filter: blur(8px); pointer-events: none;">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2" style="margin-bottom: 10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              <strong style="font-size: 1.05rem; color: #fff;">Drop Image to Detect Cracks</strong>
+              <span style="font-size: 0.78rem; color: var(--accent-cyan); margin-top: 4px;">AI multi-tile precision scan will analyze instantly</span>
+            </div>
+
             <!-- Idle / Permission Overlay -->
             <div id="camIdleOverlay" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(4,7,12,0.92); z-index: 10;">
               <div class="scan-radar" style="margin-bottom: 12px;"></div>
               <p style="font-weight: 600; color: #fff;">Connecting to camera...</p>
               <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;">Please click Allow in your browser if prompted</p>
+              <div style="margin-top: 14px; display: flex; gap: 8px;">
+                <button class="btn-capture" style="padding: 7px 16px; font-size: 0.78rem;" onclick="openImagePicker()">📁 Or Upload Image File</button>
+              </div>
             </div>
           </div>
         </div>
@@ -1062,6 +1080,7 @@
             <!-- View Mode Switcher -->
             <div class="view-mode-bar" id="viewModeBar">
               <button class="view-mode-btn active" id="vmOverlay" onclick="setViewMode('overlay')">Overlay</button>
+              <button class="view-mode-btn" id="vmPinpoint" onclick="setViewMode('pinpoint')" style="display: none;">Boxes & Scores</button>
               <button class="view-mode-btn" id="vmSideBySide" onclick="setViewMode('side_by_side')">Dual</button>
               <button class="view-mode-btn" id="vmHeatmap" onclick="setViewMode('heatmap')">Heatmap</button>
               <button class="view-mode-btn" id="vmMask" onclick="setViewMode('mask')">Mask</button>
@@ -1222,10 +1241,10 @@
           <div id="drawerWifi" class="config-inputs" style="width: 100%; display: none; justify-content: space-between; align-items: center;">
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
               <span style="color: var(--text-muted); font-size: 0.75rem;">ESP32 IP / Endpoint:</span>
-              <input type="text" id="wifiUrlInput" class="config-input" value="http://192.168.1.100/telemetry" placeholder="http://<ESP32_IP>/telemetry">
+              <input type="text" id="wifiUrlInput" class="config-input" value="http://192.168.1.100/sensor" placeholder="http://<ESP32_IP>/sensor (or /telemetry)">
               <button class="btn-capture" style="padding: 6px 14px; font-size: 0.78rem;" onclick="connectWifiMpu()">Connect to ESP32 IP</button>
             </div>
-            <span style="color: var(--text-muted); font-size: 0.72rem;">Check Arduino Serial Monitor to find your ESP32's assigned IP</span>
+            <span style="color: var(--text-muted); font-size: 0.72rem;">Supports both Claude's /sensor and standard /telemetry</span>
           </div>
 
           <!-- 3. Serial Port Config Form -->
@@ -1554,12 +1573,11 @@
           <span style="font-weight: 700;">Upload High-Resolution Photo or Choose Benchmark Sample</span>
         </div>
 
-        <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+        <div class="dropzone" id="dropzone" onclick="openImagePicker()">
           <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color: var(--accent-cyan); margin-bottom: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
           <p style="font-weight: 700; font-size: 1.05rem;">Click or Drop Wall / Concrete Photo Here</p>
           <span style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; display: block;">Supports high-resolution PNG, JPG, and WEBP. Multi-tile deep scan pinpoints flaw dimensions and coordinates.</span>
         </div>
-        <input type="file" id="fileInput" accept="image/*" style="display: none;">
 
         <div style="margin-top: 20px;">
           <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.7px;">Benchmark Test Samples:</span>
@@ -1930,13 +1948,14 @@
       const overlay = document.getElementById('scanningOverlay');
       const btnCapture = document.getElementById('btnCapturePhoto');
 
-      overlay.style.display = 'flex';
-      btnCapture.disabled = true;
+      if (overlay) overlay.style.display = 'flex';
+      if (btnCapture) btnCapture.disabled = true;
 
       const engineMode = document.getElementById('engineSelect')?.value || 'fast';
       const useClahe = document.getElementById('claheChk')?.checked || false;
 
       try {
+        console.log("[Deep Scan] Sending payload to /api/deep_scan...");
         const resp = await fetch("/api/deep_scan", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1949,17 +1968,24 @@
           })
         });
 
+        if (!resp.ok) {
+          const errData = await resp.json().catch(() => ({ error: `HTTP ${resp.status}` }));
+          throw new Error(errData.error || `Server error ${resp.status}`);
+        }
+
         const data = await resp.json();
+        console.log("[Deep Scan] Complete. Cracks detected:", data.crack_detected, "Instances:", data.num_crack_instances);
         currentScanResult = data;
 
         // Render full deep inspection output
         renderDeepScanUI(data);
 
       } catch (err) {
+        console.error("[Deep Scan] Error:", err);
         alert("Deep Scan Error: " + err.message);
       } finally {
-        overlay.style.display = 'none';
-        btnCapture.disabled = false;
+        if (overlay) overlay.style.display = 'none';
+        if (btnCapture) btnCapture.disabled = false;
       }
     }
 
@@ -1984,15 +2010,15 @@
 
       // 2. Setup images for display
       liveImg.style.display = 'none';
-      pinpointImg.src = data.images.annotated;
-      pinpointImg.style.display = 'block';
-
-      // Setup split viewer images
       splitOrigImg.src = data.images.original;
       splitAnnoImg.src = data.images.annotated;
 
-      // Show download button
+      // Show download button & deep scan view modes
       document.getElementById('btnDownload').style.display = 'flex';
+      document.getElementById('vmPinpoint').style.display = 'inline-block';
+      document.getElementById('vmSplit').style.display = 'inline-block';
+
+      setViewMode(currentViewMode || 'overlay');
 
       // 3. Render Crack Inventory Table
       const tableCard = document.getElementById('crackTableCard');
@@ -2046,20 +2072,6 @@
       requestAnimationFrame(processLiveStreamLoop);
     }
 
-      document.getElementById('btnResumeLiveCam').style.display = 'none';
-      document.getElementById('btnToggleLiveAI').className = 'btn-live-toggle active';
-      document.getElementById('btnToggleLiveAI').innerHTML = `<span id="liveAiIcon">⏸</span> <span id="liveAiText">Live AI Checking: ON</span>`;
-      document.getElementById('rightTitleMode').innerText = 'Live Footage AI Stream';
-      document.getElementById('vmSplit').style.display = 'none';
-
-      // Switch right view back to live
-      liveImg.style.display = 'block';
-      pinpointImg.style.display = 'none';
-      splitViewer.style.display = 'none';
-
-      requestAnimationFrame(processLiveStreamLoop);
-    }
-
     // View Mode Switcher
     function setViewMode(mode) {
       currentViewMode = mode;
@@ -2083,8 +2095,10 @@
             pinpointImg.src = currentScanResult.images.mask;
           } else if (mode === 'side_by_side') {
             pinpointImg.src = currentScanResult.images.comparison;
-          } else {
+          } else if (mode === 'pinpoint') {
             pinpointImg.src = currentScanResult.images.annotated;
+          } else {
+            pinpointImg.src = currentScanResult.images.overlay || currentScanResult.images.annotated;
           }
         }
       }
@@ -2168,7 +2182,7 @@
         if (actionPanel) actionPanel.style.display = 'flex';
         if (inspectionGrid) inspectionGrid.style.display = 'grid';
         if (mpuSec) mpuSec.style.display = 'flex';
-        if (!mediaStream) startViewfinder();
+        if (!mediaStream && !isPhotoFrozen) startViewfinder();
       } else if (tab === 'telemetry') {
         if (camSection) camSection.style.display = 'block';
         if (uploadSection) uploadSection.style.display = 'none';
@@ -2921,41 +2935,152 @@
       }
     }
 
-    // File Upload Handler
-    const fileInput = document.getElementById('fileInput');
-    fileInput.onchange = (e) => {
-      if (e.target.files && e.target.files[0]) handleUploadedImage(e.target.files[0]);
-    };
+    function openImagePicker() {
+      const el = document.getElementById('fileInput');
+      if (el) {
+        el.value = '';
+        el.click();
+      }
+    }
+
+    function onFileInputChanged(input) {
+      if (input && input.files && input.files.length > 0) {
+        const file = input.files[0];
+        handleUploadedImage(file);
+        input.value = '';
+      }
+    }
 
     const dropzone = document.getElementById('dropzone');
-    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.style.borderColor = 'var(--accent-cyan)'; });
-    dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = 'rgba(255,255,255,0.16)'; });
-    dropzone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropzone.style.borderColor = 'rgba(255,255,255,0.16)';
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) handleUploadedImage(e.dataTransfer.files[0]);
-    });
+    if (dropzone) {
+      dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.style.borderColor = 'var(--accent-cyan)'; });
+      dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = 'rgba(255,255,255,0.16)'; });
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = 'rgba(255,255,255,0.16)';
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleUploadedImage(e.dataTransfer.files[0]);
+        }
+      });
+    }
 
     function handleUploadedImage(file) {
+      if (!file) return;
+      console.log("[Image Upload] User selected file:", file.name, file.size, file.type);
+      if (!file.type.startsWith('image/')) {
+        alert("Please select a valid image file (JPG, PNG, WEBP, BMP).");
+        return;
+      }
+
+      // 1. Immediately pause live camera checking
+      isLiveScanning = false;
+      isPhotoFrozen = true;
+
+      // 2. Switch to main camera/inspection view
+      switchMainTab('camera');
+
+      // 3. Immediately hide the camera idle overlay and reticle
+      const camIdle = document.getElementById('camIdleOverlay');
+      if (camIdle) camIdle.style.display = 'none';
+      const reticle = document.getElementById('reticleBox');
+      if (reticle) reticle.style.display = 'none';
+
+      // 4. Update UI labels and status
+      const statusTag = document.getElementById('camStatusTag');
+      if (statusTag) {
+        statusTag.className = 'tag-captured';
+        statusTag.innerText = "📁 UPLOADED: " + file.name;
+      }
+      const btnResume = document.getElementById('btnResumeLiveCam');
+      if (btnResume) btnResume.style.display = 'flex';
+      const btnToggle = document.getElementById('btnToggleLiveAI');
+      if (btnToggle) {
+        btnToggle.className = 'btn-live-toggle paused';
+        btnToggle.innerText = '▶ Live Footage Paused';
+      }
+      const rightTitle = document.getElementById('rightTitleMode');
+      if (rightTitle) rightTitle.innerText = 'Deep Precision Scan';
+
+      const vmSpl = document.getElementById('vmSplit');
+      if (vmSpl) vmSpl.style.display = 'inline-block';
+      const vmPin = document.getElementById('vmPinpoint');
+      if (vmPin) vmPin.style.display = 'inline-block';
+
+      // 5. Show radar scanning overlay in right viewport right away
+      const scanOverlay = document.getElementById('scanningOverlay');
+      const scanTitle = document.getElementById('scanStatusTitle');
+      const scanDesc = document.getElementById('scanStatusDesc');
+      if (scanOverlay) scanOverlay.style.display = 'flex';
+      if (scanTitle) scanTitle.innerText = `🔬 Analyzing ${file.name} with AI...`;
+      if (scanDesc) scanDesc.innerText = "Multi-tile UNet-VGG16 model is scanning for micro-cracks, measuring width, and calculating damage coordinates...";
+
       const reader = new FileReader();
+      reader.onerror = (err) => {
+        console.error("[Image Upload] Read error:", err);
+        if (scanOverlay) scanOverlay.style.display = 'none';
+        alert("Could not read image file. Please try another file.");
+      };
       reader.onload = (e) => {
-        switchMainTab('camera');
-        isLiveScanning = false;
-        isPhotoFrozen = true;
+        const dataUrl = e.target.result;
 
-        frozenImg.src = e.target.result;
-        frozenImg.style.display = 'block';
-        video.style.display = 'none';
-        document.getElementById('reticleBox').style.display = 'none';
-        document.getElementById('camStatusTag').className = 'tag-captured';
-        document.getElementById('camStatusTag').innerText = "UPLOADED PHOTO: " + file.name;
-        document.getElementById('btnResumeLiveCam').style.display = 'flex';
-        document.getElementById('vmSplit').style.display = 'inline-block';
+        // Display in left viewport
+        if (frozenImg) {
+          frozenImg.src = dataUrl;
+          frozenImg.style.display = 'block';
+        }
+        if (video) video.style.display = 'none';
 
-        executeDeepScan(e.target.result);
+        // Update resolution chip
+        const tempImg = new Image();
+        tempImg.onload = () => {
+          const resChip = document.getElementById('camResChip');
+          if (resChip) resChip.innerText = `${tempImg.naturalWidth} × ${tempImg.naturalHeight}`;
+        };
+        tempImg.src = dataUrl;
+
+        // Scroll smoothly to viewfinder
+        document.getElementById('cameraViewSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        executeDeepScan(dataUrl);
       };
       reader.readAsDataURL(file);
     }
+
+    // Viewport & Window Drag-and-Drop Image Uploader
+    const leftVp = document.getElementById('leftViewport');
+    const vpDrop = document.getElementById('viewportDropOverlay');
+    if (leftVp) {
+      leftVp.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (vpDrop) vpDrop.style.display = 'flex';
+      });
+      leftVp.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!leftVp.contains(e.relatedTarget)) {
+          if (vpDrop) vpDrop.style.display = 'none';
+        }
+      });
+      leftVp.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (vpDrop) vpDrop.style.display = 'none';
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleUploadedImage(e.dataTransfer.files[0]);
+        }
+      });
+    }
+
+    window.addEventListener('dragover', (e) => e.preventDefault());
+    window.addEventListener('drop', (e) => {
+      if (!e.target.closest('#leftViewport') && !e.target.closest('#dropzone')) {
+        e.preventDefault();
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleUploadedImage(e.dataTransfer.files[0]);
+        }
+      }
+    });
 
     window.onload = init;
   </script>

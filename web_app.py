@@ -61,6 +61,7 @@ except ImportError:
 from predict import CrackPredictor, INPUT_SIZE
 
 app = Flask(__name__, template_folder="templates")
+app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024  # Support up to 50MB high-res inspection uploads
 predictors: dict[str, CrackPredictor] = {}
 SAMPLE_DIR = Path(__file__).resolve().parent / "sample_images"
 _frame_count = 0
@@ -126,8 +127,8 @@ class MPU6050Manager:
                 gy = float(data.get("gy", self.latest.get("gy", 0.0)))
                 gz = float(data.get("gz", self.latest.get("gz", 0.0)))
                 temp = float(data.get("temp", self.latest.get("temp", 25.0)))
-                shock = bool(data.get("shock", False))
                 total_g = math.sqrt(ax * ax + ay * ay + az * az)
+                shock = bool(data.get("shock", False)) or (total_g > 1.85)
 
                 now = time.time()
                 # Apply tare offset
@@ -214,8 +215,8 @@ class MPU6050Manager:
         self.stop_event.clear()
         if not url.startswith("http://") and not url.startswith("https://"):
             url = f"http://{url}"
-        if not url.endswith("/telemetry") and not "/telemetry" in url:
-            url = f"{url.rstrip('/')}/telemetry"
+        if not ("/sensor" in url or "/telemetry" in url):
+            url = f"{url.rstrip('/')}/sensor"
         self.connection_target = url
         self.connection_type = "wifi"
         self.worker_thread = threading.Thread(target=self._wifi_worker, args=(url,), daemon=True)
@@ -271,15 +272,27 @@ class MPU6050Manager:
         with self.lock:
             self.connected = True
         consecutive_fails = 0
+        active_url = url
         while not self.stop_event.is_set():
             try:
-                req = urllib.request.Request(url, headers={"User-Agent": "MPU6050Studio/1.0"})
+                req = urllib.request.Request(active_url, headers={"User-Agent": "MPU6050Studio/1.0"})
                 with urllib.request.urlopen(req, timeout=1.2) as resp:
                     if resp.status == 200:
                         payload = resp.read().decode("utf-8")
                         data = json.loads(payload)
                         self.update_reading(data, source="wifi")
                         consecutive_fails = 0
+            except urllib.error.HTTPError as e:
+                # If 404, toggle between /sensor and /telemetry
+                if e.code == 404:
+                    if "/sensor" in active_url:
+                        active_url = active_url.replace("/sensor", "/telemetry")
+                    elif "/telemetry" in active_url:
+                        active_url = active_url.replace("/telemetry", "/sensor")
+                consecutive_fails += 1
+                if consecutive_fails > 10:
+                    with self.lock:
+                        self.connected = False
             except Exception:
                 consecutive_fails += 1
                 if consecutive_fails > 10:

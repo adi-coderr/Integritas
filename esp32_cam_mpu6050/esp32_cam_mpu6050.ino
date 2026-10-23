@@ -51,7 +51,7 @@ const char *password = "620720113"; // Replace with your WiFi Password
 // =========================================================================
 // If pushServerHost is set, ESP32 pushes telemetry directly to your laptop's webpage!
 // You DO NOT need to know or look up what IP your router gave the ESP32!
-const char *pushServerHost = "10.169.71.221"; // Replace with your laptop's Wi-Fi IP (shown on webpage)
+const char *pushServerHost = "10.169.71.17"; // Replace with your laptop's Wi-Fi IP (shown on webpage)
 const int   pushServerPort = 5050;             // Port of web_app.py
 const bool  enableDirectPush = true;           // Set to true to push data to webpage
 

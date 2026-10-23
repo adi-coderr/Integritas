@@ -64,13 +64,13 @@ In Arduino IDE:
 
 1. **Method 1: Direct Wi-Fi Push (Recommended — NO ESP32 IP NEEDED)**
    - The ESP32 acts as the client and **pushes** its sensor telemetry directly to your laptop's IP address.
-   - You only need your laptop's IP address (`10.169.71.221:5050`), which is already configured in the `.ino` sketch:
+   - You only need your laptop's IP address (`10.169.71.17:5050`), which is already configured in the `.ino` sketch:
      ```cpp
-     const char *pushServerHost = "10.169.71.221"; // Your laptop's LAN IP
+     const char *pushServerHost = "10.169.71.17"; // Your laptop's LAN IP
      const int   pushServerPort = 5050;
      const bool  enableDirectPush = true;
      ```
-   - As soon as the ESP32 connects to your Wi-Fi hotspot/router, it immediately begins sending HTTP POST packets to `http://10.169.71.221:5050/api/mpu/feed`. The web dashboard receives them automatically without you ever needing to know the ESP32's DHCP IP!
+   - As soon as the ESP32 connects to your Wi-Fi hotspot/router, it immediately begins sending HTTP POST packets to `http://10.169.71.17:5050/api/mpu/feed`. The web dashboard receives them automatically without you ever needing to know the ESP32's DHCP IP!
 
 2. **Method 2: USB Cable Mode (NO IP NEEDED AT ALL)**
    - Connect the ESP32 via USB cable / FTDI adapter.

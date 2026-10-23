@@ -28,7 +28,7 @@
 // =========================================================================
 const char *ssid             = "realme X7 5G";  // Replace with your WiFi SSID
 const char *password         = "620720113";     // Replace with your WiFi Password
-const char *pushServerHost   = "10.169.71.221"; // Replace with your laptop's Wi-Fi IP (shown on webpage)
+const char *pushServerHost   = "10.169.71.17"; // Replace with your laptop's Wi-Fi IP (shown on webpage)
 const int   pushServerPort   = 5050;             // Port of web_app.py
 const bool  enableDirectPush = true;            // Push data directly to webpage (NO ESP32 IP NEEDED!)
 
