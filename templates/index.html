@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/mpu_alert_system.css">
   <style>
     /* =========================================================================
        Professional Typography & Enterprise Clean Theme
@@ -1217,6 +1218,9 @@
             </button>
           </div>
         </div>
+
+        <!-- Master MPU-6050 Alert & Analytics Mount Point -->
+        <div id="mpuAlertSystemMount" style="margin-top: 14px; margin-bottom: 14px;"></div>
 
         <!-- Dynamic Connection Configuration Drawer -->
         <div class="mpu-config-drawer" id="mpuConfigDrawer">
@@ -3329,5 +3333,11 @@
       init();
     }
   </script>
+
+  <!-- MPU-6050 Alert & Analytics Modules -->
+  <script src="/static/js/mpu_alert_engine.js"></script>
+  <script src="/static/js/mpu_history_store.js"></script>
+  <script src="/static/js/mpu_simulator.js"></script>
+  <script src="/static/js/mpu_alert_ui.js"></script>
 </body>
 </html>
