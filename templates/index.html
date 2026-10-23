@@ -3,159 +3,220 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNet-VGG16 Deep Crack Inspection Studio</title>
+  <title>UNet-VGG16 Real-Time Structural Crack Inspection Studio</title>
+  <meta name="description" content="Real-time live video footage crack detection and high-precision photo deep scanning using UNet-VGG16.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #080b11;
-      --card-bg: rgba(16, 22, 34, 0.78);
+      --bg-dark: #070a11;
+      --bg-surface: #0e1422;
+      --card-bg: rgba(15, 22, 36, 0.82);
       --card-border: rgba(255, 255, 255, 0.08);
+      --card-border-glow: rgba(0, 210, 255, 0.25);
       --accent-cyan: #00d2ff;
       --accent-blue: #3a7bd5;
-      --accent-purple: #7b2cbf;
-      --accent-red: #ff3366;
+      --accent-purple: #8a2be2;
+      --accent-red: #ff2a5f;
       --accent-green: #00e676;
       --accent-yellow: #ffb703;
       --text-main: #f0f4f8;
-      --text-muted: #8a99ad;
-      --radius-lg: 14px;
-      --radius-md: 9px;
+      --text-muted: #8898aa;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: radial-gradient(circle at 10% 20%, #10192e 0%, #070a10 90%);
+      background: radial-gradient(circle at 15% 15%, #131c31 0%, #070a11 85%);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
+    /* Header */
     header {
       padding: 14px 32px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(8, 11, 17, 0.88);
-      backdrop-filter: blur(16px);
+      background: rgba(7, 10, 17, 0.92);
+      backdrop-filter: blur(18px);
       border-bottom: 1px solid var(--card-border);
       position: sticky;
       top: 0;
       z-index: 100;
     }
 
-    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 14px; }
     .brand-icon {
-      width: 38px; height: 38px; border-radius: 9px;
+      width: 40px; height: 40px; border-radius: 10px;
       background: linear-gradient(135deg, #00d2ff, #3a7bd5);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+      box-shadow: 0 0 18px rgba(0, 210, 255, 0.45);
     }
-    .brand-icon svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2.5; }
-    .brand-text h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.3px; }
-    .brand-text span { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+    .brand-icon svg { width: 22px; height: 22px; fill: none; stroke: #040d1a; stroke-width: 2.5; }
+    .brand-text h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px; }
+    .brand-text span { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.9px; }
 
-    .header-right { display: flex; align-items: center; gap: 12px; }
+    .header-right { display: flex; align-items: center; gap: 14px; }
     .nav-tabs {
-      display: flex; background: rgba(0, 0, 0, 0.4);
-      padding: 3px; border-radius: 30px; border: 1px solid var(--card-border);
+      display: flex; background: rgba(0, 0, 0, 0.45);
+      padding: 4px; border-radius: 30px; border: 1px solid var(--card-border);
     }
     .nav-tab {
-      padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+      padding: 7px 18px; border-radius: 20px; font-size: 0.82rem; font-weight: 600;
       color: var(--text-muted); border: none; background: transparent; cursor: pointer;
-      display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+      display: flex; align-items: center; gap: 8px; transition: all 0.25s;
     }
     .nav-tab.active {
       background: linear-gradient(135deg, rgba(0, 210, 255, 0.25), rgba(58, 123, 213, 0.25));
       color: var(--accent-cyan); border: 1px solid rgba(0, 210, 255, 0.4);
+      box-shadow: 0 0 12px rgba(0, 210, 255, 0.2);
     }
 
     .model-badge {
       display: flex; align-items: center; gap: 8px;
-      background: rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.25);
-      padding: 6px 12px; border-radius: 30px; font-size: 0.78rem;
+      background: rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.3);
+      padding: 6px 14px; border-radius: 30px; font-size: 0.76rem;
       color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace;
     }
     .badge-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green);
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green);
+      animation: pulse-dot 1.8s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
     }
 
     main {
-      flex: 1; max-width: 1440px; margin: 0 auto;
-      padding: 20px 32px; width: 100%;
+      flex: 1; max-width: 1480px; margin: 0 auto;
+      padding: 22px 32px; width: 100%;
       display: flex; flex-direction: column; gap: 20px;
     }
 
-    /* Top Metrics HUD */
+    /* Global Metrics HUD */
     .metrics-bar {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+      display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 14px;
     }
+    @media (max-width: 1024px) {
+      .metrics-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .metrics-bar { grid-template-columns: 1fr; }
+    }
+
     .metric-card {
       background: var(--card-bg); border: 1px solid var(--card-border);
-      border-radius: var(--radius-md); padding: 14px 18px; backdrop-filter: blur(16px);
-      display: flex; flex-direction: column; gap: 4px;
+      border-radius: var(--radius-md); padding: 14px 18px; backdrop-filter: blur(18px);
+      display: flex; flex-direction: column; justify-content: space-between; gap: 6px;
+      transition: all 0.2s;
     }
-    .metric-card span { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .metric-card:hover { border-color: var(--card-border-glow); }
+    .metric-header { display: flex; justify-content: space-between; align-items: center; }
+    .metric-title { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
     .metric-card h3 { font-size: 1.35rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
 
     .verdict-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 10px; border-radius: 20px; font-size: 0.75rem;
-      font-weight: 700; text-transform: uppercase; width: fit-content;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 20px; font-size: 0.85rem;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      width: fit-content; transition: all 0.3s;
     }
-    .verdict-crack { background: rgba(255, 51, 102, 0.18); border: 1px solid rgba(255, 51, 102, 0.45); color: #ff557f; }
-    .verdict-clean { background: rgba(0, 230, 118, 0.15); border: 1px solid rgba(0, 230, 118, 0.4); color: #00e676; }
+    .verdict-crack {
+      background: rgba(255, 42, 95, 0.2); border: 1px solid rgba(255, 42, 95, 0.6);
+      color: #ff3b6c; box-shadow: 0 0 16px rgba(255, 42, 95, 0.35);
+      animation: flash-alert 1.2s infinite alternate;
+    }
+    @keyframes flash-alert {
+      from { border-color: rgba(255, 42, 95, 0.4); box-shadow: 0 0 10px rgba(255, 42, 95, 0.2); }
+      to { border-color: rgba(255, 42, 95, 0.9); box-shadow: 0 0 22px rgba(255, 42, 95, 0.6); }
+    }
+    .verdict-clean {
+      background: rgba(0, 230, 118, 0.15); border: 1px solid rgba(0, 230, 118, 0.45);
+      color: #00e676; box-shadow: 0 0 12px rgba(0, 230, 118, 0.2);
+    }
+    .verdict-ready {
+      background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border);
+      color: var(--text-muted);
+    }
 
     /* Action Control Bar */
     .action-panel {
       background: var(--card-bg); border: 1px solid var(--card-border);
       border-radius: var(--radius-lg); padding: 18px 24px; backdrop-filter: blur(20px);
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     }
 
+    .action-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .action-right { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+    /* Hero "Take Picture" Button */
     .btn-capture {
-      padding: 12px 28px;
-      background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+      padding: 12px 26px;
+      background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
       border: none; border-radius: var(--radius-md);
       color: #030d1a; font-size: 0.95rem; font-weight: 800; cursor: pointer;
       display: flex; align-items: center; gap: 10px;
-      box-shadow: 0 4px 20px rgba(0, 210, 255, 0.4);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 22px rgba(0, 210, 255, 0.45);
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .btn-capture:hover { transform: translateY(-2px); box-shadow: 0 6px 26px rgba(0, 210, 255, 0.6); }
+    .btn-capture:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(0, 210, 255, 0.7);
+    }
+    .btn-capture:active { transform: translateY(0); }
+    .btn-capture:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-live-toggle {
+      padding: 11px 18px; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;
+    }
+    .btn-live-toggle.active {
+      background: rgba(0, 230, 118, 0.15); border: 1px solid rgba(0, 230, 118, 0.4);
+      color: var(--accent-green);
+    }
+    .btn-live-toggle.paused {
+      background: rgba(255, 183, 3, 0.15); border: 1px solid rgba(255, 183, 3, 0.4);
+      color: var(--accent-yellow);
+    }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--card-border);
-      color: var(--text-main); font-weight: 600; padding: 10px 18px; border-radius: var(--radius-md);
-      cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid var(--card-border);
+      color: var(--text-main); font-weight: 600; padding: 10px 16px; border-radius: var(--radius-md);
+      cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.82rem;
       transition: all 0.2s;
     }
-    .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.2); }
 
     .control-item { display: flex; align-items: center; gap: 8px; }
-    .control-item label { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
+    .control-item label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
     select {
-      background: rgba(0, 0, 0, 0.4); border: 1px solid var(--card-border);
+      background: rgba(4, 7, 13, 0.7); border: 1px solid var(--card-border);
       border-radius: var(--radius-md); padding: 8px 12px; color: var(--text-main);
-      font-size: 0.8rem; outline: none; cursor: pointer;
+      font-size: 0.8rem; outline: none; cursor: pointer; transition: border-color 0.2s;
     }
+    select:focus { border-color: var(--accent-cyan); }
 
     input[type="range"] {
-      width: 120px; height: 5px; border-radius: 4px;
-      background: rgba(255, 255, 255, 0.1); outline: none; -webkit-appearance: none;
+      width: 110px; height: 5px; border-radius: 4px;
+      background: rgba(255, 255, 255, 0.12); outline: none; -webkit-appearance: none;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
-      background: var(--accent-cyan); cursor: pointer; box-shadow: 0 0 8px var(--accent-cyan);
+      background: var(--accent-cyan); cursor: pointer; box-shadow: 0 0 10px var(--accent-cyan);
     }
 
-    /* Inspection Main Display Grid */
+    /* Inspection Grid: Dual-Stream Viewports */
     .inspection-grid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
     }
@@ -166,98 +227,161 @@
     .display-card {
       background: var(--card-bg); border: 1px solid var(--card-border);
       border-radius: var(--radius-lg); padding: 18px; backdrop-filter: blur(20px);
-      display: flex; flex-direction: column; gap: 12px;
+      display: flex; flex-direction: column; gap: 12px; position: relative;
     }
+
     .display-header {
       display: flex; justify-content: space-between; align-items: center;
       font-size: 0.88rem; font-weight: 600;
     }
+    .header-tags { display: flex; align-items: center; gap: 8px; }
 
+    .tag-live {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 10px; border-radius: 14px; font-size: 0.72rem; font-weight: 700;
+      background: rgba(0, 230, 118, 0.12); border: 1px solid rgba(0, 230, 118, 0.35);
+      color: var(--accent-green); font-family: 'JetBrains Mono', monospace;
+    }
+    .tag-captured {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 10px; border-radius: 14px; font-size: 0.72rem; font-weight: 700;
+      background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.35);
+      color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Viewport Frame */
     .viewport {
       position: relative; width: 100%; aspect-ratio: 4 / 3;
-      background: #05070a; border-radius: var(--radius-md);
+      background: #04060a; border-radius: var(--radius-md);
       overflow: hidden; display: flex; align-items: center; justify-content: center;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
     video, img.viewport-img {
       width: 100%; height: 100%; object-fit: contain; display: block;
     }
 
-    /* Before/After Split Viewer */
+    /* Live HUD crosshairs overlay on left video */
+    .viewport-hud {
+      position: absolute; inset: 0; pointer-events: none;
+      display: flex; flex-direction: column; justify-content: space-between; padding: 12px;
+    }
+    .hud-top { display: flex; justify-content: space-between; }
+    .hud-chip {
+      background: rgba(4, 7, 13, 0.75); border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace;
+      color: #a0aec0;
+    }
+
+    .reticle-box {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 65%; height: 65%; border: 1px dashed rgba(0, 210, 255, 0.25);
+      border-radius: 8px; pointer-events: none;
+    }
+    .reticle-corner {
+      position: absolute; width: 14px; height: 14px; border: 2px solid var(--accent-cyan);
+    }
+    .reticle-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+    .reticle-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+    .reticle-bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+    .reticle-br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+    /* Interactive Before/After Split Viewer */
     .split-viewer {
       position: relative; width: 100%; height: 100%; overflow: hidden;
-      user-select: none; display: none;
+      user-select: none; display: none; cursor: ew-resize;
     }
-    .split-layer {
+    .split-layer-base {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     }
-    .split-layer img { width: 100%; height: 100%; object-fit: contain; display: block; }
-    .split-overlay {
+    .split-layer-base img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+    .split-layer-overlay {
       position: absolute; top: 0; left: 0; width: 50%; height: 100%;
       overflow: hidden; border-right: 2px solid var(--accent-cyan);
-      box-shadow: 2px 0 15px rgba(0, 210, 255, 0.5);
+      box-shadow: 2px 0 16px rgba(0, 210, 255, 0.6);
     }
+    .split-layer-overlay img {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: contain; display: block;
+    }
+
     .split-handle {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 34px; height: 34px; border-radius: 50%;
-      background: var(--accent-cyan); box-shadow: 0 0 12px var(--accent-cyan);
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--accent-cyan); box-shadow: 0 0 16px var(--accent-cyan);
       display: flex; align-items: center; justify-content: center;
-      cursor: ew-resize; z-index: 10;
+      cursor: ew-resize; z-index: 20;
     }
-    .split-handle svg { width: 16px; height: 16px; fill: #030d1a; }
+    .split-handle svg { width: 18px; height: 18px; fill: #030d1a; }
 
-    /* Detected Cracks Table */
+    /* Scanning Radar / Spinner */
+    .scanning-overlay {
+      position: absolute; inset: 0; background: rgba(4, 7, 12, 0.88);
+      backdrop-filter: blur(12px); display: none; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px; z-index: 40;
+    }
+    .scan-radar {
+      width: 60px; height: 60px; border-radius: 50%;
+      border: 3px solid rgba(0, 210, 255, 0.15);
+      border-top-color: var(--accent-cyan);
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* View Mode Toolbar inside Inspection Card */
+    .view-mode-bar {
+      display: flex; align-items: center; gap: 6px; background: rgba(0, 0, 0, 0.35);
+      padding: 3px; border-radius: 8px; border: 1px solid var(--card-border);
+    }
+    .view-mode-btn {
+      padding: 4px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 600;
+      color: var(--text-muted); border: none; background: transparent; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .view-mode-btn.active {
+      background: rgba(0, 210, 255, 0.2); color: var(--accent-cyan);
+    }
+
+    /* Detected Cracks Inventory Table */
     .crack-table {
       width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left;
     }
     .crack-table th {
-      padding: 10px 12px; background: rgba(0, 0, 0, 0.3); color: var(--text-muted);
+      padding: 10px 14px; background: rgba(0, 0, 0, 0.4); color: var(--text-muted);
       text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--card-border);
     }
     .crack-table td {
-      padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     }
-    .crack-table tr:hover { background: rgba(255, 255, 255, 0.02); }
+    .crack-table tr:hover { background: rgba(255, 255, 255, 0.03); }
 
-    .tag-severe { color: #ff557f; font-weight: 700; }
+    .tag-severe { color: #ff3b6c; font-weight: 700; }
     .tag-moderate { color: #ffb703; font-weight: 600; }
     .tag-minor { color: #00d2ff; }
 
-    /* Spinner / Scanning Animation */
-    .scanning-overlay {
-      position: absolute; inset: 0; background: rgba(5, 7, 10, 0.85);
-      backdrop-filter: blur(10px); display: none; flex-direction: column;
-      align-items: center; justify-content: center; gap: 14px; z-index: 50;
-    }
-    .scan-spinner {
-      width: 48px; height: 48px; border: 3px solid rgba(0, 210, 255, 0.15);
-      border-radius: 50%; border-top-color: var(--accent-cyan);
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
     /* Dropzone for Uploads */
     .dropzone {
-      border: 2px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-md);
-      padding: 24px; text-align: center; cursor: pointer; background: rgba(255, 255, 255, 0.02);
+      border: 2px dashed rgba(255, 255, 255, 0.16); border-radius: var(--radius-md);
+      padding: 32px; text-align: center; cursor: pointer; background: rgba(255, 255, 255, 0.02);
       transition: all 0.2s;
     }
-    .dropzone:hover { border-color: var(--accent-cyan); background: rgba(0, 210, 255, 0.05); }
+    .dropzone:hover { border-color: var(--accent-cyan); background: rgba(0, 210, 255, 0.06); }
 
     .sample-grid {
-      display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px;
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 12px;
+    }
+    @media (max-width: 900px) {
+      .sample-grid { grid-template-columns: repeat(2, 1fr); }
     }
     .sample-btn {
       background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border);
-      border-radius: var(--radius-md); padding: 8px; font-size: 0.74rem; color: var(--text-main);
-      cursor: pointer; text-align: center;
+      border-radius: var(--radius-md); padding: 12px; font-size: 0.76rem; color: var(--text-main);
+      cursor: pointer; text-align: center; transition: all 0.2s;
     }
-    .sample-btn:hover { border-color: var(--accent-cyan); background: rgba(0, 210, 255, 0.1); }
+    .sample-btn:hover { border-color: var(--accent-cyan); background: rgba(0, 210, 255, 0.12); transform: translateY(-2px); }
   </style>
 </head>
 <body>
-
-  <canvas id="hiddenCanvas" style="display: none;"></canvas>
 
   <header>
     <div class="brand">
@@ -265,81 +389,107 @@
         <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       </div>
       <div class="brand-text">
-        <h1>UNet-VGG16 Deep Crack Inspection Studio</h1>
-        <span>High-Precision Sub-Millimeter Flaw Pinpointing</span>
+        <h1>UNet-VGG16 Real-Time Structural Inspection Studio</h1>
+        <span>Live Video Stream AI Monitoring • High-Precision Photo Deep Scan</span>
       </div>
     </div>
 
     <div class="header-right">
       <div class="nav-tabs">
-        <button class="nav-tab active" id="tabCamera" onclick="switchMode('camera')">
+        <button class="nav-tab active" id="tabCamera" onclick="switchMainTab('camera')">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          Camera Viewfinder & Deep Scan
+          Live Camera & Deep Scan
         </button>
-        <button class="nav-tab" id="tabUpload" onclick="switchMode('upload')">
+        <button class="nav-tab" id="tabUpload" onclick="switchMainTab('upload')">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           Upload Photo & Samples
         </button>
       </div>
 
       <div class="model-badge">
-        <span class="badge-dot"></span>
-        <span id="deviceBadge">Loading...</span>
+        <span class="badge-dot" id="deviceBadgeDot"></span>
+        <span id="deviceBadge">INITIALIZING...</span>
       </div>
     </div>
   </header>
 
   <main>
-    <!-- Top Metrics HUD -->
+    <!-- Top Global Metrics HUD -->
     <div class="metrics-bar">
       <div class="metric-card">
-        <span>Inspection Verdict</span>
+        <div class="metric-header">
+          <span class="metric-title">Inspection Verdict</span>
+          <span id="liveStatusBadge" style="font-size: 0.68rem; color: var(--accent-green); font-family: 'JetBrains Mono', monospace;">● LIVE AI</span>
+        </div>
         <div id="verdictContainer">
-          <span class="verdict-badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">Ready to Scan</span>
+          <span class="verdict-badge verdict-ready">Waiting for Camera...</span>
         </div>
       </div>
+
       <div class="metric-card">
-        <span>Detected Crack Instances</span>
-        <h3 id="statInstances">--</h3>
+        <div class="metric-header">
+          <span class="metric-title">Peak Confidence</span>
+          <span style="font-size: 0.7rem; color: var(--text-muted);">Prob.</span>
+        </div>
+        <h3 id="statConfidence">--</h3>
       </div>
+
       <div class="metric-card">
-        <span>Damaged Surface Area</span>
+        <div class="metric-header">
+          <span class="metric-title">Damaged Surface Area</span>
+          <span style="font-size: 0.7rem; color: var(--text-muted);">Coverage</span>
+        </div>
         <h3 id="statCoverage">--</h3>
       </div>
+
       <div class="metric-card">
-        <span>Scan Latency (Multi-Tile)</span>
-        <h3 id="statLatency">--</h3>
+        <div class="metric-header">
+          <span class="metric-title">Inference Speed / FPS</span>
+          <span id="statFps" style="font-size: 0.7rem; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace;">-- FPS</span>
+        </div>
+        <h3 id="statLatency">-- ms</h3>
       </div>
     </div>
 
-    <!-- Action Toolbar -->
+    <!-- Action & Control Bar -->
     <div class="action-panel">
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <button class="btn-capture" id="btnDeepScan" onclick="triggerDeepScan()">
+      <div class="action-left">
+        <!-- Hero "Take Picture" Button -->
+        <button class="btn-capture" id="btnCapturePhoto" onclick="capturePhotoForDeepScan()" title="Capture full-resolution photo for multi-tile pinpoint accuracy">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          <span id="btnDeepScanText">📸 Capture & Deep Scan</span>
+          <span id="btnCaptureText">📸 Take Picture & Deep Scan</span>
         </button>
 
-        <button class="btn-secondary" id="btnResumeCam" onclick="resumeCamera()" style="display: none;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-          Resume Viewfinder
+        <!-- Live Stream Toggle -->
+        <button class="btn-live-toggle active" id="btnToggleLiveAI" onclick="toggleLiveAI()">
+          <span id="liveAiIcon">⏸</span>
+          <span id="liveAiText">Live AI Checking: ON</span>
         </button>
 
-        <button class="btn-secondary" id="btnDownload" onclick="downloadAnnotatedResult()" style="display: none;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        <!-- Resume Live Camera (Shown when photo frozen) -->
+        <button class="btn-secondary" id="btnResumeLiveCam" onclick="resumeLiveViewfinder()" style="display: none;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Resume Live Footage
+        </button>
+
+        <!-- Download Report -->
+        <button class="btn-secondary" id="btnDownload" onclick="downloadCurrentInspection()" style="display: none;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
           Download Report
         </button>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+      <div class="action-right">
+        <!-- Engine selection -->
         <div class="control-item">
-          <label>Engine Mode:</label>
-          <select id="engineSelect" onchange="updateEngineTag(this.value)">
-            <option value="gentle" selected>🍃 Gentle & Cool (CPU • 0% Strain, ~2-3s)</option>
-            <option value="fast">⚡ Fast GPU (Apple Metal • ~0.5s)</option>
+          <label>Engine:</label>
+          <select id="engineSelect" onchange="changeEngine(this.value)">
+            <option value="fast" selected>⚡ Metal GPU (~180ms)</option>
+            <option value="gentle">🍃 Gentle CPU (Cool)</option>
           </select>
         </div>
 
+        <!-- Camera selection -->
         <div class="control-item">
           <label>Camera:</label>
           <select id="cameraSelect" onchange="changeCameraDevice()">
@@ -347,98 +497,154 @@
           </select>
         </div>
 
+        <!-- Sensitivity Threshold Slider -->
         <div class="control-item">
-          <label>Threshold:</label>
-          <input type="range" id="threshSlider" min="0.10" max="0.90" step="0.05" value="0.45" oninput="updateThresh(this.value)">
-          <span id="threshVal" style="font-family: monospace; font-size: 0.8rem; color: var(--accent-cyan);">0.45</span>
+          <label>Sensitivity:</label>
+          <input type="range" id="threshSlider" min="0.10" max="0.90" step="0.05" value="0.45" oninput="updateThreshold(this.value)">
+          <span id="threshVal" style="font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--accent-cyan);">0.45</span>
         </div>
 
+        <!-- CLAHE Auto-Contrast -->
         <div class="control-item">
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-main); font-size: 0.8rem;">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-main); font-size: 0.78rem;">
             <input type="checkbox" id="claheChk">
-            <span>CLAHE Auto-Contrast</span>
+            <span>CLAHE</span>
+          </label>
+        </div>
+
+        <!-- Sound Alarm Toggle -->
+        <div class="control-item">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-main); font-size: 0.78rem;" title="Play audio alert chime when crack is detected">
+            <input type="checkbox" id="soundChk" checked>
+            <span>🔔 Alert</span>
           </label>
         </div>
       </div>
     </div>
 
-    <!-- View Section -->
+    <!-- Live Inspection Dual-Stream Grid Section -->
     <div id="cameraViewSection">
       <div class="inspection-grid">
 
-        <!-- Left: Live Viewfinder / Original Image -->
+        <!-- Left: Live Camera Viewfinder (Raw Footage) -->
         <div class="display-card">
           <div class="display-header">
-            <span>1. Camera Viewfinder</span>
-            <span id="camStatusTag" style="font-size: 0.72rem; color: var(--accent-green);">● LIVE</span>
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              1. Camera Viewfinder (Input Stream)
+            </span>
+            <div class="header-tags">
+              <span id="camStatusTag" class="tag-live">● LIVE FEED</span>
+            </div>
           </div>
 
-          <div class="viewport">
+          <div class="viewport" id="leftViewport">
+            <!-- HTML5 Webcam Video Element -->
             <video id="webcamVideo" autoplay playsinline muted></video>
-            <img id="frozenFrameImg" class="viewport-img" style="display: none;" alt="Captured frame">
-            <div id="camIdleOverlay" style="text-align: center; color: var(--text-muted); padding: 20px;">
-              <p>Initializing camera...</p>
+
+            <!-- Frozen Captured Frame (shown when a picture is taken) -->
+            <img id="frozenFrameImg" class="viewport-img" style="display: none;" alt="Captured high-resolution photo">
+
+            <!-- Target Crosshair Reticle -->
+            <div class="reticle-box" id="reticleBox">
+              <div class="reticle-corner reticle-tl"></div>
+              <div class="reticle-corner reticle-tr"></div>
+              <div class="reticle-corner reticle-bl"></div>
+              <div class="reticle-corner reticle-br"></div>
+            </div>
+
+            <!-- Viewport HUD Overlay -->
+            <div class="viewport-hud">
+              <div class="hud-top">
+                <span class="hud-chip" id="camResChip">1280 × 720</span>
+                <span class="hud-chip" id="camFpsChip">30 FPS</span>
+              </div>
+            </div>
+
+            <!-- Idle / Permission Overlay -->
+            <div id="camIdleOverlay" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(4,7,12,0.92); z-index: 10;">
+              <div class="scan-radar" style="margin-bottom: 12px;"></div>
+              <p style="font-weight: 600; color: #fff;">Connecting to camera...</p>
+              <p style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;">Please click Allow in your browser if prompted</p>
             </div>
           </div>
         </div>
 
-        <!-- Right: Pinpointed Cracks & Deep Analysis -->
+        <!-- Right: AI Model Analysis (Real-Time Live Footage / Deep Scan) -->
         <div class="display-card">
           <div class="display-header">
-            <span>2. High-Precision Pinpointed Output</span>
-            <span id="displayModeTag" style="font-size: 0.72rem; color: var(--accent-cyan); font-family: monospace;">TTA OVERLAPPING TILES</span>
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              2. ML Model Output (<span id="rightTitleMode">Live Footage AI Stream</span>)
+            </span>
+
+            <!-- View Mode Switcher -->
+            <div class="view-mode-bar" id="viewModeBar">
+              <button class="view-mode-btn active" id="vmOverlay" onclick="setViewMode('overlay')">Overlay</button>
+              <button class="view-mode-btn" id="vmSideBySide" onclick="setViewMode('side_by_side')">Dual</button>
+              <button class="view-mode-btn" id="vmHeatmap" onclick="setViewMode('heatmap')">Heatmap</button>
+              <button class="view-mode-btn" id="vmMask" onclick="setViewMode('mask')">Mask</button>
+              <button class="view-mode-btn" id="vmSplit" onclick="setViewMode('split')" style="display: none;">Before/After</button>
+            </div>
           </div>
 
-          <div class="viewport">
-            <!-- Scanning Spinner Overlay -->
+          <div class="viewport" id="rightViewport">
+            <!-- Scanning Spinner / Animation (Used during Deep Scan on photo) -->
             <div class="scanning-overlay" id="scanningOverlay">
-              <div class="scan-spinner"></div>
-              <strong style="color: #fff; font-size: 0.95rem;" id="scanStatusTitle">🍃 Gentle Deep Scan In Progress...</strong>
-              <p style="font-size: 0.78rem; color: #a0aec0; text-align: center; max-width: 340px; line-height: 1.4;" id="scanStatusDesc">
-                Letting the model take its time (~2-3s) to thoroughly inspect every pixel without putting extra load or heat on your laptop.
+              <div class="scan-radar"></div>
+              <strong style="color: #fff; font-size: 1rem;" id="scanStatusTitle">🔬 Multi-Tile Deep Precision Scan In Progress...</strong>
+              <p style="font-size: 0.8rem; color: #a0aec0; text-align: center; max-width: 380px; line-height: 1.45;" id="scanStatusDesc">
+                Analyzing high-resolution photo across overlapping patches with sub-millimeter flaw localization.
               </p>
             </div>
 
-            <!-- Pinpointed image with bounding boxes -->
-            <img id="pinpointResultImg" class="viewport-img" style="display: none;" alt="Pinpointed result">
+            <!-- Live Stream AI Image Output -->
+            <img id="liveAiOutputImg" class="viewport-img" alt="Real-time ML Model Stream Output">
 
-            <!-- Split Reveal Viewer -->
+            <!-- Deep Scan Pinpoint Image Output -->
+            <img id="pinpointResultImg" class="viewport-img" style="display: none;" alt="High-accuracy deep scan result">
+
+            <!-- Interactive Before/After Split Viewer -->
             <div class="split-viewer" id="splitViewer">
-              <div class="split-layer">
-                <img id="splitOriginal" alt="Original">
+              <div class="split-layer-base">
+                <img id="splitOriginalImg" alt="Original raw photo">
               </div>
-              <div class="split-overlay" id="splitOverlay">
-                <img id="splitOverlayImg" alt="Overlay">
+              <div class="split-layer-overlay" id="splitOverlayContainer" style="width: 50%;">
+                <img id="splitAnnotatedImg" alt="AI detected cracks overlay">
               </div>
-              <div class="split-handle" id="splitHandle">
+              <div class="split-handle" id="splitHandle" style="left: 50%;">
                 <svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
               </div>
             </div>
 
-            <div id="resultPlaceholder" style="text-align: center; color: var(--text-muted); padding: 30px;">
+            <!-- Initial Placeholder -->
+            <div id="resultPlaceholder" style="text-align: center; color: var(--text-muted); padding: 30px; display: none;">
               <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 8px; opacity: 0.4;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-              <p>Aim your camera at the wall and click <strong>"📸 Capture & Deep Scan"</strong>.</p>
-              <p style="font-size: 0.76rem; margin-top: 6px; color: var(--accent-cyan);">🍃 Gentle Mode: Model takes ~2-3 seconds at 0% laptop strain for pin-point accuracy.</p>
+              <p>Aim your camera at a wall or concrete surface.</p>
+              <p style="font-size: 0.78rem; margin-top: 6px; color: var(--accent-cyan);">The model inspects live footage continuously. Click <strong>"Take Picture"</strong> for high-accuracy deep analysis.</p>
             </div>
           </div>
         </div>
 
       </div>
 
-      <!-- Detected Crack Inventory Breakdown Table -->
+      <!-- Detected Crack Locations & Structural Severity Breakdown Table -->
       <div class="display-card" id="crackTableCard" style="display: none; margin-top: 20px;">
         <div class="display-header">
-          <span style="font-size: 0.95rem;">📋 Pinpointed Crack Locations & Severity Inventory</span>
-          <span id="crackCountBadge" style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 700;"></span>
+          <span style="font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            📋 Pinpointed Flaw Locations & Structural Severity Inventory
+          </span>
+          <span id="crackCountBadge" style="font-size: 0.76rem; color: var(--accent-cyan); font-weight: 700; font-family: 'JetBrains Mono', monospace;"></span>
         </div>
 
-        <div style="overflow-x: auto;">
+        <div style="overflow-x: auto; margin-top: 6px;">
           <table class="crack-table">
             <thead>
               <tr>
-                <th>Crack ID</th>
+                <th>Defect ID</th>
                 <th>Wall Region</th>
-                <th>Bounding Box (X, Y, W, H)</th>
+                <th>Bounding Box (X, Y) [W × H]</th>
                 <th>Damaged Area</th>
                 <th>Confidence</th>
                 <th>Structural Severity</th>
@@ -451,21 +657,22 @@
       </div>
     </div>
 
-    <!-- Upload & Samples Mode -->
+    <!-- Upload Photo & Benchmark Samples View Section -->
     <div id="uploadViewSection" style="display: none;">
       <div class="display-card">
         <div class="display-header">
-          <span>Upload Image or Select Benchmark Sample</span>
+          <span style="font-weight: 700;">Upload High-Resolution Photo or Choose Benchmark Sample</span>
         </div>
 
         <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
-          <p style="font-weight: 600;">Click or Drop Wall / Concrete Photo Here</p>
-          <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block;">High-resolution photos will be processed in full detail</span>
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color: var(--accent-cyan); margin-bottom: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          <p style="font-weight: 700; font-size: 1.05rem;">Click or Drop Wall / Concrete Photo Here</p>
+          <span style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; display: block;">Supports high-resolution PNG, JPG, and WEBP. Multi-tile deep scan pinpoints flaw dimensions and coordinates.</span>
         </div>
         <input type="file" id="fileInput" accept="image/*" style="display: none;">
 
-        <div style="margin-top: 18px;">
-          <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Benchmark Test Samples:</span>
+        <div style="margin-top: 20px;">
+          <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.7px;">Benchmark Test Samples:</span>
           <div class="sample-grid" id="sampleGrid"></div>
         </div>
       </div>
@@ -473,37 +680,95 @@
   </main>
 
   <script>
-    let stream = null;
-    let isFrozen = false;
+    // State Variables
+    let mediaStream = null;
+    let isLiveScanning = true;
+    let isProcessingFrame = false;
+    let isPhotoFrozen = false;
     let currentThreshold = 0.45;
+    let currentViewMode = 'overlay';
     let currentScanResult = null;
+    let currentLiveResult = null;
     let appMode = 'camera';
+    let lastFrameTimestamp = performance.now();
+    let frameTimes = [];
+    let hadCrackLastFrame = false;
 
+    // DOM Elements
     const video = document.getElementById('webcamVideo');
-    const canvas = document.getElementById('hiddenCanvas');
-    const ctx = canvas.getContext('2d');
+    const liveImg = document.getElementById('liveAiOutputImg');
+    const pinpointImg = document.getElementById('pinpointResultImg');
+    const frozenImg = document.getElementById('frozenFrameImg');
+    const splitViewer = document.getElementById('splitViewer');
+    const splitOverlay = document.getElementById('splitOverlayContainer');
+    const splitHandle = document.getElementById('splitHandle');
+    const splitOrigImg = document.getElementById('splitOriginalImg');
+    const splitAnnoImg = document.getElementById('splitAnnotatedImg');
 
+    // Off-screen canvas for frame capture
+    const offscreenCanvas = document.createElement('canvas');
+    const offscreenCtx = offscreenCanvas.getContext('2d', { willReadFrequently: true });
+
+    // Web Audio alert context
+    let audioCtx = null;
+    function playAlertChime() {
+      if (!document.getElementById('soundChk')?.checked) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.16);
+        gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.16);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.18);
+      } catch (e) {
+        console.warn('Audio alert error:', e);
+      }
+    }
+
+    // App Initialization
     async function init() {
       try {
-        const engineSelect = document.getElementById('engineSelect');
-        if (engineSelect) {
-          updateEngineTag(engineSelect.value);
+        const resp = await fetch("/api/info");
+        const data = await resp.json();
+
+        // Update badge
+        const badge = document.getElementById('deviceBadge');
+        const badgeDot = document.getElementById('deviceBadgeDot');
+        if (data.has_mps) {
+          badge.innerText = `MPS GPU • IoU ${(data.valid_iou * 100).toFixed(1)}%`;
+        } else if (data.has_cuda) {
+          badge.innerText = `CUDA GPU • IoU ${(data.valid_iou * 100).toFixed(1)}%`;
         } else {
-          document.getElementById('deviceBadge').innerText = `${data.device.toUpperCase()} • Epoch ${data.epoch}`;
+          badge.innerText = `CPU • IoU ${(data.valid_iou * 100).toFixed(1)}%`;
         }
 
-        // Populate samples
-        const grid = document.getElementById('sampleGrid');
-        grid.innerHTML = '';
-        data.samples.forEach(s => {
+        // Engine default
+        const engineSelect = document.getElementById('engineSelect');
+        if (data.has_mps || data.has_cuda) {
+          engineSelect.value = "fast";
+        } else {
+          engineSelect.value = "gentle";
+        }
+
+        // Benchmark samples
+        const sampleGrid = document.getElementById('sampleGrid');
+        sampleGrid.innerHTML = '';
+        (data.samples || []).forEach(s => {
           const btn = document.createElement('button');
           btn.className = 'sample-btn';
-          btn.innerHTML = `<strong>${s.label}</strong><br><span style="color:#888;">${s.type}</span>`;
+          btn.innerHTML = `<strong>${s.label}</strong><br><span style="color:#00d2ff; font-size:0.7rem;">${s.type}</span>`;
           btn.onclick = () => runSampleDeepScan(s.name);
-          grid.appendChild(btn);
+          sampleGrid.appendChild(btn);
         });
 
-        // Enumerate video devices
+        // Camera enumeration
         if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
           const devices = await navigator.mediaDevices.enumerateDevices();
           const videoDevs = devices.filter(d => d.kind === 'videoinput');
@@ -517,13 +782,18 @@
           });
         }
 
-        // Start viewfinder automatically
-        startViewfinder();
+        // Setup Split handle dragging events
+        initSplitDrag();
+
+        // Start Live Camera
+        await startViewfinder();
+
       } catch (err) {
-        console.error(err);
+        console.error("Initialization error:", err);
       }
     }
 
+    // Camera Viewfinder Startup
     async function startViewfinder() {
       try {
         const deviceId = document.getElementById('cameraSelect').value;
@@ -536,85 +806,228 @@
         };
         if (deviceId) constraints.video.deviceId = { exact: deviceId };
 
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-        video.srcObject = stream;
+        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = mediaStream;
         await video.play();
 
         document.getElementById('camIdleOverlay').style.display = 'none';
-        document.getElementById('camStatusTag').innerText = "● LIVE VIEWFINDER";
-        document.getElementById('camStatusTag').style.color = "var(--accent-green)";
+        document.getElementById('camStatusTag').className = 'tag-live';
+        document.getElementById('camStatusTag').innerText = "● LIVE FEED";
+
+        // Display camera resolution once metadata loads
+        video.onloadedmetadata = () => {
+          document.getElementById('camResChip').innerText = `${video.videoWidth} × ${video.videoHeight}`;
+        };
+
+        // Start continuous live checking loop
+        isLiveScanning = true;
+        isPhotoFrozen = false;
+        requestAnimationFrame(processLiveStreamLoop);
+
       } catch (err) {
-        document.getElementById('camIdleOverlay').innerHTML = `<p style="color:#ff557f;">⚠️ Camera Access: ${err.message}</p><p style="font-size:0.75rem; margin-top:4px;">Please click Allow Camera in your browser.</p>`;
+        document.getElementById('camIdleOverlay').innerHTML = `
+          <p style="color:#ff3b6c; font-weight:700;">⚠️ Camera Access Denied or Unavailable</p>
+          <p style="font-size:0.78rem; color:#cbd5e0; margin-top:6px; max-width:320px; text-align:center;">
+            Please ensure camera permissions are allowed in your browser settings. You can also use the "Upload Photo & Samples" tab.
+          </p>
+        `;
       }
     }
 
     function changeCameraDevice() {
-      if (stream) stream.getTracks().forEach(t => t.stop());
+      if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
       startViewfinder();
     }
 
-    function updateThresh(val) {
-      currentThreshold = parseFloat(val);
-      document.getElementById('threshVal').innerText = currentThreshold.toFixed(2);
-      if (currentScanResult) {
-        // Re-run deep scan on current captured frame
-        runDeepScanOnDataUrl(currentScanResult.images.original);
+    function changeEngine(val) {
+      const badge = document.getElementById('deviceBadge');
+      if (val === 'gentle') {
+        badge.innerText = 'CPU GENTLE • 0% LOAD';
+      } else {
+        badge.innerText = 'METAL GPU • FAST';
       }
     }
 
-    async function triggerDeepScan() {
-      if (!video || video.videoWidth === 0) {
-        alert("Camera viewfinder is not ready yet.");
+    // Live AI Stream Loop: Adaptive, non-blocking real-time inspection
+    async function processLiveStreamLoop() {
+      if (!isLiveScanning || isPhotoFrozen || !video || video.readyState < 2) {
+        if (isLiveScanning && !isPhotoFrozen) {
+          setTimeout(() => requestAnimationFrame(processLiveStreamLoop), 100);
+        }
         return;
       }
 
-      // 1. Capture full uncompressed resolution frame
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+      if (isProcessingFrame) {
+        requestAnimationFrame(processLiveStreamLoop);
+        return;
+      }
 
-      // 2. Freeze viewfinder immediately (stops GPU/CPU video load)
-      document.getElementById('frozenFrameImg').src = dataUrl;
-      document.getElementById('frozenFrameImg').style.display = 'block';
-      video.style.display = 'none';
-      document.getElementById('camStatusTag').innerText = "⏸ FRAME CAPTURED";
-      document.getElementById('camStatusTag').style.color = "var(--accent-cyan)";
-      document.getElementById('btnResumeCam').style.display = 'flex';
+      isProcessingFrame = true;
+      const loopStart = performance.now();
 
-      runDeepScanOnDataUrl(dataUrl);
-    }
+      try {
+        // Render current video frame to scaled off-screen canvas for high inference throughput
+        const vw = video.videoWidth || 640;
+        const vh = video.videoHeight || 480;
+        const targetWidth = Math.min(640, vw);
+        const targetHeight = Math.round(vh * (targetWidth / vw));
 
-    function updateEngineTag(mode) {
-      const title = document.getElementById('scanStatusTitle');
-      const desc = document.getElementById('scanStatusDesc');
-      const badge = document.getElementById('deviceBadge');
-      if (mode === 'gentle') {
-        if (title) title.innerText = "🍃 Gentle Deep Scan In Progress...";
-        if (desc) desc.innerText = "Letting the model take its time (~2-3s) for sub-millimeter precision with 0% device strain.";
-        if (badge) badge.innerText = "CPU GENTLE • 0% STRAIN";
-      } else {
-        if (title) title.innerText = "⚡ Turbo GPU Scan In Progress...";
-        if (desc) desc.innerText = "Running multi-tile acceleration on Apple Metal GPU (~0.5s).";
-        if (badge) badge.innerText = "APPLE METAL GPU";
+        offscreenCanvas.width = targetWidth;
+        offscreenCanvas.height = targetHeight;
+        offscreenCtx.drawImage(video, 0, 0, targetWidth, targetHeight);
+
+        const frameDataUrl = offscreenCanvas.toDataURL("image/jpeg", 0.75);
+        const engine = document.getElementById('engineSelect')?.value || 'fast';
+        const useClahe = document.getElementById('claheChk')?.checked || false;
+
+        const resp = await fetch("/api/predict_frame", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image: frameDataUrl,
+            threshold: currentThreshold,
+            use_clahe: useClahe,
+            engine: engine,
+            view_mode: currentViewMode === 'split' ? 'overlay' : currentViewMode
+          })
+        });
+
+        if (resp.ok) {
+          const res = await resp.json();
+          if (res.success && isLiveScanning && !isPhotoFrozen) {
+            currentLiveResult = res;
+
+            // Update live AI view
+            liveImg.src = res.image;
+            liveImg.style.display = 'block';
+            pinpointImg.style.display = 'none';
+            splitViewer.style.display = 'none';
+            document.getElementById('resultPlaceholder').style.display = 'none';
+
+            // Calculate rolling FPS
+            const now = performance.now();
+            const elapsed = now - loopStart;
+            frameTimes.push(elapsed);
+            if (frameTimes.length > 8) frameTimes.shift();
+            const avgTime = frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length;
+            const approxFps = (1000 / Math.max(avgTime, 1)).toFixed(1);
+
+            // Update Metrics HUD
+            updateLiveHUD(res, approxFps);
+
+            // Audio Alert chime on newly detected crack
+            if (res.crack_detected) {
+              if (!hadCrackLastFrame) playAlertChime();
+              hadCrackLastFrame = true;
+            } else {
+              hadCrackLastFrame = false;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Live frame inference warning:", err);
+      } finally {
+        isProcessingFrame = false;
+        if (isLiveScanning && !isPhotoFrozen) {
+          requestAnimationFrame(processLiveStreamLoop);
+        }
       }
     }
 
-    async function runDeepScanOnDataUrl(dataUrl) {
+    // Update Live Metrics HUD
+    function updateLiveHUD(res, fps) {
+      const vBox = document.getElementById('verdictContainer');
+      const liveStatus = document.getElementById('liveStatusBadge');
+
+      if (res.crack_detected) {
+        vBox.innerHTML = `<span class="verdict-badge verdict-crack">⚠️ CRACK DETECTED (${res.crack_percentage}%)</span>`;
+        liveStatus.innerText = `● CRACK IN FOOTAGE`;
+        liveStatus.style.color = 'var(--accent-red)';
+      } else {
+        vBox.innerHTML = `<span class="verdict-badge verdict-clean">🟢 SOUND SURFACE</span>`;
+        liveStatus.innerText = `● LIVE AI CLEAN`;
+        liveStatus.style.color = 'var(--accent-green)';
+      }
+
+      document.getElementById('statConfidence').innerText = `${(res.peak_probability * 100).toFixed(1)}%`;
+      document.getElementById('statCoverage').innerText = `${res.crack_percentage}% (${res.num_crack_instances} flaw${res.num_crack_instances === 1 ? '' : 's'})`;
+      document.getElementById('statLatency').innerText = `${res.inference_time_ms} ms`;
+      document.getElementById('statFps').innerText = `${fps} FPS`;
+    }
+
+    // Toggle Live AI stream checking on / off
+    function toggleLiveAI() {
+      if (isPhotoFrozen) {
+        resumeLiveViewfinder();
+        return;
+      }
+
+      isLiveScanning = !isLiveScanning;
+      const btn = document.getElementById('btnToggleLiveAI');
+      const icon = document.getElementById('liveAiIcon');
+      const text = document.getElementById('liveAiText');
+
+      if (isLiveScanning) {
+        btn.className = 'btn-live-toggle active';
+        icon.innerText = '⏸';
+        text.innerText = 'Live AI Checking: ON';
+        requestAnimationFrame(processLiveStreamLoop);
+      } else {
+        btn.className = 'btn-live-toggle paused';
+        icon.innerText = '▶';
+        text.innerText = 'Live AI Checking: PAUSED';
+        document.getElementById('verdictContainer').innerHTML = `<span class="verdict-badge verdict-ready">Live AI Paused</span>`;
+      }
+    }
+
+    // Capture High-Resolution Photo for Deep Precision Scanning
+    async function capturePhotoForDeepScan() {
+      if (!video || video.videoWidth === 0) {
+        alert("Camera viewfinder is still initializing. Please wait a second.");
+        return;
+      }
+
+      // 1. Freeze live scanning immediately
+      isLiveScanning = false;
+      isPhotoFrozen = true;
+
+      // 2. Capture FULL uncompressed sensor resolution from video
+      offscreenCanvas.width = video.videoWidth;
+      offscreenCanvas.height = video.videoHeight;
+      offscreenCtx.drawImage(video, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
+      const highResDataUrl = offscreenCanvas.toDataURL("image/jpeg", 0.95);
+
+      // 3. Freeze Left Viewfinder UI
+      frozenImg.src = highResDataUrl;
+      frozenImg.style.display = 'block';
+      video.style.display = 'none';
+      document.getElementById('reticleBox').style.display = 'none';
+      document.getElementById('camStatusTag').className = 'tag-captured';
+      document.getElementById('camStatusTag').innerText = "⏸ CAPTURED HIGH-RES PHOTO";
+
+      // 4. Update action buttons
+      document.getElementById('btnResumeLiveCam').style.display = 'flex';
+      document.getElementById('btnToggleLiveAI').className = 'btn-live-toggle paused';
+      document.getElementById('btnToggleLiveAI').innerText = '▶ Live Footage Paused';
+      document.getElementById('rightTitleMode').innerText = 'Deep Precision Scan';
+
+      // Enable split view button
+      document.getElementById('vmSplit').style.display = 'inline-block';
+
+      // 5. Run deep scan
+      await executeDeepScan(highResDataUrl);
+    }
+
+    // Execute Deep Scan with multi-tile overlapping inference
+    async function executeDeepScan(dataUrl) {
       const overlay = document.getElementById('scanningOverlay');
-      const placeholder = document.getElementById('resultPlaceholder');
-      const resultImg = document.getElementById('pinpointResultImg');
-      const splitViewer = document.getElementById('splitViewer');
-      const btnScan = document.getElementById('btnDeepScan');
+      const btnCapture = document.getElementById('btnCapturePhoto');
 
       overlay.style.display = 'flex';
-      placeholder.style.display = 'none';
-      resultImg.style.display = 'none';
-      splitViewer.style.display = 'none';
-      btnScan.disabled = true;
+      btnCapture.disabled = true;
 
-      const engineMode = document.getElementById('engineSelect') ? document.getElementById('engineSelect').value : 'gentle';
-      const useClahe = document.getElementById('claheChk').checked;
+      const engineMode = document.getElementById('engineSelect')?.value || 'fast';
+      const useClahe = document.getElementById('claheChk')?.checked || false;
 
       try {
         const resp = await fetch("/api/deep_scan", {
@@ -624,44 +1037,57 @@
             image: dataUrl,
             threshold: currentThreshold,
             use_clahe: useClahe,
-            engine: engineMode
+            engine: engineMode,
+            use_tta: false
           })
         });
 
         const data = await resp.json();
         currentScanResult = data;
 
-        // Render UI
-        updateInspectionUI(data);
+        // Render full deep inspection output
+        renderDeepScanUI(data);
+
       } catch (err) {
         alert("Deep Scan Error: " + err.message);
       } finally {
         overlay.style.display = 'none';
-        btnScan.disabled = false;
+        btnCapture.disabled = false;
       }
     }
 
-    function updateInspectionUI(data) {
-      // 1. Metrics HUD
+    // Render Deep Scan UI and Inventory Breakdown
+    function renderDeepScanUI(data) {
+      // 1. Top Global HUD
       const vBox = document.getElementById('verdictContainer');
+      const liveStatus = document.getElementById('liveStatusBadge');
+      liveStatus.innerText = '● PHOTO DEEP SCAN';
+      liveStatus.style.color = 'var(--accent-cyan)';
+
       if (data.crack_detected) {
         vBox.innerHTML = `<span class="verdict-badge verdict-crack">⚠️ CRACK DETECTED (${data.crack_percentage}%)</span>`;
       } else {
-        vBox.innerHTML = `<span class="verdict-badge verdict-clean">🟢 SOUND SURFACE</span>`;
+        vBox.innerHTML = `<span class="verdict-badge verdict-clean">🟢 SOUND SURFACE (CLEAN)</span>`;
       }
 
-      document.getElementById('statInstances').innerText = `${data.num_crack_instances} Defect${data.num_crack_instances === 1 ? '' : 's'}`;
+      document.getElementById('statConfidence').innerText = `${(data.peak_probability * 100).toFixed(1)}%`;
       document.getElementById('statCoverage').innerText = `${data.crack_percentage}% (${data.crack_pixels.toLocaleString()} px)`;
       document.getElementById('statLatency').innerText = `${data.inference_time_ms} ms`;
+      document.getElementById('statFps').innerText = `Multi-Tile`;
 
-      // 2. Images
-      const resultImg = document.getElementById('pinpointResultImg');
-      resultImg.src = data.images.annotated;
-      resultImg.style.display = 'block';
+      // 2. Setup images for display
+      liveImg.style.display = 'none';
+      pinpointImg.src = data.images.annotated;
+      pinpointImg.style.display = 'block';
 
+      // Setup split viewer images
+      splitOrigImg.src = data.images.original;
+      splitAnnoImg.src = data.images.annotated;
+
+      // Show download button
       document.getElementById('btnDownload').style.display = 'flex';
 
-      // 3. Crack Inventory Table
+      // 3. Render Crack Inventory Table
       const tableCard = document.getElementById('crackTableCard');
       const tableBody = document.getElementById('crackTableBody');
       tableBody.innerHTML = '';
@@ -674,11 +1100,11 @@
           const row = document.createElement('tr');
           let sevClass = c.severity_code === 'high' ? 'tag-severe' : (c.severity_code === 'medium' ? 'tag-moderate' : 'tag-minor');
           row.innerHTML = `
-            <td><strong style="color:var(--accent-cyan);">#${c.id}</strong></td>
+            <td><strong style="color:var(--accent-cyan); font-family:'JetBrains Mono', monospace;">#${c.id}</strong></td>
             <td><strong>${c.location}</strong></td>
-            <td style="font-family: monospace;">(${c.x}, ${c.y}) [${c.width} × ${c.height} px]</td>
+            <td style="font-family:'JetBrains Mono', monospace;">(${c.x}, ${c.y}) [${c.width} × ${c.height} px]</td>
             <td>${c.area_pixels.toLocaleString()} px (${c.area_pct}%)</td>
-            <td><span style="font-family: monospace; font-weight:700;">${c.confidence}%</span></td>
+            <td><span style="font-family:'JetBrains Mono', monospace; font-weight:700;">${c.confidence}%</span></td>
             <td><span class="${sevClass}">${c.severity}</span></td>
           `;
           tableBody.appendChild(row);
@@ -688,43 +1114,164 @@
       }
     }
 
-    function resumeCamera() {
-      document.getElementById('frozenFrameImg').style.display = 'none';
+    // Resume Live Viewfinder
+    function resumeLiveViewfinder() {
+      isPhotoFrozen = false;
+      isLiveScanning = true;
+
+      frozenImg.style.display = 'none';
       video.style.display = 'block';
-      document.getElementById('camStatusTag').innerText = "● LIVE VIEWFINDER";
-      document.getElementById('camStatusTag').style.color = "var(--accent-green)";
-      document.getElementById('btnResumeCam').style.display = 'none';
+      document.getElementById('reticleBox').style.display = 'block';
+      document.getElementById('camStatusTag').className = 'tag-live';
+      document.getElementById('camStatusTag').innerText = "● LIVE FEED";
+
+      document.getElementById('btnResumeLiveCam').style.display = 'none';
+      document.getElementById('btnToggleLiveAI').className = 'btn-live-toggle active';
+      document.getElementById('btnToggleLiveAI').innerHTML = `<span id="liveAiIcon">⏸</span> <span id="liveAiText">Live AI Checking: ON</span>`;
+      document.getElementById('rightTitleMode').innerText = 'Live Footage AI Stream';
+      document.getElementById('vmSplit').style.display = 'none';
+
+      // Switch right view back to live
+      liveImg.style.display = 'block';
+      pinpointImg.style.display = 'none';
+      splitViewer.style.display = 'none';
+
+      requestAnimationFrame(processLiveStreamLoop);
     }
 
-    function downloadAnnotatedResult() {
-      if (!currentScanResult) return;
-      const a = document.createElement('a');
-      a.href = currentScanResult.images.annotated;
-      a.download = `crack_deep_scan_${Date.now()}.jpg`;
-      a.click();
+      document.getElementById('btnResumeLiveCam').style.display = 'none';
+      document.getElementById('btnToggleLiveAI').className = 'btn-live-toggle active';
+      document.getElementById('btnToggleLiveAI').innerHTML = `<span id="liveAiIcon">⏸</span> <span id="liveAiText">Live AI Checking: ON</span>`;
+      document.getElementById('rightTitleMode').innerText = 'Live Footage AI Stream';
+      document.getElementById('vmSplit').style.display = 'none';
+
+      // Switch right view back to live
+      liveImg.style.display = 'block';
+      pinpointImg.style.display = 'none';
+      splitViewer.style.display = 'none';
+
+      requestAnimationFrame(processLiveStreamLoop);
     }
 
-    function switchMode(mode) {
-      appMode = mode;
-      document.getElementById('tabCamera').classList.toggle('active', mode === 'camera');
-      document.getElementById('tabUpload').classList.toggle('active', mode === 'upload');
+    // View Mode Switcher
+    function setViewMode(mode) {
+      currentViewMode = mode;
+      document.querySelectorAll('.view-mode-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`vm${mode.charAt(0).toUpperCase() + mode.slice(1).replace(/_([a-z])/g, g => g[1].toUpperCase())}`);
+      if (activeBtn) activeBtn.classList.add('active');
 
-      document.getElementById('cameraViewSection').style.display = mode === 'camera' ? 'block' : 'none';
-      document.getElementById('uploadViewSection').style.display = mode === 'upload' ? 'block' : 'none';
-
-      if (mode === 'camera') {
-        if (!stream) startViewfinder();
+      if (isPhotoFrozen && currentScanResult) {
+        // Deep scan photo mode
+        if (mode === 'split') {
+          pinpointImg.style.display = 'none';
+          liveImg.style.display = 'none';
+          splitViewer.style.display = 'block';
+        } else {
+          splitViewer.style.display = 'none';
+          liveImg.style.display = 'none';
+          pinpointImg.style.display = 'block';
+          if (mode === 'heatmap') {
+            pinpointImg.src = currentScanResult.images.heatmap;
+          } else if (mode === 'mask') {
+            pinpointImg.src = currentScanResult.images.mask;
+          } else if (mode === 'side_by_side') {
+            pinpointImg.src = currentScanResult.images.comparison;
+          } else {
+            pinpointImg.src = currentScanResult.images.annotated;
+          }
+        }
       }
     }
 
+    // Interactive Before/After Split Viewer Handle Dragging
+    function initSplitDrag() {
+      let isDragging = false;
+
+      function updateSplitPosition(clientX) {
+        const rect = splitViewer.getBoundingClientRect();
+        let posX = clientX - rect.left;
+        posX = Math.max(0, Math.min(rect.width, posX));
+        const pct = (posX / rect.width) * 100;
+
+        splitOverlay.style.width = `${pct}%`;
+        splitHandle.style.left = `${pct}%`;
+      }
+
+      splitViewer.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        updateSplitPosition(e.clientX);
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        updateSplitPosition(e.clientX);
+      });
+
+      window.addEventListener('mouseup', () => { isDragging = false; });
+
+      // Touch events for mobile/tablet
+      splitViewer.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        if (e.touches[0]) updateSplitPosition(e.touches[0].clientX);
+      });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!isDragging || !e.touches[0]) return;
+        updateSplitPosition(e.touches[0].clientX);
+      });
+
+      window.addEventListener('touchend', () => { isDragging = false; });
+    }
+
+    // Threshold sensitivity updates
+    function updateThreshold(val) {
+      currentThreshold = parseFloat(val);
+      document.getElementById('threshVal').innerText = currentThreshold.toFixed(2);
+      if (isPhotoFrozen && currentScanResult) {
+        // Re-run deep scan with new sensitivity threshold on frozen photo
+        executeDeepScan(currentScanResult.images.original);
+      }
+    }
+
+    // Download Annotated Report
+    function downloadCurrentInspection() {
+      if (!currentScanResult) return;
+      const a = document.createElement('a');
+      a.href = currentScanResult.images.annotated;
+      a.download = `crack_inspection_deep_scan_${Date.now()}.jpg`;
+      a.click();
+    }
+
+    // Main Tab Switching
+    function switchMainTab(tab) {
+      appMode = tab;
+      document.getElementById('tabCamera').classList.toggle('active', tab === 'camera');
+      document.getElementById('tabUpload').classList.toggle('active', tab === 'upload');
+
+      document.getElementById('cameraViewSection').style.display = tab === 'camera' ? 'block' : 'none';
+      document.getElementById('uploadViewSection').style.display = tab === 'upload' ? 'block' : 'none';
+
+      if (tab === 'camera') {
+        if (!mediaStream) startViewfinder();
+      }
+    }
+
+    // Benchmark Sample Scanner
     async function runSampleDeepScan(sampleName) {
-      switchMode('camera'); // Switch to view results
-      document.getElementById('btnResumeCam').style.display = 'flex';
+      switchMainTab('camera');
+      isLiveScanning = false;
+      isPhotoFrozen = true;
+
       const overlay = document.getElementById('scanningOverlay');
       overlay.style.display = 'flex';
+      document.getElementById('btnResumeLiveCam').style.display = 'flex';
+      document.getElementById('vmSplit').style.display = 'inline-block';
+      document.getElementById('camStatusTag').className = 'tag-captured';
+      document.getElementById('camStatusTag').innerText = "SAMPLE BENCHMARK";
+
+      const engineMode = document.getElementById('engineSelect')?.value || 'fast';
 
       try {
-        const engineMode = document.getElementById('engineSelect') ? document.getElementById('engineSelect').value : 'gentle';
         const resp = await fetch("/api/deep_scan", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -734,16 +1281,18 @@
             engine: engineMode
           })
         });
+
         const data = await resp.json();
         currentScanResult = data;
 
-        // Show sample in frozen window
-        document.getElementById('frozenFrameImg').src = data.images.original;
-        document.getElementById('frozenFrameImg').style.display = 'block';
+        // Display sample in left viewport
+        frozenImg.src = data.images.original;
+        frozenImg.style.display = 'block';
         video.style.display = 'none';
-        document.getElementById('camStatusTag').innerText = "SAMPLE: " + sampleName;
+        document.getElementById('reticleBox').style.display = 'none';
 
-        updateInspectionUI(data);
+        renderDeepScanUI(data);
+
       } catch (err) {
         alert("Sample scan error: " + err.message);
       } finally {
@@ -751,23 +1300,38 @@
       }
     }
 
-    // Drag and drop for upload section
+    // File Upload Handler
     const fileInput = document.getElementById('fileInput');
     fileInput.onchange = (e) => {
-      if (e.target.files && e.target.files[0]) handleUploadedFile(e.target.files[0]);
+      if (e.target.files && e.target.files[0]) handleUploadedImage(e.target.files[0]);
     };
 
-    function handleUploadedFile(file) {
+    const dropzone = document.getElementById('dropzone');
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.style.borderColor = 'var(--accent-cyan)'; });
+    dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = 'rgba(255,255,255,0.16)'; });
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.style.borderColor = 'rgba(255,255,255,0.16)';
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) handleUploadedImage(e.dataTransfer.files[0]);
+    });
+
+    function handleUploadedImage(file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        switchMode('camera');
-        document.getElementById('frozenFrameImg').src = e.target.result;
-        document.getElementById('frozenFrameImg').style.display = 'block';
-        video.style.display = 'none';
-        document.getElementById('camStatusTag').innerText = "UPLOADED: " + file.name;
-        document.getElementById('btnResumeCam').style.display = 'flex';
+        switchMainTab('camera');
+        isLiveScanning = false;
+        isPhotoFrozen = true;
 
-        runDeepScanOnDataUrl(e.target.result);
+        frozenImg.src = e.target.result;
+        frozenImg.style.display = 'block';
+        video.style.display = 'none';
+        document.getElementById('reticleBox').style.display = 'none';
+        document.getElementById('camStatusTag').className = 'tag-captured';
+        document.getElementById('camStatusTag').innerText = "UPLOADED PHOTO: " + file.name;
+        document.getElementById('btnResumeLiveCam').style.display = 'flex';
+        document.getElementById('vmSplit').style.display = 'inline-block';
+
+        executeDeepScan(e.target.result);
       };
       reader.readAsDataURL(file);
     }

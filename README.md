@@ -54,16 +54,22 @@ Runs inference on `sample_images/pure_crack_01.jpg` and saves `quick_test_output
 python3 quick_test.py
 ```
 
-### 3. Launch the Interactive Web Dashboard with Live Camera
+### 3. Launch the Real-Time Web Dashboard (Live Footage AI + Deep Photo Scan)
 ```bash
 python3 web_app.py
 ```
 Open **[http://localhost:5050](http://localhost:5050)** in your browser:
-- Click **"Open Live Camera"** to start real-time crack inspection from your webcam!
-- Choose between camera overlays, heatmaps, and side-by-side view modes.
-- Toggle CLAHE contrast enhancement for uneven lighting.
-- Freeze any frame to inspect details.
-- Switch to **"Image & Batch Mode"** to drag-and-drop photos or use the Before/After split comparison slider.
+- **Live Footage AI Stream**: The UNet-VGG16 model continuously analyzes live video footage from your camera in real time (~190ms / ~5.3 FPS on Apple Silicon Metal GPU).
+  - Displays real-time crack segmentation overlays, boundary contours, and live bounding boxes.
+  - Live HUD verdict: `⚠️ CRACK DETECTED` (with damage % and confidence) vs `🟢 SOUND SURFACE`.
+  - Audio alert chime when cracks enter the frame.
+  - Cycle live view modes: `Overlay`, `Dual Side-by-Side`, `Heatmap`, and `Binary Mask`.
+- **📸 Take Picture & Deep Scan Button**:
+  - Captures full-resolution uncompressed photo from the camera.
+  - Executes multi-tile overlapping deep scan with sub-millimeter flaw localization.
+  - Populates the **Pinpointed Flaw Locations & Structural Severity Inventory** table (coordinates, pixel area, severity rating).
+  - Interactive **Before / After Split Reveal Slider** to peel and compare raw photo vs AI detected flaws.
+  - Export and download annotated inspection report.
 
 ### 4. Run Desktop Native Camera Inspector (No Browser Needed)
 If you prefer a native desktop window with OpenCV:
