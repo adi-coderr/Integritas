@@ -48,6 +48,7 @@ except Exception:
 
 import json
 import math
+import re
 import urllib.request
 from typing import Optional
 
@@ -249,25 +250,128 @@ class MPU6050Manager:
             self.connection_type = "disconnected"
             self.connection_target = ""
 
+    @staticmethod
+    def parse_line(line: str) -> Optional[dict]:
+        """
+        Universally parses telemetry strings from ESP32:
+        1. JSON strings: {"pitch":..,"roll":..,"ax":..,"ay":..,"az":..,"gx":..,"gy":..,"gz":..,"temp":..}
+        2. Human-readable text format (Adafruit/Standard Arduino):
+           "Accel g: X= 0.97 Y= 0.05 Z= -0.20 | Gyro dps: X= 2.9 Y= 1.9 Z= 0.2 | Temp= 42.2 C | |a|=1.00 g"
+        3. Delimited comma or space separated numbers: ax, ay, az, gx, gy, gz, temp
+        """
+        if not line:
+            return None
+        line = line.strip()
+        if not line:
+            return None
+
+        # 1. JSON format
+        start = line.find("{")
+        end = line.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            try:
+                return json.loads(line[start : end + 1])
+            except Exception:
+                pass
+
+        # 2. Human-readable format
+        acc_m = re.search(r"Accel(?:erometer)?(?:\s*g)?:\s*X=\s*([-\d\.]+)\s+Y=\s*([-\d\.]+)\s+Z=\s*([-\d\.]+)", line, re.I)
+        gyro_m = re.search(r"Gyro(?:scope)?(?:\s*dps)?:\s*X=\s*([-\d\.]+)\s+Y=\s*([-\d\.]+)\s+Z=\s*([-\d\.]+)", line, re.I)
+        temp_m = re.search(r"Temp(?:erature)?\s*=\s*([-\d\.]+)", line, re.I)
+
+        if acc_m:
+            ax = float(acc_m.group(1))
+            ay = float(acc_m.group(2))
+            az = float(acc_m.group(3))
+            gx = float(gyro_m.group(1)) if gyro_m else 0.0
+            gy = float(gyro_m.group(2)) if gyro_m else 0.0
+            gz = float(gyro_m.group(3)) if gyro_m else 0.0
+            temp = float(temp_m.group(1)) if temp_m else 25.0
+
+            pitch = math.atan2(ay, math.sqrt(ax * ax + az * az)) * 180.0 / math.pi
+            roll = math.atan2(-ax, az) * 180.0 / math.pi
+            total_g = math.sqrt(ax * ax + ay * ay + az * az)
+
+            return {
+                "ax": ax, "ay": ay, "az": az,
+                "gx": gx, "gy": gy, "gz": gz,
+                "temp": temp,
+                "pitch": pitch,
+                "roll": roll,
+                "total_g": total_g,
+                "shock": abs(total_g - 1.0) > 0.45
+            }
+
+        # 3. Delimited numeric values: "ax, ay, az, gx, gy, gz, [temp]"
+        parts = re.split(r"[\s,;\t|]+", line)
+        num_parts = []
+        for p in parts:
+            try:
+                num_parts.append(float(p))
+            except ValueError:
+                pass
+        if len(num_parts) >= 6:
+            ax, ay, az, gx, gy, gz = num_parts[:6]
+            if abs(ax) > 100 or abs(ay) > 100 or abs(az) > 100:
+                ax /= 16384.0
+                ay /= 16384.0
+                az /= 16384.0
+                gx /= 131.0
+                gy /= 131.0
+                gz /= 131.0
+            temp = num_parts[6] if len(num_parts) > 6 else 25.0
+            pitch = math.atan2(ay, math.sqrt(ax * ax + az * az)) * 180.0 / math.pi
+            roll = math.atan2(-ax, az) * 180.0 / math.pi
+            total_g = math.sqrt(ax * ax + ay * ay + az * az)
+            return {
+                "ax": ax, "ay": ay, "az": az,
+                "gx": gx, "gy": gy, "gz": gz,
+                "temp": temp,
+                "pitch": pitch,
+                "roll": roll,
+                "total_g": total_g,
+                "shock": abs(total_g - 1.0) > 0.45
+            }
+
+        return None
+
     def _serial_worker(self, port: str, baud: int):
-        try:
-            ser = serial.Serial(port, baudrate=baud, timeout=1.0)
-            self.serial_obj = ser
-            with self.lock:
-                self.connected = True
-            while not self.stop_event.is_set():
-                line = ser.readline().decode("utf-8", errors="ignore").strip()
-                if line.startswith("{") and line.endswith("}"):
-                    try:
-                        data = json.loads(line)
+        retry_delay = 1.0
+        while not self.stop_event.is_set():
+            ser = None
+            try:
+                ser = serial.Serial(port, baudrate=baud, timeout=1.0)
+                self.serial_obj = ser
+                with self.lock:
+                    self.connected = True
+                    self.connection_target = port
+                    self.connection_type = "serial"
+                print(f"[MPU-6050] Connected to serial port {port} @ {baud} baud")
+                retry_delay = 1.0
+                while not self.stop_event.is_set():
+                    line = ser.readline().decode("utf-8", errors="ignore").strip()
+                    if not line:
+                        continue
+                    data = self.parse_line(line)
+                    if data:
                         self.update_reading(data, source="serial")
-                    except json.JSONDecodeError:
+            except Exception as e:
+                # Connection interrupted or port temporarily busy
+                pass
+            finally:
+                if ser:
+                    try:
+                        ser.close()
+                    except Exception:
                         pass
-        except Exception as e:
-            print(f"[MPU-6050] Serial worker connection ended: {e}")
-        finally:
-            with self.lock:
-                self.connected = False
+                self.serial_obj = None
+                with self.lock:
+                    self.connected = False
+
+            # If user has not clicked disconnect, retry connecting gracefully
+            if not self.stop_event.is_set():
+                time.sleep(retry_delay)
+                retry_delay = min(4.0, retry_delay * 1.5)
 
     def _wifi_worker(self, url: str):
         with self.lock:
@@ -341,11 +445,18 @@ class MPU6050Manager:
         if serial_ports:
             try:
                 for p in serial_ports.comports():
+                    desc = p.description or ""
+                    hwid = p.hwid or ""
+                    dev = p.device or ""
+                    is_usb = any(k in (desc + " " + dev + " " + hwid).lower() for k in ("usb", "cp210", "ch340", "ch341", "ftdi", "uart", "serial"))
                     ports.append({
-                        "port": p.device,
-                        "description": p.description,
-                        "hwid": p.hwid or ""
+                        "port": dev,
+                        "description": desc,
+                        "hwid": hwid,
+                        "is_usb": is_usb
                     })
+                # Sort USB devices to the top of the list
+                ports.sort(key=lambda x: not x["is_usb"])
             except Exception:
                 pass
         return ports
@@ -816,6 +927,10 @@ def feed_mpu():
         data = request.get_json(force=True, silent=True)
         if not data:
             data = request.form.to_dict()
+        if not data:
+            raw_text = request.get_data(as_text=True)
+            if raw_text:
+                data = mpu_manager.parse_line(raw_text)
     else:
         data = request.args.to_dict()
 
