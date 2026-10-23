@@ -16,46 +16,58 @@
       --font-sans: "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
-      --bg-dark: #05070e;
-      --bg-surface: #0a0e1a;
-      --card-bg: rgba(12, 17, 30, 0.78);
-      --card-bg-hover: rgba(16, 23, 40, 0.9);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --card-border-subtle: rgba(255, 255, 255, 0.04);
-      --card-border-glow: rgba(0, 210, 255, 0.35);
+      /* =========================================================================
+         Black, Beige & Dark Beige Harmonious Color System
+         ========================================================================= */
+      --bg-dark: #0a0908;
+      --bg-surface: #12100e;
+      --card-bg: rgba(18, 16, 13, 0.85);
+      --card-bg-hover: rgba(28, 24, 20, 0.95);
+      --card-border: rgba(222, 200, 171, 0.12);
+      --card-border-subtle: rgba(222, 200, 171, 0.06);
+      --card-border-glow: rgba(222, 200, 171, 0.35);
 
-      --accent-cyan: #00d2ff;
-      --accent-blue: #38bdf8;
-      --accent-indigo: #6366f1;
-      --accent-purple: #8b5cf6;
-      --accent-red: #ff2a6d;
-      --accent-green: #10b981;
-      --accent-yellow: #f59e0b;
+      /* Beige Palette Hierarchy */
+      --beige-light: #f7f2ea;
+      --beige-base: #dec8ab;
+      --beige-mid: #c4ad8e;
+      --beige-dark: #968065;
+      --beige-deeper: #5c4e3d;
+      --beige-dim: rgba(222, 200, 171, 0.12);
 
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
+      /* Semantic Accents calibrated to Beige Theme */
+      --accent-cyan: #dec8ab;      /* Primary Refined Beige */
+      --accent-blue: #c4ad8e;      /* Soft Light Beige */
+      --accent-indigo: #968065;    /* Dark Beige / Earthy Bronze */
+      --accent-purple: #b59e82;    /* Warm Taupe Beige */
+      --accent-red: #f43f5e;       /* Structural Defect Alert */
+      --accent-green: #34d399;     /* Nominal / Clear Operational State */
+      --accent-yellow: #eab308;    /* Advisory / Minor Alert */
+
+      --text-main: #f7f2ea;
+      --text-muted: #b8a896;
+      --text-dim: #7d6f5f;
 
       --radius-xl: 16px;
       --radius-lg: 12px;
       --radius-md: 8px;
       --radius-sm: 6px;
 
-      --shadow-card: 0 12px 32px -4px rgba(0, 0, 0, 0.6), 0 4px 12px -2px rgba(0, 0, 0, 0.3);
-      --shadow-glow: 0 0 24px rgba(0, 210, 255, 0.22);
+      --shadow-card: 0 12px 32px -4px rgba(0, 0, 0, 0.75), 0 4px 12px -2px rgba(0, 0, 0, 0.45);
+      --shadow-glow: 0 0 24px rgba(222, 200, 171, 0.18);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #05070e; }
+    ::-webkit-scrollbar-track { background: #0a0908; }
     ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.16);
+      background: rgba(222, 200, 171, 0.2);
       border-radius: 6px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(222, 200, 171, 0.38);
     }
 
     body {
@@ -65,9 +77,9 @@
       text-rendering: optimizeLegibility;
       background-color: var(--bg-dark);
       background-image:
-        radial-gradient(ellipse 900px 500px at 15% 0%, rgba(0, 210, 255, 0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 800px 450px at 85% 10%, rgba(139, 92, 246, 0.07) 0%, transparent 55%),
-        radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+        radial-gradient(ellipse 900px 500px at 15% 0%, rgba(222, 200, 171, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 800px 450px at 85% 10%, rgba(150, 128, 101, 0.07) 0%, transparent 55%),
+        radial-gradient(rgba(222, 200, 171, 0.04) 1px, transparent 1px);
       background-size: 100% 100%, 100% 100%, 24px 24px;
       background-attachment: fixed;
       color: var(--text-main);
@@ -86,23 +98,23 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(5, 7, 14, 0.88);
+      background: rgba(10, 9, 8, 0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(222, 200, 171, 0.1);
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
     }
 
     .brand { display: flex; align-items: center; gap: 14px; }
     .brand-icon {
       width: 40px; height: 40px; border-radius: 10px;
-      background: linear-gradient(135deg, rgba(0, 210, 255, 0.18), rgba(99, 102, 241, 0.25));
-      border: 1px solid rgba(0, 210, 255, 0.45);
+      background: linear-gradient(135deg, rgba(222, 200, 171, 0.2), rgba(150, 128, 101, 0.25));
+      border: 1px solid rgba(222, 200, 171, 0.4);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 18px rgba(0, 210, 255, 0.3);
+      box-shadow: 0 0 16px rgba(222, 200, 171, 0.2);
       transition: transform 0.2s ease;
     }
     .brand-icon svg {
@@ -127,8 +139,8 @@
 
     .header-right { display: flex; align-items: center; gap: 14px; }
     .nav-tabs {
-      display: flex; background: rgba(8, 12, 22, 0.7);
-      padding: 4px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex; background: rgba(18, 16, 13, 0.9);
+      padding: 4px; border-radius: 24px; border: 1px solid rgba(222, 200, 171, 0.12);
     }
     .nav-tab {
       padding: 7px 18px; border-radius: 18px; font-size: 0.82rem; font-weight: 500;
@@ -136,11 +148,11 @@
       display: flex; align-items: center; gap: 8px; transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
-    .nav-tab:hover { color: #ffffff; }
+    .nav-tab:hover { color: var(--text-main); }
     .nav-tab.active {
-      background: linear-gradient(135deg, rgba(0, 210, 255, 0.18), rgba(99, 102, 241, 0.22));
-      color: #ffffff; border: 1px solid rgba(0, 210, 255, 0.45);
-      box-shadow: 0 2px 12px rgba(0, 210, 255, 0.2);
+      background: linear-gradient(135deg, rgba(222, 200, 171, 0.22), rgba(150, 128, 101, 0.28));
+      color: var(--text-main); border: 1px solid rgba(222, 200, 171, 0.45);
+      box-shadow: 0 2px 12px rgba(222, 200, 171, 0.2);
     }
     .nav-tab.active svg { stroke: var(--accent-cyan); }
 
@@ -168,19 +180,19 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(222, 200, 171, 0.08);
       position: relative; overflow: hidden;
       transition: all 0.22s ease;
     }
     .metric-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(0, 210, 255, 0.4), transparent);
+      background: linear-gradient(90deg, transparent, rgba(222, 200, 171, 0.45), transparent);
       opacity: 0.5; transition: opacity 0.2s;
     }
     .metric-card:hover {
       transform: translateY(-2px);
       border-color: var(--card-border-glow);
-      box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.65), 0 0 18px rgba(0, 210, 255, 0.12);
+      box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.75), 0 0 18px rgba(222, 200, 171, 0.15);
     }
     .metric-card:hover::before { opacity: 1; }
     .metric-header { display: flex; justify-content: space-between; align-items: center; }
@@ -191,7 +203,7 @@
     .metric-card h3 {
       font-size: 1.38rem; font-weight: 600; font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
-      color: #ffffff; letter-spacing: -0.02em;
+      color: var(--text-main); letter-spacing: -0.02em;
     }
 
     .verdict-badge {
@@ -202,22 +214,22 @@
       font-family: var(--font-sans);
     }
     .verdict-crack {
-      background: rgba(255, 42, 109, 0.18);
-      border: 1px solid rgba(255, 42, 109, 0.65);
-      color: #ff3b6c; box-shadow: 0 0 16px rgba(255, 42, 109, 0.35);
+      background: rgba(244, 63, 94, 0.18);
+      border: 1px solid rgba(244, 63, 94, 0.65);
+      color: #fb7185; box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
       animation: pulse-crack-glow 1.2s infinite alternate;
     }
     @keyframes pulse-crack-glow {
-      from { border-color: rgba(255, 42, 109, 0.4); box-shadow: 0 0 10px rgba(255, 42, 109, 0.2); }
-      to { border-color: rgba(255, 42, 109, 0.9); box-shadow: 0 0 22px rgba(255, 42, 109, 0.5); }
+      from { border-color: rgba(244, 63, 94, 0.4); box-shadow: 0 0 10px rgba(244, 63, 94, 0.2); }
+      to { border-color: rgba(244, 63, 94, 0.9); box-shadow: 0 0 22px rgba(244, 63, 94, 0.5); }
     }
     .verdict-clean {
-      background: rgba(16, 185, 129, 0.14);
-      border: 1px solid rgba(16, 185, 129, 0.5);
-      color: #10b981; box-shadow: 0 0 12px rgba(16, 185, 129, 0.18);
+      background: rgba(52, 211, 153, 0.14);
+      border: 1px solid rgba(52, 211, 153, 0.5);
+      color: #34d399; box-shadow: 0 0 12px rgba(52, 211, 153, 0.18);
     }
     .verdict-ready {
-      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(222, 200, 171, 0.06); border: 1px solid rgba(222, 200, 171, 0.12);
       color: var(--text-muted);
     }
 
@@ -232,7 +244,7 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(222, 200, 171, 0.08);
       position: relative;
     }
 
@@ -242,32 +254,33 @@
     /* Hero "Take Picture & Deep Scan" Button */
     .btn-capture {
       padding: 11px 22px;
-      background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+      background: linear-gradient(135deg, #dec8ab 0%, #b89d7b 100%);
       border: none; border-radius: var(--radius-md);
-      color: #030814; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      color: #0d0c0a; font-size: 0.88rem; font-weight: 600; cursor: pointer;
       display: inline-flex; align-items: center; gap: 10px;
-      box-shadow: 0 4px 18px rgba(0, 210, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 18px rgba(184, 157, 123, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
     .btn-capture:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 26px rgba(0, 210, 255, 0.6);
+      background: linear-gradient(135deg, #e8d7be 0%, #c4ab89 100%);
+      box-shadow: 0 6px 24px rgba(222, 200, 171, 0.5);
     }
     .btn-capture:active { transform: translateY(0); }
     .btn-capture:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
     /* Direct Upload Image Trigger */
     #btnUploadImageTrigger {
-      background: rgba(255, 255, 255, 0.06) !important;
-      border: 1px solid rgba(0, 210, 255, 0.4) !important;
-      color: #ffffff !important;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+      background: rgba(222, 200, 171, 0.08) !important;
+      border: 1px solid rgba(222, 200, 171, 0.35) !important;
+      color: var(--text-main) !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
     }
     #btnUploadImageTrigger:hover {
-      background: rgba(0, 210, 255, 0.14) !important;
-      border-color: #00d2ff !important;
-      box-shadow: 0 4px 18px rgba(0, 210, 255, 0.3) !important;
+      background: rgba(222, 200, 171, 0.18) !important;
+      border-color: var(--accent-cyan) !important;
+      box-shadow: 0 4px 18px rgba(222, 200, 171, 0.3) !important;
       transform: translateY(-2px);
     }
 
@@ -277,23 +290,23 @@
       font-family: var(--font-sans);
     }
     .btn-live-toggle.active {
-      background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.45);
-      color: #10b981; box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
+      background: rgba(52, 211, 153, 0.14); border: 1px solid rgba(52, 211, 153, 0.45);
+      color: #34d399; box-shadow: 0 0 12px rgba(52, 211, 153, 0.15);
     }
     .btn-live-toggle.paused {
-      background: rgba(245, 158, 11, 0.14); border: 1px solid rgba(245, 158, 11, 0.45);
-      color: #f59e0b; box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
+      background: rgba(234, 179, 8, 0.14); border: 1px solid rgba(234, 179, 8, 0.45);
+      color: #eab308; box-shadow: 0 0 12px rgba(234, 179, 8, 0.15);
     }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(222, 200, 171, 0.06); border: 1px solid rgba(222, 200, 171, 0.14);
       color: var(--text-main); font-weight: 500; padding: 9px 16px; border-radius: var(--radius-md);
       cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem;
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
     .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.12); border-color: rgba(0, 210, 255, 0.35);
+      background: rgba(222, 200, 171, 0.14); border-color: rgba(222, 200, 171, 0.4);
       transform: translateY(-1px);
     }
 
@@ -304,20 +317,20 @@
     }
 
     select {
-      background: rgba(6, 10, 18, 0.85); border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(18, 16, 13, 0.9); border: 1px solid rgba(222, 200, 171, 0.15);
       border-radius: var(--radius-md); padding: 8px 12px; color: var(--text-main);
       font-size: 0.82rem; outline: none; cursor: pointer; transition: all 0.2s;
       font-family: var(--font-sans);
     }
-    select:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(0, 210, 255, 0.25); }
+    select:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(222, 200, 171, 0.25); }
 
     input[type="range"] {
       width: 110px; height: 6px; border-radius: 4px;
-      background: rgba(255, 255, 255, 0.12); outline: none; -webkit-appearance: none;
+      background: rgba(222, 200, 171, 0.14); outline: none; -webkit-appearance: none;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; width: 15px; height: 15px; border-radius: 50%;
-      background: var(--accent-cyan); cursor: pointer; box-shadow: 0 0 10px var(--accent-cyan);
+      background: var(--accent-cyan); cursor: pointer; box-shadow: 0 0 10px rgba(222, 200, 171, 0.6);
       transition: transform 0.15s;
     }
     input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
@@ -325,7 +338,7 @@
     input[type="checkbox"] {
       appearance: none; -webkit-appearance: none;
       width: 17px; height: 17px; border-radius: 4px;
-      background: rgba(6, 10, 18, 0.85); border: 1.5px solid rgba(255, 255, 255, 0.2);
+      background: rgba(18, 16, 13, 0.9); border: 1.5px solid rgba(222, 200, 171, 0.25);
       cursor: pointer; outline: none; position: relative;
       transition: all 0.2s ease;
     }
@@ -334,7 +347,7 @@
     }
     input[type="checkbox"]:checked::after {
       content: ''; position: absolute; top: 2px; left: 5px;
-      width: 4px; height: 8px; border: solid #030814;
+      width: 4px; height: 8px; border: solid #090807;
       border-width: 0 2px 2px 0; transform: rotate(45deg);
     }
 
@@ -368,23 +381,23 @@
     .tag-live {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #10b981; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: rgba(52, 211, 153, 0.12); border: 1px solid rgba(52, 211, 153, 0.4);
+      color: #34d399; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-captured {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: rgba(0, 210, 255, 0.14); border: 1px solid rgba(0, 210, 255, 0.45);
+      background: rgba(222, 200, 171, 0.14); border: 1px solid rgba(222, 200, 171, 0.4);
       color: var(--accent-cyan); font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
 
     /* Tactical Viewport Frame */
     .viewport {
       position: relative; width: 100%; aspect-ratio: 4 / 3;
-      background: #030509; border-radius: var(--radius-md);
+      background: #060504; border-radius: var(--radius-md);
       overflow: hidden; display: flex; align-items: center; justify-content: center;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8), 0 6px 20px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(222, 200, 171, 0.1);
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.85), 0 6px 20px rgba(0, 0, 0, 0.5);
     }
     video, img.viewport-img {
       width: 100%; height: 100%; object-fit: contain; display: block;
@@ -398,15 +411,15 @@
     }
     .hud-top { display: flex; justify-content: space-between; align-items: center; }
     .hud-chip {
-      background: rgba(5, 8, 16, 0.85); border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(14, 12, 10, 0.88); border: 1px solid rgba(222, 200, 171, 0.15);
       padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
-      color: #cbd5e1; backdrop-filter: blur(8px);
+      color: var(--text-muted); backdrop-filter: blur(8px);
     }
 
     .reticle-box {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 65%; height: 65%; border: 1px dashed rgba(0, 210, 255, 0.25);
+      width: 65%; height: 65%; border: 1px dashed rgba(222, 200, 171, 0.3);
       border-radius: 8px; pointer-events: none;
     }
     .reticle-corner {
@@ -420,8 +433,8 @@
     /* Scanning Laser Sweep */
     .laser-scanner {
       position: absolute; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent 0%, rgba(0, 210, 255, 0.75) 50%, transparent 100%);
-      box-shadow: 0 0 14px 1px #00d2ff;
+      background: linear-gradient(90deg, transparent 0%, rgba(222, 200, 171, 0.8) 50%, transparent 100%);
+      box-shadow: 0 0 14px 1px #dec8ab;
       z-index: 12; pointer-events: none;
       animation: laser-sweep 2.8s ease-in-out infinite alternate;
     }
@@ -444,7 +457,7 @@
     .split-layer-overlay {
       position: absolute; top: 0; left: 0; width: 50%; height: 100%;
       overflow: hidden; border-right: 2px solid var(--accent-cyan);
-      box-shadow: 2px 0 16px rgba(0, 210, 255, 0.5);
+      box-shadow: 2px 0 16px rgba(222, 200, 171, 0.4);
     }
     .split-layer-overlay img {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -455,24 +468,24 @@
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 36px; height: 36px; border-radius: 50%;
       background: var(--accent-cyan);
-      box-shadow: 0 0 16px var(--accent-cyan);
-      border: 2px solid #ffffff;
+      box-shadow: 0 0 16px rgba(222, 200, 171, 0.6);
+      border: 2px solid #090807;
       display: flex; align-items: center; justify-content: center;
       cursor: ew-resize; z-index: 25;
       transition: transform 0.15s ease;
     }
     .split-handle:hover { transform: translate(-50%, -50%) scale(1.1); }
-    .split-handle svg { width: 16px; height: 16px; fill: #030814; }
+    .split-handle svg { width: 16px; height: 16px; fill: #090807; }
 
     /* Scanning Radar Overlay */
     .scanning-overlay {
-      position: absolute; inset: 0; background: rgba(5, 8, 16, 0.9);
+      position: absolute; inset: 0; background: rgba(10, 9, 8, 0.92);
       backdrop-filter: blur(14px); display: none; flex-direction: column;
       align-items: center; justify-content: center; gap: 14px; z-index: 40;
     }
     .scan-radar {
       width: 56px; height: 56px; border-radius: 50%;
-      border: 3px solid rgba(0, 210, 255, 0.18);
+      border: 3px solid rgba(222, 200, 171, 0.2);
       border-top-color: var(--accent-cyan);
       animation: spin 0.75s linear infinite;
     }
@@ -480,8 +493,8 @@
 
     /* View Mode Toolbar */
     .view-mode-bar {
-      display: flex; align-items: center; gap: 4px; background: rgba(5, 8, 16, 0.6);
-      padding: 3px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex; align-items: center; gap: 4px; background: rgba(14, 12, 10, 0.7);
+      padding: 3px; border-radius: 8px; border: 1px solid rgba(222, 200, 171, 0.1);
     }
     .view-mode-btn {
       padding: 4px 11px; border-radius: 6px; font-size: 0.74rem; font-weight: 500;
@@ -489,10 +502,10 @@
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
-    .view-mode-btn:hover { color: #ffffff; }
+    .view-mode-btn:hover { color: var(--text-main); }
     .view-mode-btn.active {
-      background: rgba(0, 210, 255, 0.2);
-      color: var(--accent-cyan); border: 1px solid rgba(0, 210, 255, 0.4);
+      background: rgba(222, 200, 171, 0.2);
+      color: var(--accent-cyan); border: 1px solid rgba(222, 200, 171, 0.4);
     }
 
     /* Detected Cracks Inventory Table */
@@ -501,42 +514,42 @@
       font-family: var(--font-sans);
     }
     .crack-table th {
-      padding: 10px 14px; background: rgba(4, 7, 14, 0.6); color: var(--text-muted);
+      padding: 10px 14px; background: rgba(14, 12, 10, 0.8); color: var(--text-muted);
       text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--card-border);
       font-family: var(--font-sans); font-size: 0.7rem; font-weight: 600;
     }
     .crack-table td {
-      padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 10px 14px; border-bottom: 1px solid rgba(222, 200, 171, 0.06);
       vertical-align: middle;
     }
-    .crack-table tr:hover { background: rgba(255, 255, 255, 0.03); }
+    .crack-table tr:hover { background: rgba(222, 200, 171, 0.04); }
 
     .tag-severe {
       display: inline-block; padding: 2px 8px; border-radius: 10px;
-      background: rgba(255, 42, 109, 0.16); border: 1px solid rgba(255, 42, 109, 0.45);
-      color: #ff3b6c; font-weight: 600;
+      background: rgba(244, 63, 94, 0.16); border: 1px solid rgba(244, 63, 94, 0.45);
+      color: #fb7185; font-weight: 600;
     }
     .tag-moderate {
       display: inline-block; padding: 2px 8px; border-radius: 10px;
-      background: rgba(245, 158, 11, 0.16); border: 1px solid rgba(245, 158, 11, 0.45);
-      color: #f59e0b; font-weight: 600;
+      background: rgba(234, 179, 8, 0.16); border: 1px solid rgba(234, 179, 8, 0.45);
+      color: #eab308; font-weight: 600;
     }
     .tag-minor {
       display: inline-block; padding: 2px 8px; border-radius: 10px;
-      background: rgba(0, 210, 255, 0.14); border: 1px solid rgba(0, 210, 255, 0.35);
+      background: rgba(222, 200, 171, 0.14); border: 1px solid rgba(222, 200, 171, 0.35);
       color: var(--accent-cyan); font-weight: 600;
     }
 
     /* Dropzone for Uploads */
     .dropzone {
-      border: 2px dashed rgba(0, 210, 255, 0.3); border-radius: var(--radius-lg);
+      border: 2px dashed rgba(222, 200, 171, 0.35); border-radius: var(--radius-lg);
       padding: 38px 24px; text-align: center; cursor: pointer;
-      background: rgba(0, 210, 255, 0.02);
+      background: rgba(222, 200, 171, 0.02);
       transition: all 0.2s ease;
     }
     .dropzone:hover {
-      border-color: #00d2ff;
-      background: rgba(0, 210, 255, 0.06);
+      border-color: var(--accent-cyan);
+      background: rgba(222, 200, 171, 0.07);
       transform: translateY(-2px);
     }
 
@@ -545,13 +558,13 @@
     }
     @media (max-width: 960px) { .sample-grid { grid-template-columns: repeat(2, 1fr); } }
     .sample-btn {
-      background: rgba(14, 20, 36, 0.7); border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(18, 16, 13, 0.8); border: 1px solid rgba(222, 200, 171, 0.1);
       border-radius: var(--radius-md); padding: 12px; font-size: 0.8rem; color: var(--text-main);
       cursor: pointer; text-align: center; transition: all 0.2s ease;
     }
     .sample-btn:hover {
       border-color: var(--accent-cyan);
-      background: rgba(0, 210, 255, 0.12);
+      background: rgba(222, 200, 171, 0.12);
       transform: translateY(-2px);
     }
 
@@ -565,38 +578,38 @@
       padding: 22px;
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(222, 200, 171, 0.08);
       display: flex; flex-direction: column; gap: 18px; position: relative;
       transition: all 0.2s ease;
     }
-    .mpu-panel:hover { border-color: rgba(0, 210, 255, 0.25); }
+    .mpu-panel:hover { border-color: rgba(222, 200, 171, 0.25); }
     .mpu-panel.shock-active {
-      border-color: rgba(255, 42, 109, 0.85) !important;
-      box-shadow: 0 0 35px rgba(255, 42, 109, 0.45) !important;
+      border-color: rgba(244, 63, 94, 0.85) !important;
+      box-shadow: 0 0 35px rgba(244, 63, 94, 0.45) !important;
       animation: flash-shock-border 0.6s infinite alternate;
     }
     @keyframes flash-shock-border {
-      from { border-color: rgba(255, 42, 109, 0.4); box-shadow: 0 0 14px rgba(255, 42, 109, 0.2); }
-      to { border-color: rgba(255, 42, 109, 0.95); box-shadow: 0 0 40px rgba(255, 42, 109, 0.6); }
+      from { border-color: rgba(244, 63, 94, 0.4); box-shadow: 0 0 14px rgba(244, 63, 94, 0.2); }
+      to { border-color: rgba(244, 63, 94, 0.95); box-shadow: 0 0 40px rgba(244, 63, 94, 0.6); }
     }
 
     .mpu-header {
       display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      flex-wrap: wrap; gap: 12px; border-bottom: 1px solid rgba(222, 200, 171, 0.08);
       padding-bottom: 14px;
     }
     .mpu-header-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .mpu-icon-glow {
       width: 38px; height: 38px; border-radius: 10px;
-      background: rgba(0, 210, 255, 0.15);
-      border: 1px solid rgba(0, 210, 255, 0.4);
+      background: rgba(222, 200, 171, 0.15);
+      border: 1px solid rgba(222, 200, 171, 0.4);
       display: flex; align-items: center; justify-content: center;
     }
     .mpu-icon-glow svg { width: 20px; height: 20px; stroke: var(--accent-cyan); }
     .mpu-title-text h2 {
       font-family: var(--font-sans);
       font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em;
-      color: #ffffff; display: flex; align-items: center; gap: 8px;
+      color: var(--text-main); display: flex; align-items: center; gap: 8px;
     }
     .mpu-title-text span { font-size: 0.72rem; color: var(--text-muted); font-weight: 400; }
     .mpu-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -604,51 +617,51 @@
     .tag-level {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #10b981; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: rgba(52, 211, 153, 0.14); border: 1px solid rgba(52, 211, 153, 0.4);
+      color: #34d399; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-tilt {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: rgba(0, 210, 255, 0.14); border: 1px solid rgba(0, 210, 255, 0.35);
+      background: rgba(222, 200, 171, 0.14); border: 1px solid rgba(222, 200, 171, 0.35);
       color: var(--accent-cyan); font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-shock-alarm {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: rgba(255, 42, 109, 0.2); border: 1px solid rgba(255, 42, 109, 0.7);
-      color: #ff3b6c; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: rgba(244, 63, 94, 0.2); border: 1px solid rgba(244, 63, 94, 0.7);
+      color: #fb7185; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-shock-safe {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 500;
-      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(222, 200, 171, 0.06); border: 1px solid rgba(222, 200, 171, 0.12);
       color: var(--text-muted); font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
 
     .mpu-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .source-tab-btn {
       padding: 5px 12px; border-radius: 6px; font-size: 0.74rem; font-weight: 500;
-      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(222, 200, 171, 0.06); border: 1px solid rgba(222, 200, 171, 0.12);
       color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px;
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
-    .source-tab-btn:hover { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+    .source-tab-btn:hover { background: rgba(222, 200, 171, 0.12); color: var(--text-main); }
     .source-tab-btn.active {
-      background: rgba(0, 210, 255, 0.18);
-      border-color: rgba(0, 210, 255, 0.45); color: var(--accent-cyan);
+      background: rgba(222, 200, 171, 0.22);
+      border-color: rgba(222, 200, 171, 0.5); color: var(--accent-cyan);
     }
 
     .mpu-config-drawer {
-      background: rgba(5, 8, 16, 0.6); border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(14, 12, 10, 0.7); border: 1px solid rgba(222, 200, 171, 0.08);
       border-radius: var(--radius-md); padding: 12px 16px;
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 12px; font-size: 0.8rem;
     }
     .config-inputs { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .config-input {
-      background: rgba(4, 7, 13, 0.85); border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(10, 9, 8, 0.9); border: 1px solid rgba(222, 200, 171, 0.14);
       border-radius: var(--radius-sm); padding: 6px 12px; color: var(--text-main);
       font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.78rem; outline: none; min-width: 220px;
     }
@@ -661,11 +674,11 @@
     @media (max-width: 700px) { .mpu-telemetry-grid { grid-template-columns: 1fr; } }
 
     .mpu-subcard {
-      background: rgba(8, 12, 24, 0.65); border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(18, 16, 13, 0.7); border: 1px solid rgba(222, 200, 171, 0.08);
       border-radius: var(--radius-lg); padding: 14px 16px;
       display: flex; flex-direction: column; gap: 10px; position: relative;
     }
-    .mpu-subcard:hover { border-color: rgba(255, 255, 255, 0.12); }
+    .mpu-subcard:hover { border-color: rgba(222, 200, 171, 0.2); }
     .subcard-title {
       font-size: 0.72rem; font-weight: 600; color: var(--text-muted);
       text-transform: uppercase; letter-spacing: 0.04em;
@@ -679,14 +692,14 @@
     }
     .horizon-bezel {
       width: 154px; height: 154px; border-radius: 50%;
-      position: relative; overflow: hidden; background: #080c14;
-      border: 3px solid #1e293b;
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 8px 24px rgba(0, 0, 0, 0.8), inset 0 0 16px rgba(0, 0, 0, 0.7);
+      position: relative; overflow: hidden; background: #0a0908;
+      border: 3px solid #2e261e;
+      box-shadow: 0 0 0 1px rgba(222, 200, 171, 0.15), 0 8px 24px rgba(0, 0, 0, 0.8), inset 0 0 16px rgba(0, 0, 0, 0.7);
     }
     .horizon-disk {
       position: absolute; width: 320px; height: 320px; top: -83px; left: -83px;
       border-radius: 50%;
-      background: linear-gradient(180deg, #0284c7 0%, #38bdf8 49.5%, #ffffff 50%, #334155 50.8%, #0f172a 100%);
+      background: linear-gradient(180deg, #524434 0%, #877259 49.5%, #f5eedf 50%, #2e261d 50.8%, #14110d 100%);
       transition: transform 0.06s cubic-bezier(0.1, 0.8, 0.3, 1);
       display: flex; align-items: center; justify-content: center;
     }
@@ -698,36 +711,36 @@
     .aircraft-pip {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 8px; height: 8px; border-radius: 50%;
-      background: #facc15; box-shadow: 0 0 8px #facc15;
+      background: #dec8ab; box-shadow: 0 0 8px rgba(222, 200, 171, 0.6);
     }
     .aircraft-wing-left {
       position: absolute; top: 50%; left: 6px; width: 22px; height: 3px;
-      background: #facc15; transform: translateY(-50%); box-shadow: 0 0 6px #facc15;
+      background: #dec8ab; transform: translateY(-50%); box-shadow: 0 0 6px rgba(222, 200, 171, 0.6);
     }
     .aircraft-wing-right {
       position: absolute; top: 50%; right: 6px; width: 22px; height: 3px;
-      background: #facc15; transform: translateY(-50%); box-shadow: 0 0 6px #facc15;
+      background: #dec8ab; transform: translateY(-50%); box-shadow: 0 0 6px rgba(222, 200, 171, 0.6);
     }
     .roll-indicator-pip {
       position: absolute; top: 3px; left: 50%; transform: translateX(-50%);
       width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent;
-      border-top: 7px solid #facc15; z-index: 12;
+      border-top: 7px solid #dec8ab; z-index: 12;
     }
 
     /* 3D Probe Sensor Board */
     .probe-3d-scene { perspective: 450px; width: 140px; height: 72px; margin: 4px auto 0; }
     .probe-3d-board {
       width: 100%; height: 100%;
-      background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
-      border: 1.5px solid #10b981; border-radius: 8px;
+      background: linear-gradient(135deg, #2a2219 0%, #17130e 100%);
+      border: 1.5px solid #a89276; border-radius: 8px;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
       transform-style: preserve-3d; transition: transform 0.08s cubic-bezier(0.1, 0.8, 0.3, 1);
       display: flex; align-items: center; justify-content: center; gap: 10px; padding: 6px; position: relative;
     }
     .probe-chip {
-      width: 32px; height: 32px; background: #0f172a; border: 1px solid #64748b;
+      width: 32px; height: 32px; background: #0d0c0a; border: 1px solid #6b5c4b;
       border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-size: 7px; font-weight: 600; color: #cbd5e1; font-family: var(--font-mono);
+      font-size: 7px; font-weight: 600; color: #dec8ab; font-family: var(--font-mono);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
     .probe-axis-labels {
@@ -742,33 +755,33 @@
       font-size: 0.74rem; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .vector-track {
-      position: relative; height: 8px; background: rgba(255, 255, 255, 0.06);
+      position: relative; height: 8px; background: rgba(222, 200, 171, 0.08);
       border-radius: 4px; overflow: hidden;
     }
     .vector-center-zero {
       position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
-      background: rgba(255, 255, 255, 0.3); z-index: 2;
+      background: rgba(222, 200, 171, 0.35); z-index: 2;
     }
     .vector-fill { position: absolute; top: 0; bottom: 0; border-radius: 4px; transition: all 0.08s linear; }
 
     .gyro-spin-icon {
       width: 34px; height: 34px; border-radius: 50%;
-      border: 2px dashed rgba(0, 210, 255, 0.35);
+      border: 2px dashed rgba(222, 200, 171, 0.4);
       display: flex; align-items: center; justify-content: center;
       transition: transform 0.1s linear;
     }
 
     /* Oscilloscope Strip Chart */
     .waveform-card {
-      background: rgba(8, 12, 24, 0.65); border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(18, 16, 13, 0.7); border: 1px solid rgba(222, 200, 171, 0.08);
       border-radius: var(--radius-lg); padding: 14px 16px;
       display: flex; flex-direction: column; gap: 10px;
     }
     .waveform-canvas-box {
-      width: 100%; height: 120px; background: #03060c;
-      border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.06);
+      width: 100%; height: 120px; background: #060504;
+      border-radius: var(--radius-sm); border: 1px solid rgba(222, 200, 171, 0.08);
       position: relative; overflow: hidden;
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.75);
     }
     #mpuCanvas { width: 100%; height: 100%; display: block; }
 
@@ -783,19 +796,19 @@
     .toast-item {
       pointer-events: auto;
       padding: 10px 18px; border-radius: 10px;
-      background: rgba(8, 12, 24, 0.94);
+      background: rgba(18, 16, 13, 0.96);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(0, 210, 255, 0.35);
-      color: #ffffff; font-size: 0.82rem; font-weight: 500;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 14px rgba(0, 210, 255, 0.15);
+      border: 1px solid rgba(222, 200, 171, 0.4);
+      color: var(--text-main); font-size: 0.82rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 14px rgba(222, 200, 171, 0.15);
       display: flex; align-items: center; gap: 10px;
       animation: toast-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       transition: opacity 0.25s, transform 0.25s;
       font-family: var(--font-sans);
     }
     .toast-item.fade-out { opacity: 0; transform: translateY(8px) scale(0.96); }
-    .toast-success { border-color: rgba(16, 185, 129, 0.5); }
-    .toast-warning { border-color: rgba(255, 42, 109, 0.5); }
+    .toast-success { border-color: rgba(52, 211, 153, 0.5); }
+    .toast-warning { border-color: rgba(244, 63, 94, 0.5); }
     @keyframes toast-slide-in {
       from { opacity: 0; transform: translateY(16px) scale(0.95); }
       to { opacity: 1; transform: translateY(0) scale(1); }
@@ -993,24 +1006,24 @@
             <div class="viewport-hud">
               <div class="hud-top">
                 <span class="hud-chip" id="camResChip">1280 × 720</span>
-                <span class="hud-chip" id="camTimecodeChip" style="color: var(--accent-cyan); border-color: rgba(0, 242, 254, 0.35);">REC 00:00:00.0</span>
+                <span class="hud-chip" id="camTimecodeChip" style="color: var(--accent-cyan); border-color: rgba(222, 200, 171, 0.35);">REC 00:00:00.0</span>
                 <span class="hud-chip" id="camFpsChip">30 FPS</span>
               </div>
               <!-- Live MPU-6050 Camera Mini HUD -->
               <div class="hud-bottom" id="camMpuHud" style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%;">
-                <span class="hud-chip" style="background: rgba(4, 7, 13, 0.85); border-color: rgba(0, 210, 255, 0.35); color: #00d2ff;">
-                  IMU: P: <strong id="hudPitch" style="color: #00d2ff;">+0.0°</strong> | R: <strong id="hudRoll" style="color: #f43f5e;">+0.0°</strong> | <span id="hudG" style="color: #cbd5e1;">1.00G</span>
+                <span class="hud-chip" style="background: rgba(14, 12, 10, 0.9); border-color: rgba(222, 200, 171, 0.35); color: #dec8ab;">
+                  IMU: P: <strong id="hudPitch" style="color: #dec8ab;">+0.0°</strong> | R: <strong id="hudRoll" style="color: #f43f5e;">+0.0°</strong> | <span id="hudG" style="color: #c4ad8e;">1.00G</span>
                 </span>
-                <span class="hud-chip" id="hudShockFlag" style="display: none; background: rgba(255, 42, 95, 0.9); color: #fff; font-weight: 600; border-color: #ff3b6c;">
+                <span class="hud-chip" id="hudShockFlag" style="display: none; background: rgba(244, 63, 94, 0.9); color: #fff; font-weight: 600; border-color: #fb7185;">
                   ⚠️ SHOCK DETECTED
                 </span>
               </div>
             </div>
 
             <!-- Drag and drop zone overlay for direct image upload -->
-            <div id="viewportDropOverlay" style="position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; background: rgba(5, 10, 24, 0.94); border: 2px dashed var(--accent-cyan); border-radius: var(--radius-md); z-index: 25; backdrop-filter: blur(8px); pointer-events: none;">
+            <div id="viewportDropOverlay" style="position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; background: rgba(14, 12, 10, 0.95); border: 2px dashed var(--accent-cyan); border-radius: var(--radius-md); z-index: 25; backdrop-filter: blur(8px); pointer-events: none;">
               <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2" style="margin-bottom: 10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-              <strong style="font-size: 1.05rem; color: #fff;">Drop Image to Detect Cracks</strong>
+              <strong style="font-size: 1.05rem; color: var(--text-main);">Drop Image to Detect Cracks</strong>
               <span style="font-size: 0.78rem; color: var(--accent-cyan); margin-top: 4px;">AI multi-tile precision scan will analyze instantly</span>
             </div>
 
@@ -1132,7 +1145,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M12 2a14.5 14.5 0 0 0 0 20M2 12h20"/>
-                <circle cx="12" cy="12" r="3" fill="#00d2ff"/>
+                <circle cx="12" cy="12" r="3" fill="#dec8ab"/>
               </svg>
             </div>
             <div class="mpu-title-text">
@@ -1147,7 +1160,7 @@
           </div>
 
           <div class="mpu-toolbar">
-            <div class="view-mode-bar" style="background: rgba(0,0,0,0.5);">
+            <div class="view-mode-bar" style="background: rgba(14, 12, 10, 0.7); border: 1px solid rgba(222, 200, 171, 0.1);">
               <button class="source-tab-btn active" id="tabSrcPush" onclick="setMpuSource('push')">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v10m0 0l4-4m-4 4L8 8M3 17v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"/></svg>
                 Direct Push (No ESP32 IP Needed)
@@ -1193,7 +1206,7 @@
             <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
               <span class="tag-level" style="font-size: 0.72rem; padding: 4px 10px;">★ NO ESP32 IP NEEDED</span>
               <span style="font-size: 0.76rem; color: var(--text-muted);">In your ESP32 Arduino code, set:</span>
-              <code style="background: rgba(0,0,0,0.65); padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(0, 210, 255, 0.4); color: #00d2ff; font-family: var(--font-mono); font-size: 0.82rem;">
+              <code style="background: rgba(10, 9, 8, 0.85); padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(222, 200, 171, 0.35); color: #dec8ab; font-family: var(--font-mono); font-size: 0.82rem;">
                 pushServerHost = "<span id="pushHostIpText">10.169.71.221</span>";
               </code>
               <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.74rem;" onclick="copyPushIp()" title="Copy host IP to clipboard">
@@ -1287,14 +1300,14 @@
               </div>
 
               <!-- Digital Readout: Pitch & Roll -->
-              <div style="display: flex; justify-content: space-around; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+              <div style="display: flex; justify-content: space-around; width: 100%; border-top: 1px solid rgba(222, 200, 171, 0.1); padding-top: 8px;">
                 <div style="text-align: center;">
                   <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Pitch (θ)</span>
-                  <div id="readoutPitch" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #00d2ff;">+0.00°</div>
+                  <div id="readoutPitch" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #dec8ab;">+0.00°</div>
                 </div>
                 <div style="text-align: center;">
                   <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Roll (φ)</span>
-                  <div id="readoutRoll" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #f43f5e;">+0.00°</div>
+                  <div id="readoutRoll" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #c4ad8e;">+0.00°</div>
                 </div>
               </div>
 
@@ -1306,9 +1319,9 @@
                     <span>6050</span>
                   </div>
                   <div class="probe-axis-labels">
-                    <span style="color: #ef4444;">X → Pitch</span>
-                    <span style="color: #10b981;">Y ↑ Roll</span>
-                    <span style="color: #3b82f6;">Z ⊙ 1.0G</span>
+                    <span style="color: #dec8ab;">X → Pitch</span>
+                    <span style="color: #968065;">Y ↑ Roll</span>
+                    <span style="color: #c4ad8e;">Z ⊙ 1.0G</span>
                   </div>
                 </div>
               </div>
@@ -1323,10 +1336,10 @@
             </div>
 
             <!-- Total G-Force Hero Meter -->
-            <div style="background: rgba(4,7,13,0.5); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="background: rgba(18, 16, 13, 0.7); padding: 10px; border-radius: 8px; border: 1px solid rgba(222, 200, 171, 0.1); display: flex; justify-content: space-between; align-items: baseline;">
               <div>
                 <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Total Gravity Vector</span>
-                <h4 id="heroTotalG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: #fff;">1.002 <span style="font-size: 0.8rem; color: var(--accent-cyan);">G</span></h4>
+                <h4 id="heroTotalG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: var(--text-main);">1.002 <span style="font-size: 0.8rem; color: var(--accent-cyan);">G</span></h4>
               </div>
               <span id="gStateBadge" class="tag-level" style="font-size: 0.65rem;">Nominal 1.0G</span>
             </div>
@@ -1336,45 +1349,45 @@
               <!-- Ax -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #00d2ff; font-weight: 600;">Ax (Surge / Tilt X)</span>
-                  <span id="readoutAx" style="color: #00d2ff;">+0.000 g</span>
+                  <span style="color: #dec8ab; font-weight: 600;">Ax (Surge / Tilt X)</span>
+                  <span id="readoutAx" style="color: #dec8ab;">+0.000 g</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barAx" style="background: #00d2ff; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barAx" style="background: #dec8ab; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Ay -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #a855f7; font-weight: 600;">Ay (Sway / Tilt Y)</span>
-                  <span id="readoutAy" style="color: #a855f7;">+0.000 g</span>
+                  <span style="color: #968065; font-weight: 600;">Ay (Sway / Tilt Y)</span>
+                  <span id="readoutAy" style="color: #968065;">+0.000 g</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barAy" style="background: #a855f7; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barAy" style="background: #968065; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Az -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #38bdf8; font-weight: 600;">Az (Normal Gravity)</span>
-                  <span id="readoutAz" style="color: #38bdf8;">+1.000 g</span>
+                  <span style="color: #c4ad8e; font-weight: 600;">Az (Normal Gravity)</span>
+                  <span id="readoutAz" style="color: #c4ad8e;">+1.000 g</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barAz" style="background: #38bdf8; left: 50%; width: 50%;"></div>
+                  <div class="vector-fill" id="barAz" style="background: #c4ad8e; left: 50%; width: 50%;"></div>
                 </div>
               </div>
             </div>
 
             <!-- Dynamic Vibration Level -->
-            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06);">
+            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(222, 200, 171, 0.1);">
               <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px;">
                 <span>Vibration Intensity (ΔG)</span>
-                <span id="readoutDeltaG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; color: #fff;">0.012 G</span>
+                <span id="readoutDeltaG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text-main);">0.012 G</span>
               </div>
               <div class="vector-track" style="height: 6px;">
                 <div id="barVibration" style="height: 100%; width: 5%; background: var(--accent-green); border-radius: 4px; transition: width 0.1s linear, background 0.2s;"></div>
@@ -1389,13 +1402,13 @@
               <span id="gyroStatePill" class="tag-level" style="font-size: 0.65rem;">STABLE</span>
             </div>
 
-            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(4,7,13,0.5); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(18, 16, 13, 0.7); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(222, 200, 171, 0.1);">
               <div>
                 <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Angular Velocity</span>
-                <h4 id="heroAngularRate" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: #fff;">0.0 <span style="font-size: 0.8rem; color: #f43f5e;">°/s</span></h4>
+                <h4 id="heroAngularRate" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: var(--text-main);">0.0 <span style="font-size: 0.8rem; color: #dec8ab;">°/s</span></h4>
               </div>
               <div class="gyro-spin-icon" id="gyroSpinRotor">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 12a10 10 0 0 1 18.36-5.36L21.5 8M22 12a10 10 0 0 1-18.36 5.36L2.5 16"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dec8ab" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 12a10 10 0 0 1 18.36-5.36L21.5 8M22 12a10 10 0 0 1-18.36 5.36L2.5 16"/></svg>
               </div>
             </div>
 
@@ -1403,41 +1416,41 @@
               <!-- Gx -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #cbd5e1; font-weight: 600;">Gx (Roll Rate)</span>
-                  <span id="readoutGx" style="color: #f43f5e; font-weight: 600;">+0.00 °/s</span>
+                  <span style="color: #b8a896; font-weight: 600;">Gx (Roll Rate)</span>
+                  <span id="readoutGx" style="color: #c4ad8e; font-weight: 600;">+0.00 °/s</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barGx" style="background: #f43f5e; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barGx" style="background: #c4ad8e; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Gy -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #cbd5e1; font-weight: 600;">Gy (Pitch Rate)</span>
-                  <span id="readoutGy" style="color: #00d2ff; font-weight: 600;">+0.00 °/s</span>
+                  <span style="color: #b8a896; font-weight: 600;">Gy (Pitch Rate)</span>
+                  <span id="readoutGy" style="color: #dec8ab; font-weight: 600;">+0.00 °/s</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barGy" style="background: #00d2ff; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barGy" style="background: #dec8ab; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Gz -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #cbd5e1; font-weight: 600;">Gz (Yaw Rate)</span>
-                  <span id="readoutGz" style="color: #eab308; font-weight: 600;">+0.00 °/s</span>
+                  <span style="color: #b8a896; font-weight: 600;">Gz (Yaw Rate)</span>
+                  <span id="readoutGz" style="color: #968065; font-weight: 600;">+0.00 °/s</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barGz" style="background: #eab308; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barGz" style="background: #968065; left: 50%; width: 0%;"></div>
                 </div>
               </div>
             </div>
 
-            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(222, 200, 171, 0.1); font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between;">
               <span>Rotational Stability:</span>
               <strong id="rotationalStabilityText" style="color: var(--accent-green);">Steady</strong>
             </div>
@@ -1499,16 +1512,16 @@
                 📈 Real-Time Telemetry Waveform Oscilloscope
               </span>
               <div style="display: flex; align-items: center; gap: 12px; font-size: 0.72rem; font-family: var(--font-mono);">
-                <span style="color: #00d2ff; display: flex; align-items: center; gap: 4px;">
-                  <span style="width: 8px; height: 8px; background: #00d2ff; border-radius: 50%; display: inline-block;"></span>
+                <span style="color: #dec8ab; display: flex; align-items: center; gap: 4px;">
+                  <span style="width: 8px; height: 8px; background: #dec8ab; border-radius: 50%; display: inline-block;"></span>
                   Pitch (θ)
                 </span>
-                <span style="color: #f43f5e; display: flex; align-items: center; gap: 4px;">
-                  <span style="width: 8px; height: 8px; background: #f43f5e; border-radius: 50%; display: inline-block;"></span>
+                <span style="color: #c4ad8e; display: flex; align-items: center; gap: 4px;">
+                  <span style="width: 8px; height: 8px; background: #c4ad8e; border-radius: 50%; display: inline-block;"></span>
                   Roll (φ)
                 </span>
-                <span style="color: #eab308; display: flex; align-items: center; gap: 4px;">
-                  <span style="width: 8px; height: 8px; background: #eab308; border-radius: 50%; display: inline-block;"></span>
+                <span style="color: #968065; display: flex; align-items: center; gap: 4px;">
+                  <span style="width: 8px; height: 8px; background: #968065; border-radius: 50%; display: inline-block;"></span>
                   Total G-Force
                 </span>
               </div>
@@ -1689,7 +1702,7 @@
         (data.samples || []).forEach(s => {
           const btn = document.createElement('button');
           btn.className = 'sample-btn';
-          btn.innerHTML = `<strong>${s.label}</strong><br><span style="color:#00d2ff; font-size:0.7rem;">${s.type}</span>`;
+          btn.innerHTML = `<strong>${s.label}</strong><br><span style="color:var(--accent-cyan); font-size:0.7rem;">${s.type}</span>`;
           btn.onclick = () => runSampleDeepScan(s.name);
           sampleGrid.appendChild(btn);
         });
@@ -2231,7 +2244,7 @@
         mpuSec.scrollIntoView({ behavior: 'smooth' });
         mpuSec.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease';
         mpuSec.style.borderColor = 'var(--accent-cyan)';
-        mpuSec.style.boxShadow = '0 0 35px rgba(0, 210, 255, 0.45)';
+        mpuSec.style.boxShadow = '0 0 35px rgba(222, 200, 171, 0.35)';
         setTimeout(() => {
           mpuSec.style.borderColor = '';
           mpuSec.style.boxShadow = '';
@@ -2602,7 +2615,7 @@
 
       // Background grid
       const midY = h / 2;
-      mpuCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      mpuCtx.strokeStyle = 'rgba(222, 200, 171, 0.08)';
       mpuCtx.lineWidth = 1;
 
       // Horizontal gridlines: +scale/2, 0, -scale/2
@@ -2615,14 +2628,14 @@
       });
 
       // Luminous center zero line
-      mpuCtx.strokeStyle = 'rgba(0, 210, 255, 0.2)';
+      mpuCtx.strokeStyle = 'rgba(222, 200, 171, 0.22)';
       mpuCtx.beginPath();
       mpuCtx.moveTo(0, midY);
       mpuCtx.lineTo(w, midY);
       mpuCtx.stroke();
 
       // Zero and scale labels
-      mpuCtx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+      mpuCtx.fillStyle = 'rgba(222, 200, 171, 0.4)';
       mpuCtx.font = "9px 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace";
       mpuCtx.fillText(`+${waveformScale}°`, 8, midY - (h * 0.38));
       mpuCtx.fillText("0°", 8, midY - 2);
@@ -2633,10 +2646,10 @@
       const stepX = w / (MAX_WAVEFORM_POINTS - 1);
       const scaleDeg = waveformScale;
 
-      // 1. Draw Pitch trace (Glowing Cyan)
+      // 1. Draw Pitch trace (Glowing Warm Beige)
       mpuCtx.shadowBlur = 8;
-      mpuCtx.shadowColor = '#00f2fe';
-      mpuCtx.strokeStyle = '#00f2fe';
+      mpuCtx.shadowColor = '#dec8ab';
+      mpuCtx.strokeStyle = '#dec8ab';
       mpuCtx.lineWidth = 2.2;
       mpuCtx.beginPath();
       waveformPoints.forEach((pt, idx) => {
@@ -2648,9 +2661,9 @@
       });
       mpuCtx.stroke();
 
-      // 2. Draw Roll trace (Glowing Magenta)
-      mpuCtx.shadowColor = '#f43f5e';
-      mpuCtx.strokeStyle = '#f43f5e';
+      // 2. Draw Roll trace (Mid Beige)
+      mpuCtx.shadowColor = '#c4ad8e';
+      mpuCtx.strokeStyle = '#c4ad8e';
       mpuCtx.lineWidth = 2.2;
       mpuCtx.beginPath();
       waveformPoints.forEach((pt, idx) => {
@@ -2662,9 +2675,9 @@
       });
       mpuCtx.stroke();
 
-      // 3. Draw Total G-Force trace (Yellow dashed line)
+      // 3. Draw Total G-Force trace (Dark Beige dashed line)
       mpuCtx.shadowBlur = 0; // Turn off glow for subtle reference line
-      mpuCtx.strokeStyle = 'rgba(234, 179, 8, 0.65)';
+      mpuCtx.strokeStyle = 'rgba(150, 128, 101, 0.75)';
       mpuCtx.setLineDash([4, 4]);
       mpuCtx.lineWidth = 1.5;
       mpuCtx.beginPath();
@@ -2685,14 +2698,14 @@
       const headRollY = midY - (Math.max(-1.1, Math.min(1.1, lastPt.r / scaleDeg)) * (h * 0.42));
 
       mpuCtx.shadowBlur = 10;
-      mpuCtx.shadowColor = '#00f2fe';
-      mpuCtx.fillStyle = '#00f2fe';
+      mpuCtx.shadowColor = '#dec8ab';
+      mpuCtx.fillStyle = '#dec8ab';
       mpuCtx.beginPath();
       mpuCtx.arc(headX, headPitchY, 4, 0, Math.PI * 2);
       mpuCtx.fill();
 
-      mpuCtx.shadowColor = '#f43f5e';
-      mpuCtx.fillStyle = '#f43f5e';
+      mpuCtx.shadowColor = '#c4ad8e';
+      mpuCtx.fillStyle = '#c4ad8e';
       mpuCtx.beginPath();
       mpuCtx.arc(headX, headRollY, 4, 0, Math.PI * 2);
       mpuCtx.fill();
