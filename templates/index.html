@@ -17,57 +17,61 @@
       --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
       /* =========================================================================
-         Black, Beige & Dark Beige Harmonious Color System
+         Beige, Black & Dark Beige Master Color System
          ========================================================================= */
-      --bg-dark: #0a0908;
-      --bg-surface: #12100e;
-      --card-bg: rgba(18, 16, 13, 0.85);
-      --card-bg-hover: rgba(28, 24, 20, 0.95);
-      --card-border: rgba(222, 200, 171, 0.12);
-      --card-border-subtle: rgba(222, 200, 171, 0.06);
-      --card-border-glow: rgba(222, 200, 171, 0.35);
+      --bg-dark: #f4efe6;           /* Warm architectural beige canvas */
+      --bg-surface: #ede5d8;        /* Soft sand beige surface */
+      --card-bg: #fcfaf7;           /* Crisp, warm ivory-beige card surface */
+      --card-bg-hover: #ffffff;     /* Bright ivory card hover */
+      --card-border: #ded2c1;       /* Warm dark beige border */
+      --card-border-subtle: #ebdcd0;
+      --card-border-glow: #8c7355;  /* Deep dark beige focus border */
 
-      /* Beige Palette Hierarchy */
-      --beige-light: #f7f2ea;
-      --beige-base: #dec8ab;
-      --beige-mid: #c4ad8e;
-      --beige-dark: #968065;
-      --beige-deeper: #5c4e3d;
-      --beige-dim: rgba(222, 200, 171, 0.12);
+      /* Beige & Black Palette Hierarchy */
+      --beige-light: #fcfaf7;       /* Clean ivory */
+      --beige-base: #f4efe6;        /* Canvas beige */
+      --beige-mid: #dfd4c4;         /* Mid sand beige */
+      --beige-dark: #8c7355;        /* Refined dark beige / bronze */
+      --beige-deeper: #5c4b37;      /* Deep dark beige */
+      --beige-dim: rgba(140, 115, 85, 0.12);
 
-      /* Semantic Accents calibrated to Beige Theme */
-      --accent-cyan: #dec8ab;      /* Primary Refined Beige */
-      --accent-blue: #c4ad8e;      /* Soft Light Beige */
-      --accent-indigo: #968065;    /* Dark Beige / Earthy Bronze */
-      --accent-purple: #b59e82;    /* Warm Taupe Beige */
-      --accent-red: #f43f5e;       /* Structural Defect Alert */
-      --accent-green: #34d399;     /* Nominal / Clear Operational State */
-      --accent-yellow: #eab308;    /* Advisory / Minor Alert */
+      --black-pure: #12100e;        /* Deep obsidian black */
+      --black-card: #181512;        /* Deep black container background */
+      --black-muted: #24201c;       /* Dark charcoal black */
 
-      --text-main: #f7f2ea;
-      --text-muted: #b8a896;
-      --text-dim: #7d6f5f;
+      /* Semantic Accents calibrated to Beige & Black Theme */
+      --accent-cyan: #141210;       /* Primary structural accent: Deep Black */
+      --accent-blue: #8c7355;       /* Dark Beige */
+      --accent-indigo: #5c4b37;     /* Deep Earth Bronze */
+      --accent-purple: #968065;     /* Warm Taupe */
+      --accent-red: #dc2626;        /* Structural Defect Alert Red */
+      --accent-green: #059669;      /* Nominal Green */
+      --accent-yellow: #d97706;     /* Advisory Amber */
+
+      --text-main: #141210;         /* Razor-sharp deep black */
+      --text-muted: #6e5c49;        /* Warm dark beige / espresso */
+      --text-dim: #99836d;          /* Soft dark beige */
 
       --radius-xl: 16px;
       --radius-lg: 12px;
       --radius-md: 8px;
       --radius-sm: 6px;
 
-      --shadow-card: 0 12px 32px -4px rgba(0, 0, 0, 0.75), 0 4px 12px -2px rgba(0, 0, 0, 0.45);
-      --shadow-glow: 0 0 24px rgba(222, 200, 171, 0.18);
+      --shadow-card: 0 10px 28px -4px rgba(70, 55, 38, 0.07), 0 2px 8px -2px rgba(70, 55, 38, 0.04);
+      --shadow-glow: 0 0 20px rgba(140, 115, 85, 0.18);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #0a0908; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
     ::-webkit-scrollbar-thumb {
-      background: rgba(222, 200, 171, 0.2);
+      background: #c8baa6;
       border-radius: 6px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(222, 200, 171, 0.38);
+      background: #8c7355;
     }
 
     body {
@@ -77,9 +81,9 @@
       text-rendering: optimizeLegibility;
       background-color: var(--bg-dark);
       background-image:
-        radial-gradient(ellipse 900px 500px at 15% 0%, rgba(222, 200, 171, 0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 800px 450px at 85% 10%, rgba(150, 128, 101, 0.07) 0%, transparent 55%),
-        radial-gradient(rgba(222, 200, 171, 0.04) 1px, transparent 1px);
+        radial-gradient(ellipse 900px 500px at 15% 0%, rgba(140, 115, 85, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 800px 450px at 85% 10%, rgba(140, 115, 85, 0.06) 0%, transparent 55%),
+        radial-gradient(rgba(140, 115, 85, 0.12) 1px, transparent 1px);
       background-size: 100% 100%, 100% 100%, 24px 24px;
       background-attachment: fixed;
       color: var(--text-main);
@@ -98,63 +102,61 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(10, 9, 8, 0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(222, 200, 171, 0.1);
+      background: #141210;
+      border-bottom: 1px solid #2a2520;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 4px 20px rgba(20, 18, 16, 0.15);
     }
 
     .brand { display: flex; align-items: center; gap: 14px; }
     .brand-icon {
       width: 40px; height: 40px; border-radius: 10px;
-      background: linear-gradient(135deg, rgba(222, 200, 171, 0.2), rgba(150, 128, 101, 0.25));
+      background: linear-gradient(135deg, rgba(222, 200, 171, 0.2), rgba(140, 115, 85, 0.3));
       border: 1px solid rgba(222, 200, 171, 0.4);
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 0 16px rgba(222, 200, 171, 0.2);
       transition: transform 0.2s ease;
     }
     .brand-icon svg {
-      width: 22px; height: 22px; fill: none; stroke: var(--accent-cyan);
+      width: 22px; height: 22px; fill: none; stroke: #dec8ab;
       stroke-width: 2;
     }
     .brand-text h1 {
       font-family: var(--font-sans);
       font-size: 1.05rem; font-weight: 600; letter-spacing: -0.015em;
-      color: #ffffff;
+      color: #f5efe6;
       display: flex; align-items: center; gap: 8px;
     }
     .brand-text span {
       font-family: var(--font-sans);
-      font-size: 0.72rem; color: var(--text-muted);
+      font-size: 0.72rem; color: #b8a692;
       letter-spacing: 0.01em; font-weight: 400; display: flex; align-items: center; gap: 6px;
     }
     .brand-text span::before {
       content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent-cyan); box-shadow: 0 0 6px var(--accent-cyan);
+      background: #dec8ab; box-shadow: 0 0 6px #dec8ab;
     }
 
     .header-right { display: flex; align-items: center; gap: 14px; }
     .nav-tabs {
-      display: flex; background: rgba(18, 16, 13, 0.9);
-      padding: 4px; border-radius: 24px; border: 1px solid rgba(222, 200, 171, 0.12);
+      display: flex; background: #221d18;
+      padding: 4px; border-radius: 24px; border: 1px solid rgba(222, 200, 171, 0.15);
     }
     .nav-tab {
       padding: 7px 18px; border-radius: 18px; font-size: 0.82rem; font-weight: 500;
-      color: var(--text-muted); border: none; background: transparent; cursor: pointer;
+      color: #b8a692; border: none; background: transparent; cursor: pointer;
       display: flex; align-items: center; gap: 8px; transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
-    .nav-tab:hover { color: var(--text-main); }
+    .nav-tab:hover { color: #f5efe6; }
     .nav-tab.active {
-      background: linear-gradient(135deg, rgba(222, 200, 171, 0.22), rgba(150, 128, 101, 0.28));
-      color: var(--text-main); border: 1px solid rgba(222, 200, 171, 0.45);
-      box-shadow: 0 2px 12px rgba(222, 200, 171, 0.2);
+      background: #dec8ab;
+      color: #141210; font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
-    .nav-tab.active svg { stroke: var(--accent-cyan); }
+    .nav-tab.active svg { stroke: #141210; }
 
     main {
       flex: 1; max-width: 1520px; margin: 0 auto;
@@ -177,31 +179,29 @@
       border: 1px solid var(--card-border);
       border-radius: var(--radius-lg);
       padding: 16px 18px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(222, 200, 171, 0.08);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.9);
       position: relative; overflow: hidden;
       transition: all 0.22s ease;
     }
     .metric-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(222, 200, 171, 0.45), transparent);
-      opacity: 0.5; transition: opacity 0.2s;
+      background: linear-gradient(90deg, transparent, #8c7355, transparent);
+      opacity: 0.4; transition: opacity 0.2s;
     }
     .metric-card:hover {
       transform: translateY(-2px);
-      border-color: var(--card-border-glow);
-      box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.75), 0 0 18px rgba(222, 200, 171, 0.15);
+      border-color: var(--beige-dark);
+      box-shadow: 0 14px 28px -4px rgba(60, 48, 35, 0.12), 0 0 14px rgba(140, 115, 85, 0.1);
     }
     .metric-card:hover::before { opacity: 1; }
     .metric-header { display: flex; justify-content: space-between; align-items: center; }
     .metric-title {
       font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: 0.04em; font-weight: 500; font-family: var(--font-sans);
+      letter-spacing: 0.04em; font-weight: 600; font-family: var(--font-sans);
     }
     .metric-card h3 {
-      font-size: 1.38rem; font-weight: 600; font-family: var(--font-mono);
+      font-size: 1.38rem; font-weight: 700; font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
       color: var(--text-main); letter-spacing: -0.02em;
     }
@@ -214,23 +214,34 @@
       font-family: var(--font-sans);
     }
     .verdict-crack {
-      background: rgba(244, 63, 94, 0.18);
-      border: 1px solid rgba(244, 63, 94, 0.65);
-      color: #fb7185; box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
+      background: #fee2e2;
+      border: 1px solid #f87171;
+      color: #991b1b; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15);
       animation: pulse-crack-glow 1.2s infinite alternate;
     }
     @keyframes pulse-crack-glow {
-      from { border-color: rgba(244, 63, 94, 0.4); box-shadow: 0 0 10px rgba(244, 63, 94, 0.2); }
-      to { border-color: rgba(244, 63, 94, 0.9); box-shadow: 0 0 22px rgba(244, 63, 94, 0.5); }
+      from { box-shadow: 0 0 4px rgba(220, 38, 38, 0.2); }
+      to { box-shadow: 0 0 14px rgba(220, 38, 38, 0.4); }
     }
     .verdict-clean {
-      background: rgba(52, 211, 153, 0.14);
-      border: 1px solid rgba(52, 211, 153, 0.5);
-      color: #34d399; box-shadow: 0 0 12px rgba(52, 211, 153, 0.18);
+      background: #ecfdf5;
+      border: 1px solid #6ee7b7;
+      color: #065f46; box-shadow: 0 2px 8px rgba(5, 150, 105, 0.12);
+    }
+    .verdict-safe {
+      background: #ecfdf5;
+      border: 1px solid #6ee7b7;
+      color: #065f46; box-shadow: 0 2px 8px rgba(5, 150, 105, 0.12);
+    }
+    .verdict-idle {
+      background: #ede6da;
+      border: 1px solid #d4c6b2;
+      color: #6e5c49;
     }
     .verdict-ready {
-      background: rgba(222, 200, 171, 0.06); border: 1px solid rgba(222, 200, 171, 0.12);
-      color: var(--text-muted);
+      background: #ede6da;
+      border: 1px solid #d4c6b2;
+      color: #6e5c49;
     }
 
     /* =========================================================================
@@ -241,10 +252,8 @@
       border: 1px solid var(--card-border);
       border-radius: var(--radius-xl);
       padding: 16px 24px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(222, 200, 171, 0.08);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.9);
       position: relative;
     }
 
@@ -254,83 +263,84 @@
     /* Hero "Take Picture & Deep Scan" Button */
     .btn-capture {
       padding: 11px 22px;
-      background: linear-gradient(135deg, #dec8ab 0%, #b89d7b 100%);
-      border: none; border-radius: var(--radius-md);
-      color: #0d0c0a; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      background: #141210;
+      border: 1px solid #332d26; border-radius: var(--radius-md);
+      color: #f5efe6; font-size: 0.88rem; font-weight: 600; cursor: pointer;
       display: inline-flex; align-items: center; gap: 10px;
-      box-shadow: 0 4px 18px rgba(184, 157, 123, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 14px rgba(20, 18, 16, 0.25);
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
     .btn-capture:hover {
       transform: translateY(-2px);
-      background: linear-gradient(135deg, #e8d7be 0%, #c4ab89 100%);
-      box-shadow: 0 6px 24px rgba(222, 200, 171, 0.5);
+      background: #2b251f;
+      border-color: #8c7355;
+      box-shadow: 0 6px 20px rgba(20, 18, 16, 0.35);
     }
     .btn-capture:active { transform: translateY(0); }
     .btn-capture:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
     /* Direct Upload Image Trigger */
     #btnUploadImageTrigger {
-      background: rgba(222, 200, 171, 0.08) !important;
-      border: 1px solid rgba(222, 200, 171, 0.35) !important;
-      color: var(--text-main) !important;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
+      background: #ede4d6 !important;
+      border: 1px solid #8c7355 !important;
+      color: #141210 !important;
+      box-shadow: 0 2px 8px rgba(140, 115, 85, 0.15) !important;
     }
     #btnUploadImageTrigger:hover {
-      background: rgba(222, 200, 171, 0.18) !important;
-      border-color: var(--accent-cyan) !important;
-      box-shadow: 0 4px 18px rgba(222, 200, 171, 0.3) !important;
+      background: #e2d6c2 !important;
+      border-color: #5c4b37 !important;
+      box-shadow: 0 4px 14px rgba(140, 115, 85, 0.25) !important;
       transform: translateY(-2px);
     }
 
     .btn-live-toggle {
-      padding: 10px 16px; border-radius: var(--radius-md); font-size: 0.82rem; font-weight: 500;
+      padding: 10px 16px; border-radius: var(--radius-md); font-size: 0.82rem; font-weight: 600;
       cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;
       font-family: var(--font-sans);
     }
     .btn-live-toggle.active {
-      background: rgba(52, 211, 153, 0.14); border: 1px solid rgba(52, 211, 153, 0.45);
-      color: #34d399; box-shadow: 0 0 12px rgba(52, 211, 153, 0.15);
+      background: #ecfdf5; border: 1px solid #6ee7b7;
+      color: #065f46; box-shadow: 0 2px 8px rgba(5, 150, 105, 0.12);
     }
     .btn-live-toggle.paused {
-      background: rgba(234, 179, 8, 0.14); border: 1px solid rgba(234, 179, 8, 0.45);
-      color: #eab308; box-shadow: 0 0 12px rgba(234, 179, 8, 0.15);
+      background: #fef3c7; border: 1px solid #fcd34d;
+      color: #92400e; box-shadow: 0 2px 8px rgba(217, 119, 6, 0.12);
     }
 
     .btn-secondary {
-      background: rgba(222, 200, 171, 0.06); border: 1px solid rgba(222, 200, 171, 0.14);
-      color: var(--text-main); font-weight: 500; padding: 9px 16px; border-radius: var(--radius-md);
+      background: #ede6da; border: 1px solid #c8baa6;
+      color: #141210; font-weight: 500; padding: 9px 16px; border-radius: var(--radius-md);
       cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem;
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
     .btn-secondary:hover {
-      background: rgba(222, 200, 171, 0.14); border-color: rgba(222, 200, 171, 0.4);
+      background: #dfd4c4; border-color: #8c7355;
       transform: translateY(-1px);
     }
 
     .control-item { display: flex; align-items: center; gap: 8px; }
     .control-item label {
-      font-size: 0.74rem; font-weight: 500; color: var(--text-muted);
+      font-size: 0.74rem; font-weight: 600; color: var(--text-muted);
       text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--font-sans);
     }
 
     select {
-      background: rgba(18, 16, 13, 0.9); border: 1px solid rgba(222, 200, 171, 0.15);
+      background: #ffffff; border: 1px solid #d4c6b2;
       border-radius: var(--radius-md); padding: 8px 12px; color: var(--text-main);
       font-size: 0.82rem; outline: none; cursor: pointer; transition: all 0.2s;
       font-family: var(--font-sans);
     }
-    select:focus { border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(222, 200, 171, 0.25); }
+    select:focus { border-color: #8c7355; box-shadow: 0 0 8px rgba(140, 115, 85, 0.25); }
 
     input[type="range"] {
       width: 110px; height: 6px; border-radius: 4px;
-      background: rgba(222, 200, 171, 0.14); outline: none; -webkit-appearance: none;
+      background: #ded3c3; outline: none; -webkit-appearance: none;
     }
     input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 15px; height: 15px; border-radius: 50%;
-      background: var(--accent-cyan); cursor: pointer; box-shadow: 0 0 10px rgba(222, 200, 171, 0.6);
+      -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+      background: #141210; cursor: pointer; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
       transition: transform 0.15s;
     }
     input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
@@ -338,16 +348,16 @@
     input[type="checkbox"] {
       appearance: none; -webkit-appearance: none;
       width: 17px; height: 17px; border-radius: 4px;
-      background: rgba(18, 16, 13, 0.9); border: 1.5px solid rgba(222, 200, 171, 0.25);
+      background: #ffffff; border: 1.5px solid #8c7355;
       cursor: pointer; outline: none; position: relative;
       transition: all 0.2s ease;
     }
     input[type="checkbox"]:checked {
-      background: var(--accent-cyan); border-color: var(--accent-cyan);
+      background: #141210; border-color: #141210;
     }
     input[type="checkbox"]:checked::after {
       content: ''; position: absolute; top: 2px; left: 5px;
-      width: 4px; height: 8px; border: solid #090807;
+      width: 4px; height: 8px; border: solid #f5efe6;
       border-width: 0 2px 2px 0; transform: rotate(45deg);
     }
 
@@ -364,40 +374,39 @@
       border: 1px solid var(--card-border);
       border-radius: var(--radius-xl);
       padding: 18px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       display: flex; flex-direction: column; gap: 12px; position: relative;
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.9);
       transition: border-color 0.2s;
     }
-    .display-card:hover { border-color: rgba(255, 255, 255, 0.12); }
+    .display-card:hover { border-color: #b8a284; }
 
     .display-header {
       display: flex; justify-content: space-between; align-items: center;
       font-size: 0.88rem; font-weight: 600; letter-spacing: -0.01em; font-family: var(--font-sans);
+      color: var(--text-main);
     }
     .header-tags { display: flex; align-items: center; gap: 8px; }
 
     .tag-live {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: rgba(52, 211, 153, 0.12); border: 1px solid rgba(52, 211, 153, 0.4);
-      color: #34d399; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: #ecfdf5; border: 1px solid #6ee7b7;
+      color: #065f46; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-captured {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: rgba(222, 200, 171, 0.14); border: 1px solid rgba(222, 200, 171, 0.4);
-      color: var(--accent-cyan); font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: #ede4d6; border: 1px solid #8c7355;
+      color: #141210; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
 
     /* Tactical Viewport Frame */
     .viewport {
       position: relative; width: 100%; aspect-ratio: 4 / 3;
-      background: #060504; border-radius: var(--radius-md);
+      background: #0d0c0a; border-radius: var(--radius-md);
       overflow: hidden; display: flex; align-items: center; justify-content: center;
-      border: 1px solid rgba(222, 200, 171, 0.1);
-      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.85), 0 6px 20px rgba(0, 0, 0, 0.5);
+      border: 1.5px solid #2a2520;
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.85), 0 4px 16px rgba(40, 32, 24, 0.15);
     }
     video, img.viewport-img {
       width: 100%; height: 100%; object-fit: contain; display: block;
@@ -411,19 +420,19 @@
     }
     .hud-top { display: flex; justify-content: space-between; align-items: center; }
     .hud-chip {
-      background: rgba(14, 12, 10, 0.88); border: 1px solid rgba(222, 200, 171, 0.15);
+      background: rgba(18, 16, 14, 0.9); border: 1px solid rgba(222, 200, 171, 0.25);
       padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
-      color: var(--text-muted); backdrop-filter: blur(8px);
+      color: #ded3c3; backdrop-filter: blur(8px);
     }
 
     .reticle-box {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 65%; height: 65%; border: 1px dashed rgba(222, 200, 171, 0.3);
+      width: 65%; height: 65%; border: 1px dashed rgba(222, 200, 171, 0.4);
       border-radius: 8px; pointer-events: none;
     }
     .reticle-corner {
-      position: absolute; width: 14px; height: 14px; border: 2px solid var(--accent-cyan);
+      position: absolute; width: 14px; height: 14px; border: 2px solid #dec8ab;
     }
     .reticle-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
     .reticle-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
@@ -433,7 +442,7 @@
     /* Scanning Laser Sweep */
     .laser-scanner {
       position: absolute; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent 0%, rgba(222, 200, 171, 0.8) 50%, transparent 100%);
+      background: linear-gradient(90deg, transparent 0%, rgba(222, 200, 171, 0.9) 50%, transparent 100%);
       box-shadow: 0 0 14px 1px #dec8ab;
       z-index: 12; pointer-events: none;
       animation: laser-sweep 2.8s ease-in-out infinite alternate;
@@ -456,7 +465,7 @@
 
     .split-layer-overlay {
       position: absolute; top: 0; left: 0; width: 50%; height: 100%;
-      overflow: hidden; border-right: 2px solid var(--accent-cyan);
+      overflow: hidden; border-right: 2px solid #dec8ab;
       box-shadow: 2px 0 16px rgba(222, 200, 171, 0.4);
     }
     .split-layer-overlay img {
@@ -467,45 +476,45 @@
     .split-handle {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 36px; height: 36px; border-radius: 50%;
-      background: var(--accent-cyan);
-      box-shadow: 0 0 16px rgba(222, 200, 171, 0.6);
-      border: 2px solid #090807;
+      background: #dec8ab;
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.4);
+      border: 2px solid #141210;
       display: flex; align-items: center; justify-content: center;
       cursor: ew-resize; z-index: 25;
       transition: transform 0.15s ease;
     }
     .split-handle:hover { transform: translate(-50%, -50%) scale(1.1); }
-    .split-handle svg { width: 16px; height: 16px; fill: #090807; }
+    .split-handle svg { width: 16px; height: 16px; fill: #141210; }
 
     /* Scanning Radar Overlay */
     .scanning-overlay {
-      position: absolute; inset: 0; background: rgba(10, 9, 8, 0.92);
+      position: absolute; inset: 0; background: rgba(18, 16, 14, 0.92);
       backdrop-filter: blur(14px); display: none; flex-direction: column;
       align-items: center; justify-content: center; gap: 14px; z-index: 40;
     }
     .scan-radar {
       width: 56px; height: 56px; border-radius: 50%;
       border: 3px solid rgba(222, 200, 171, 0.2);
-      border-top-color: var(--accent-cyan);
+      border-top-color: #dec8ab;
       animation: spin 0.75s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* View Mode Toolbar */
     .view-mode-bar {
-      display: flex; align-items: center; gap: 4px; background: rgba(14, 12, 10, 0.7);
-      padding: 3px; border-radius: 8px; border: 1px solid rgba(222, 200, 171, 0.1);
+      display: flex; align-items: center; gap: 4px; background: #ede6da;
+      padding: 3px; border-radius: 8px; border: 1px solid #d4c6b2;
     }
     .view-mode-btn {
       padding: 4px 11px; border-radius: 6px; font-size: 0.74rem; font-weight: 500;
-      color: var(--text-muted); border: none; background: transparent; cursor: pointer;
+      color: #6e5c49; border: none; background: transparent; cursor: pointer;
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
-    .view-mode-btn:hover { color: var(--text-main); }
+    .view-mode-btn:hover { color: #141210; }
     .view-mode-btn.active {
-      background: rgba(222, 200, 171, 0.2);
-      color: var(--accent-cyan); border: 1px solid rgba(222, 200, 171, 0.4);
+      background: #141210;
+      color: #f5efe6; font-weight: 600;
     }
 
     /* Detected Cracks Inventory Table */
@@ -514,42 +523,42 @@
       font-family: var(--font-sans);
     }
     .crack-table th {
-      padding: 10px 14px; background: rgba(14, 12, 10, 0.8); color: var(--text-muted);
+      padding: 10px 14px; background: #ede6da; color: #6e5c49;
       text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--card-border);
       font-family: var(--font-sans); font-size: 0.7rem; font-weight: 600;
     }
     .crack-table td {
-      padding: 10px 14px; border-bottom: 1px solid rgba(222, 200, 171, 0.06);
-      vertical-align: middle;
+      padding: 10px 14px; border-bottom: 1px solid #ede5d8;
+      vertical-align: middle; color: var(--text-main);
     }
-    .crack-table tr:hover { background: rgba(222, 200, 171, 0.04); }
+    .crack-table tr:hover { background: #f8f4ed; }
 
     .tag-severe {
       display: inline-block; padding: 2px 8px; border-radius: 10px;
-      background: rgba(244, 63, 94, 0.16); border: 1px solid rgba(244, 63, 94, 0.45);
-      color: #fb7185; font-weight: 600;
+      background: #fee2e2; border: 1px solid #f87171;
+      color: #991b1b; font-weight: 600;
     }
     .tag-moderate {
       display: inline-block; padding: 2px 8px; border-radius: 10px;
-      background: rgba(234, 179, 8, 0.16); border: 1px solid rgba(234, 179, 8, 0.45);
-      color: #eab308; font-weight: 600;
+      background: #fef3c7; border: 1px solid #fcd34d;
+      color: #92400e; font-weight: 600;
     }
     .tag-minor {
       display: inline-block; padding: 2px 8px; border-radius: 10px;
-      background: rgba(222, 200, 171, 0.14); border: 1px solid rgba(222, 200, 171, 0.35);
-      color: var(--accent-cyan); font-weight: 600;
+      background: #ede4d6; border: 1px solid #8c7355;
+      color: #141210; font-weight: 600;
     }
 
     /* Dropzone for Uploads */
     .dropzone {
-      border: 2px dashed rgba(222, 200, 171, 0.35); border-radius: var(--radius-lg);
+      border: 2px dashed #8c7355; border-radius: var(--radius-lg);
       padding: 38px 24px; text-align: center; cursor: pointer;
-      background: rgba(222, 200, 171, 0.02);
+      background: #fbf8f2;
       transition: all 0.2s ease;
     }
     .dropzone:hover {
-      border-color: var(--accent-cyan);
-      background: rgba(222, 200, 171, 0.07);
+      border-color: #141210;
+      background: #f5eee2;
       transform: translateY(-2px);
     }
 
@@ -558,13 +567,13 @@
     }
     @media (max-width: 960px) { .sample-grid { grid-template-columns: repeat(2, 1fr); } }
     .sample-btn {
-      background: rgba(18, 16, 13, 0.8); border: 1px solid rgba(222, 200, 171, 0.1);
-      border-radius: var(--radius-md); padding: 12px; font-size: 0.8rem; color: var(--text-main);
+      background: #ede6da; border: 1px solid #c8baa6;
+      border-radius: var(--radius-md); padding: 12px; font-size: 0.8rem; color: #141210;
       cursor: pointer; text-align: center; transition: all 0.2s ease;
     }
     .sample-btn:hover {
-      border-color: var(--accent-cyan);
-      background: rgba(222, 200, 171, 0.12);
+      border-color: #8c7355;
+      background: #dfd4c4;
       transform: translateY(-2px);
     }
 
@@ -576,36 +585,34 @@
       border: 1px solid var(--card-border);
       border-radius: var(--radius-xl);
       padding: 22px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(222, 200, 171, 0.08);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.9);
       display: flex; flex-direction: column; gap: 18px; position: relative;
       transition: all 0.2s ease;
     }
-    .mpu-panel:hover { border-color: rgba(222, 200, 171, 0.25); }
+    .mpu-panel:hover { border-color: #b8a284; }
     .mpu-panel.shock-active {
-      border-color: rgba(244, 63, 94, 0.85) !important;
-      box-shadow: 0 0 35px rgba(244, 63, 94, 0.45) !important;
+      border-color: rgba(220, 38, 38, 0.85) !important;
+      box-shadow: 0 0 35px rgba(220, 38, 38, 0.35) !important;
       animation: flash-shock-border 0.6s infinite alternate;
     }
     @keyframes flash-shock-border {
-      from { border-color: rgba(244, 63, 94, 0.4); box-shadow: 0 0 14px rgba(244, 63, 94, 0.2); }
-      to { border-color: rgba(244, 63, 94, 0.95); box-shadow: 0 0 40px rgba(244, 63, 94, 0.6); }
+      from { border-color: rgba(220, 38, 38, 0.4); box-shadow: 0 0 14px rgba(220, 38, 38, 0.2); }
+      to { border-color: rgba(220, 38, 38, 0.95); box-shadow: 0 0 35px rgba(220, 38, 38, 0.4); }
     }
 
     .mpu-header {
       display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 12px; border-bottom: 1px solid rgba(222, 200, 171, 0.08);
+      flex-wrap: gap; gap: 12px; border-bottom: 1px solid #ede5d8;
       padding-bottom: 14px;
     }
     .mpu-header-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .mpu-icon-glow {
       width: 38px; height: 38px; border-radius: 10px;
-      background: rgba(222, 200, 171, 0.15);
-      border: 1px solid rgba(222, 200, 171, 0.4);
+      background: #ede4d6;
+      border: 1px solid #8c7355;
       display: flex; align-items: center; justify-content: center;
     }
-    .mpu-icon-glow svg { width: 20px; height: 20px; stroke: var(--accent-cyan); }
+    .mpu-icon-glow svg { width: 20px; height: 20px; stroke: #141210; }
     .mpu-title-text h2 {
       font-family: var(--font-sans);
       font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em;
@@ -617,55 +624,55 @@
     .tag-level {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: rgba(52, 211, 153, 0.14); border: 1px solid rgba(52, 211, 153, 0.4);
-      color: #34d399; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: #ecfdf5; border: 1px solid #6ee7b7;
+      color: #065f46; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-tilt {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: rgba(222, 200, 171, 0.14); border: 1px solid rgba(222, 200, 171, 0.35);
-      color: var(--accent-cyan); font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: #ede4d6; border: 1px solid #8c7355;
+      color: #141210; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-shock-alarm {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: rgba(244, 63, 94, 0.2); border: 1px solid rgba(244, 63, 94, 0.7);
-      color: #fb7185; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: #fee2e2; border: 1px solid #f87171;
+      color: #991b1b; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-shock-safe {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 500;
-      background: rgba(222, 200, 171, 0.06); border: 1px solid rgba(222, 200, 171, 0.12);
-      color: var(--text-muted); font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: #ede6da; border: 1px solid #d4c6b2;
+      color: #6e5c49; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
 
     .mpu-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .source-tab-btn {
       padding: 5px 12px; border-radius: 6px; font-size: 0.74rem; font-weight: 500;
-      background: rgba(222, 200, 171, 0.06); border: 1px solid rgba(222, 200, 171, 0.12);
-      color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 6px;
+      background: #ede6da; border: 1px solid #c8baa6;
+      color: #141210; cursor: pointer; display: flex; align-items: center; gap: 6px;
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
-    .source-tab-btn:hover { background: rgba(222, 200, 171, 0.12); color: var(--text-main); }
+    .source-tab-btn:hover { background: #dfd4c4; color: #141210; }
     .source-tab-btn.active {
-      background: rgba(222, 200, 171, 0.22);
-      border-color: rgba(222, 200, 171, 0.5); color: var(--accent-cyan);
+      background: #141210;
+      border-color: #141210; color: #f5efe6; font-weight: 600;
     }
 
     .mpu-config-drawer {
-      background: rgba(14, 12, 10, 0.7); border: 1px solid rgba(222, 200, 171, 0.08);
+      background: #ede6da; border: 1px solid #d4c6b2;
       border-radius: var(--radius-md); padding: 12px 16px;
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 12px; font-size: 0.8rem;
     }
     .config-inputs { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .config-input {
-      background: rgba(10, 9, 8, 0.9); border: 1px solid rgba(222, 200, 171, 0.14);
+      background: #ffffff; border: 1px solid #c8baa6;
       border-radius: var(--radius-sm); padding: 6px 12px; color: var(--text-main);
       font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.78rem; outline: none; min-width: 220px;
     }
-    .config-input:focus { border-color: var(--accent-cyan); }
+    .config-input:focus { border-color: #8c7355; }
 
     .mpu-telemetry-grid {
       display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr; gap: 16px;
@@ -674,11 +681,11 @@
     @media (max-width: 700px) { .mpu-telemetry-grid { grid-template-columns: 1fr; } }
 
     .mpu-subcard {
-      background: rgba(18, 16, 13, 0.7); border: 1px solid rgba(222, 200, 171, 0.08);
+      background: #fbf9f5; border: 1px solid #ded3c3;
       border-radius: var(--radius-lg); padding: 14px 16px;
       display: flex; flex-direction: column; gap: 10px; position: relative;
     }
-    .mpu-subcard:hover { border-color: rgba(222, 200, 171, 0.2); }
+    .mpu-subcard:hover { border-color: #8c7355; }
     .subcard-title {
       font-size: 0.72rem; font-weight: 600; color: var(--text-muted);
       text-transform: uppercase; letter-spacing: 0.04em;
@@ -755,31 +762,31 @@
       font-size: 0.74rem; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .vector-track {
-      position: relative; height: 8px; background: rgba(222, 200, 171, 0.08);
+      position: relative; height: 8px; background: #e5dacb;
       border-radius: 4px; overflow: hidden;
     }
     .vector-center-zero {
       position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
-      background: rgba(222, 200, 171, 0.35); z-index: 2;
+      background: #8c7355; z-index: 2;
     }
     .vector-fill { position: absolute; top: 0; bottom: 0; border-radius: 4px; transition: all 0.08s linear; }
 
     .gyro-spin-icon {
       width: 34px; height: 34px; border-radius: 50%;
-      border: 2px dashed rgba(222, 200, 171, 0.4);
+      border: 2px dashed #8c7355;
       display: flex; align-items: center; justify-content: center;
       transition: transform 0.1s linear;
     }
 
     /* Oscilloscope Strip Chart */
     .waveform-card {
-      background: rgba(18, 16, 13, 0.7); border: 1px solid rgba(222, 200, 171, 0.08);
+      background: #fbf9f5; border: 1px solid #ded3c3;
       border-radius: var(--radius-lg); padding: 14px 16px;
       display: flex; flex-direction: column; gap: 10px;
     }
     .waveform-canvas-box {
-      width: 100%; height: 120px; background: #060504;
-      border-radius: var(--radius-sm); border: 1px solid rgba(222, 200, 171, 0.08);
+      width: 100%; height: 120px; background: #141210;
+      border-radius: var(--radius-sm); border: 1px solid #2a2520;
       position: relative; overflow: hidden;
       box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.75);
     }
@@ -796,19 +803,18 @@
     .toast-item {
       pointer-events: auto;
       padding: 10px 18px; border-radius: 10px;
-      background: rgba(18, 16, 13, 0.96);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(222, 200, 171, 0.4);
-      color: var(--text-main); font-size: 0.82rem; font-weight: 500;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 14px rgba(222, 200, 171, 0.15);
+      background: #141210;
+      border: 1px solid #8c7355;
+      color: #f5efe6; font-size: 0.82rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(20, 18, 16, 0.25);
       display: flex; align-items: center; gap: 10px;
       animation: toast-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       transition: opacity 0.25s, transform 0.25s;
       font-family: var(--font-sans);
     }
     .toast-item.fade-out { opacity: 0; transform: translateY(8px) scale(0.96); }
-    .toast-success { border-color: rgba(52, 211, 153, 0.5); }
-    .toast-warning { border-color: rgba(244, 63, 94, 0.5); }
+    .toast-success { border-color: #059669; }
+    .toast-warning { border-color: #dc2626; }
     @keyframes toast-slide-in {
       from { opacity: 0; transform: translateY(16px) scale(0.95); }
       to { opacity: 1; transform: translateY(0) scale(1); }
@@ -900,7 +906,7 @@
         <button class="btn-capture" id="btnCapturePhoto" onclick="capturePhotoForDeepScan()" title="Capture full-resolution photo for multi-tile pinpoint accuracy">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           <span id="btnCaptureText">📸 Take Picture & Deep Scan</span>
-          <kbd style="font-size: 0.65rem; background: rgba(0,0,0,0.32); padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.22); color: #040914; font-family: var(--font-mono); font-weight: 600; margin-left: 2px;">SPACE</kbd>
+          <kbd style="font-size: 0.65rem; background: #2b251f; padding: 2px 7px; border-radius: 4px; border: 1px solid #4a3e31; color: #dec8ab; font-family: var(--font-mono); font-weight: 600; margin-left: 2px;">SPACE</kbd>
         </button>
 
         <!-- Direct Upload Image Button -->
@@ -1006,7 +1012,7 @@
             <div class="viewport-hud">
               <div class="hud-top">
                 <span class="hud-chip" id="camResChip">1280 × 720</span>
-                <span class="hud-chip" id="camTimecodeChip" style="color: var(--accent-cyan); border-color: rgba(222, 200, 171, 0.35);">REC 00:00:00.0</span>
+                <span class="hud-chip" id="camTimecodeChip" style="color: #dec8ab; border-color: rgba(222, 200, 171, 0.35);">REC 00:00:00.0</span>
                 <span class="hud-chip" id="camFpsChip">30 FPS</span>
               </div>
               <!-- Live MPU-6050 Camera Mini HUD -->
@@ -1021,10 +1027,10 @@
             </div>
 
             <!-- Drag and drop zone overlay for direct image upload -->
-            <div id="viewportDropOverlay" style="position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; background: rgba(14, 12, 10, 0.95); border: 2px dashed var(--accent-cyan); border-radius: var(--radius-md); z-index: 25; backdrop-filter: blur(8px); pointer-events: none;">
-              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2" style="margin-bottom: 10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-              <strong style="font-size: 1.05rem; color: var(--text-main);">Drop Image to Detect Cracks</strong>
-              <span style="font-size: 0.78rem; color: var(--accent-cyan); margin-top: 4px;">AI multi-tile precision scan will analyze instantly</span>
+            <div id="viewportDropOverlay" style="position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; background: rgba(14, 12, 10, 0.95); border: 2px dashed #dec8ab; border-radius: var(--radius-md); z-index: 25; backdrop-filter: blur(8px); pointer-events: none;">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#dec8ab" stroke-width="2" style="margin-bottom: 10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              <strong style="font-size: 1.05rem; color: #f5efe6;">Drop Image to Detect Cracks</strong>
+              <span style="font-size: 0.78rem; color: #dec8ab; margin-top: 4px;">AI multi-tile precision scan will analyze instantly</span>
             </div>
 
             <!-- Idle / Permission Overlay -->
@@ -1300,14 +1306,14 @@
               </div>
 
               <!-- Digital Readout: Pitch & Roll -->
-              <div style="display: flex; justify-content: space-around; width: 100%; border-top: 1px solid rgba(222, 200, 171, 0.1); padding-top: 8px;">
+              <div style="display: flex; justify-content: space-around; width: 100%; border-top: 1px solid #ded3c3; padding-top: 8px;">
                 <div style="text-align: center;">
                   <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Pitch (θ)</span>
-                  <div id="readoutPitch" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #dec8ab;">+0.00°</div>
+                  <div id="readoutPitch" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #141210;">+0.00°</div>
                 </div>
                 <div style="text-align: center;">
                   <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Roll (φ)</span>
-                  <div id="readoutRoll" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #c4ad8e;">+0.00°</div>
+                  <div id="readoutRoll" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #8c7355;">+0.00°</div>
                 </div>
               </div>
 
@@ -1320,8 +1326,8 @@
                   </div>
                   <div class="probe-axis-labels">
                     <span style="color: #dec8ab;">X → Pitch</span>
-                    <span style="color: #968065;">Y ↑ Roll</span>
-                    <span style="color: #c4ad8e;">Z ⊙ 1.0G</span>
+                    <span style="color: #c4ad8e;">Y ↑ Roll</span>
+                    <span style="color: #f5eedf;">Z ⊙ 1.0G</span>
                   </div>
                 </div>
               </div>
@@ -1332,14 +1338,14 @@
           <div class="mpu-subcard">
             <div class="subcard-title">
               <span>Accelerometer Vectors</span>
-              <span id="readoutTotalG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--accent-cyan); font-weight: 600;">1.000 G</span>
+              <span id="readoutTotalG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: #141210; font-weight: 600;">1.000 G</span>
             </div>
 
             <!-- Total G-Force Hero Meter -->
-            <div style="background: rgba(18, 16, 13, 0.7); padding: 10px; border-radius: 8px; border: 1px solid rgba(222, 200, 171, 0.1); display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="background: #ede6da; padding: 10px; border-radius: 8px; border: 1px solid #ded2c1; display: flex; justify-content: space-between; align-items: baseline;">
               <div>
                 <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Total Gravity Vector</span>
-                <h4 id="heroTotalG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: var(--text-main);">1.002 <span style="font-size: 0.8rem; color: var(--accent-cyan);">G</span></h4>
+                <h4 id="heroTotalG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: var(--text-main);">1.002 <span style="font-size: 0.8rem; color: #8c7355;">G</span></h4>
               </div>
               <span id="gStateBadge" class="tag-level" style="font-size: 0.65rem;">Nominal 1.0G</span>
             </div>
@@ -1349,42 +1355,42 @@
               <!-- Ax -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #dec8ab; font-weight: 600;">Ax (Surge / Tilt X)</span>
-                  <span id="readoutAx" style="color: #dec8ab;">+0.000 g</span>
+                  <span style="color: #141210; font-weight: 600;">Ax (Surge / Tilt X)</span>
+                  <span id="readoutAx" style="color: #141210;">+0.000 g</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barAx" style="background: #dec8ab; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barAx" style="background: #141210; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Ay -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #968065; font-weight: 600;">Ay (Sway / Tilt Y)</span>
-                  <span id="readoutAy" style="color: #968065;">+0.000 g</span>
+                  <span style="color: #8c7355; font-weight: 600;">Ay (Sway / Tilt Y)</span>
+                  <span id="readoutAy" style="color: #8c7355;">+0.000 g</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barAy" style="background: #968065; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barAy" style="background: #8c7355; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Az -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #c4ad8e; font-weight: 600;">Az (Normal Gravity)</span>
-                  <span id="readoutAz" style="color: #c4ad8e;">+1.000 g</span>
+                  <span style="color: #5c4b37; font-weight: 600;">Az (Normal Gravity)</span>
+                  <span id="readoutAz" style="color: #5c4b37;">+1.000 g</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barAz" style="background: #c4ad8e; left: 50%; width: 50%;"></div>
+                  <div class="vector-fill" id="barAz" style="background: #5c4b37; left: 50%; width: 50%;"></div>
                 </div>
               </div>
             </div>
 
             <!-- Dynamic Vibration Level -->
-            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(222, 200, 171, 0.1);">
+            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid #ded3c3;">
               <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px;">
                 <span>Vibration Intensity (ΔG)</span>
                 <span id="readoutDeltaG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text-main);">0.012 G</span>
@@ -1402,13 +1408,13 @@
               <span id="gyroStatePill" class="tag-level" style="font-size: 0.65rem;">STABLE</span>
             </div>
 
-            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(18, 16, 13, 0.7); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(222, 200, 171, 0.1);">
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #ede6da; padding: 10px 14px; border-radius: 8px; border: 1px solid #ded2c1;">
               <div>
                 <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Angular Velocity</span>
-                <h4 id="heroAngularRate" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: var(--text-main);">0.0 <span style="font-size: 0.8rem; color: #dec8ab;">°/s</span></h4>
+                <h4 id="heroAngularRate" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: var(--text-main);">0.0 <span style="font-size: 0.8rem; color: #8c7355;">°/s</span></h4>
               </div>
               <div class="gyro-spin-icon" id="gyroSpinRotor">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dec8ab" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 12a10 10 0 0 1 18.36-5.36L21.5 8M22 12a10 10 0 0 1-18.36 5.36L2.5 16"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#141210" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 12a10 10 0 0 1 18.36-5.36L21.5 8M22 12a10 10 0 0 1-18.36 5.36L2.5 16"/></svg>
               </div>
             </div>
 
@@ -1416,41 +1422,41 @@
               <!-- Gx -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #b8a896; font-weight: 600;">Gx (Roll Rate)</span>
-                  <span id="readoutGx" style="color: #c4ad8e; font-weight: 600;">+0.00 °/s</span>
+                  <span style="color: #5c4b37; font-weight: 600;">Gx (Roll Rate)</span>
+                  <span id="readoutGx" style="color: #5c4b37; font-weight: 600;">+0.00 °/s</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barGx" style="background: #c4ad8e; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barGx" style="background: #5c4b37; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Gy -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #b8a896; font-weight: 600;">Gy (Pitch Rate)</span>
-                  <span id="readoutGy" style="color: #dec8ab; font-weight: 600;">+0.00 °/s</span>
+                  <span style="color: #141210; font-weight: 600;">Gy (Pitch Rate)</span>
+                  <span id="readoutGy" style="color: #141210; font-weight: 600;">+0.00 °/s</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barGy" style="background: #dec8ab; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barGy" style="background: #141210; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Gz -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #b8a896; font-weight: 600;">Gz (Yaw Rate)</span>
-                  <span id="readoutGz" style="color: #968065; font-weight: 600;">+0.00 °/s</span>
+                  <span style="color: #8c7355; font-weight: 600;">Gz (Yaw Rate)</span>
+                  <span id="readoutGz" style="color: #8c7355; font-weight: 600;">+0.00 °/s</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barGz" style="background: #968065; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barGz" style="background: #8c7355; left: 50%; width: 0%;"></div>
                 </div>
               </div>
             </div>
 
-            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(222, 200, 171, 0.1); font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid #ded3c3; font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between;">
               <span>Rotational Stability:</span>
               <strong id="rotationalStabilityText" style="color: var(--accent-green);">Steady</strong>
             </div>
@@ -1464,10 +1470,10 @@
             </div>
 
             <!-- Temperature Card -->
-            <div style="background: rgba(4,7,13,0.5); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+            <div style="background: #ede6da; padding: 10px 14px; border-radius: 8px; border: 1px solid #ded2c1; display: flex; justify-content: space-between; align-items: center;">
               <div>
                 <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Die Temperature</span>
-                <h4 id="readoutTemp" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: #fff;">26.5 <span style="font-size: 0.8rem; color: #f59e0b;">°C</span></h4>
+                <h4 id="readoutTemp" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: var(--text-main);">26.5 <span style="font-size: 0.8rem; color: #b45309;">°C</span></h4>
               </div>
               <div style="text-align: right;">
                 <span id="tempStatusPill" class="tag-level" style="font-size: 0.65rem;">OPTIMAL</span>
@@ -1476,7 +1482,7 @@
             </div>
 
             <!-- Shock & Impact Event Log -->
-            <div style="background: rgba(4,7,13,0.5); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 4px;">
+            <div style="background: #ede6da; padding: 10px 14px; border-radius: 8px; border: 1px solid #ded2c1; display: flex; flex-direction: column; gap: 4px;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Shock Detection</span>
                 <span id="shockCounterBadge" class="tag-shock-safe" style="font-size: 0.65rem;">0 SHOCKS</span>
@@ -1530,7 +1536,7 @@
             <div style="display: flex; align-items: center; gap: 8px;">
               <button class="source-tab-btn" onclick="toggleWaveformPause()" id="btnPauseWaveform">⏸ Pause</button>
               <button class="source-tab-btn" onclick="clearWaveform()">🗑 Clear</button>
-              <select id="canvasScaleSelect" onchange="changeWaveformScale(this.value)" style="padding: 4px 8px; font-size: 0.72rem; background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 4px;">
+              <select id="canvasScaleSelect" onchange="changeWaveformScale(this.value)" style="padding: 4px 8px; font-size: 0.72rem; background: #ede6da; border: 1px solid #d4c6b2; color: #141210; border-radius: 4px;">
                 <option value="15">±15° Scale</option>
                 <option value="45" selected>±45° Scale</option>
                 <option value="90">±90° Scale</option>
@@ -2392,7 +2398,7 @@
 
       // 3. Accelerometer & Total G-Force
       document.getElementById('readoutTotalG').innerText = `${totalG.toFixed(3)} G`;
-      document.getElementById('heroTotalG').innerHTML = `${totalG.toFixed(3)} <span style="font-size: 0.8rem; color: var(--accent-cyan);">G</span>`;
+      document.getElementById('heroTotalG').innerHTML = `${totalG.toFixed(3)} <span style="font-size: 0.8rem; color: #8c7355;">G</span>`;
 
       // G-force state pill
       const gPill = document.getElementById('gStateBadge');
@@ -2435,7 +2441,7 @@
       document.getElementById('readoutGz').innerText = `${gzSign}${gz.toFixed(2)} °/s`;
 
       const angRate = Math.sqrt(gx*gx + gy*gy + gz*gz);
-      document.getElementById('heroAngularRate').innerHTML = `${angRate.toFixed(1)} <span style="font-size: 0.8rem; color: #f43f5e;">°/s</span>`;
+      document.getElementById('heroAngularRate').innerHTML = `${angRate.toFixed(1)} <span style="font-size: 0.8rem; color: #8c7355;">°/s</span>`;
 
       // Rotate rotor icon
       currentGyroRotation += (gx + gy + gz) * 0.45;
@@ -2449,17 +2455,17 @@
         gyroPill.className = 'tag-shock-alarm';
         gyroPill.innerText = 'HIGH ROTATION';
         stabText.innerText = 'Rapid Tumbling';
-        stabText.style.color = '#ff3b6c';
+        stabText.style.color = '#dc2626';
       } else if (angRate > 4.0) {
         gyroPill.className = 'tag-tilt';
         gyroPill.innerText = 'ROTATING';
         stabText.innerText = 'Angular Drift';
-        stabText.style.color = '#f59e0b';
+        stabText.style.color = '#b45309';
       } else {
         gyroPill.className = 'tag-level';
         gyroPill.innerText = 'STABLE';
         stabText.innerText = 'Steady / Fixed';
-        stabText.style.color = '#00e676';
+        stabText.style.color = '#059669';
       }
 
       updateBipolarMeter('Gx', gx, 100.0);
@@ -2467,7 +2473,7 @@
       updateBipolarMeter('Gz', gz, 100.0);
 
       // 5. Temperature
-      document.getElementById('readoutTemp').innerHTML = `${temp.toFixed(1)} <span style="font-size: 0.8rem; color: #f59e0b;">°C</span>`;
+      document.getElementById('readoutTemp').innerHTML = `${temp.toFixed(1)} <span style="font-size: 0.8rem; color: #b45309;">°C</span>`;
       const tempF = (temp * 9/5) + 32;
       document.getElementById('readoutTempF').innerText = `${tempF.toFixed(1)} °F`;
       const tempPill = document.getElementById('tempStatusPill');
@@ -2508,7 +2514,7 @@
         shockBadge.innerText = '⚠️ IMPACT DETECTED!';
         statShockBadge.className = 'tag-shock-alarm';
         statShockBadge.innerText = '⚠️ IMPACT!';
-        shockStatusDisplay.innerHTML = `<span style="color:#ff3b6c; font-weight:700;">⚠️ Sudden physical impact detected!</span>`;
+        shockStatusDisplay.innerHTML = `<span style="color:#dc2626; font-weight:700;">⚠️ Sudden physical impact detected!</span>`;
         if (hudShockFlag) hudShockFlag.style.display = 'block';
 
         // Play audio alert chime
@@ -2999,11 +3005,12 @@
 
     const dropzone = document.getElementById('dropzone');
     if (dropzone) {
-      dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.style.borderColor = 'var(--accent-cyan)'; });
-      dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = 'rgba(255,255,255,0.16)'; });
+      dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.style.borderColor = '#141210'; dropzone.style.background = '#ede4d6'; });
+      dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = '#8c7355'; dropzone.style.background = '#fbf8f2'; });
       dropzone.addEventListener('drop', (e) => {
         e.preventDefault();
-        dropzone.style.borderColor = 'rgba(255,255,255,0.16)';
+        dropzone.style.borderColor = '#8c7355';
+        dropzone.style.background = '#fbf8f2';
         if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
           handleUploadedImage(e.dataTransfer.files[0]);
         }
