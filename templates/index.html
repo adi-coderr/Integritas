@@ -17,61 +17,64 @@
       --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
       /* =========================================================================
-         Beige, Black & Dark Beige Master Color System
+         Oceanic Sapphire & Ice Blue Master System (7-Color Palette)
+         1. #001D39 - Deep Midnight Navy (Canvas & Viewport Foundation)
+         2. #0A4174 - Deep Oceanic Blue (Primary Surfaces & Elevated Cards)
+         3. #49769F - Muted Steel Blue (Dividers, Borders & Badges)
+         4. #4E8EA2 - Ocean Aqua Teal (Interactive Accents & Secondary Controls)
+         5. #6EA2B3 - Soft Coastal Slate (Secondary Typography & Subdued Elements)
+         6. #7BBDE8 - Vibrant Ice Sky Blue (Primary Hero Action & Active States)
+         7. #BDD8E9 - Light Ice Powder Blue (Crisp High-Contrast Headings & Values)
          ========================================================================= */
-      --bg-dark: #f4efe6;           /* Warm architectural beige canvas */
-      --bg-surface: #ede5d8;        /* Soft sand beige surface */
-      --card-bg: #fcfaf7;           /* Crisp, warm ivory-beige card surface */
-      --card-bg-hover: #ffffff;     /* Bright ivory card hover */
-      --card-border: #ded2c1;       /* Warm dark beige border */
-      --card-border-subtle: #ebdcd0;
-      --card-border-glow: #8c7355;  /* Deep dark beige focus border */
+      --c-midnight: #001D39;
+      --c-ocean: #0A4174;
+      --c-steel: #49769F;
+      --c-teal: #4E8EA2;
+      --c-slate: #6EA2B3;
+      --c-sky: #7BBDE8;
+      --c-ice: #BDD8E9;
 
-      /* Beige & Black Palette Hierarchy */
-      --beige-light: #fcfaf7;       /* Clean ivory */
-      --beige-base: #f4efe6;        /* Canvas beige */
-      --beige-mid: #dfd4c4;         /* Mid sand beige */
-      --beige-dark: #8c7355;        /* Refined dark beige / bronze */
-      --beige-deeper: #5c4b37;      /* Deep dark beige */
-      --beige-dim: rgba(140, 115, 85, 0.12);
+      /* Semantic Mapping */
+      --bg-dark: #001D39;            /* Page Canvas */
+      --bg-surface: #0A4174;         /* Cards and Elevated Panels */
+      --card-bg: #0A4174;            /* Primary Cards */
+      --card-bg-hover: #0d4a82;      /* Elevated Card Hover */
+      --card-border: #49769F;        /* Architectural Borders */
+      --card-border-subtle: rgba(73, 118, 159, 0.35);
+      --card-border-glow: #7BBDE8;   /* Active / Focus Glow */
 
-      --black-pure: #12100e;        /* Deep obsidian black */
-      --black-card: #181512;        /* Deep black container background */
-      --black-muted: #24201c;       /* Dark charcoal black */
+      --accent-cyan: #7BBDE8;        /* Sky Blue Luminous Accent */
+      --accent-blue: #6EA2B3;        /* Slate Coastal Blue */
+      --accent-indigo: #4E8EA2;      /* Ocean Teal */
+      --accent-purple: #49769F;      /* Steel Blue */
+      --accent-red: #f87171;         /* Critical Crack Safety Alert */
+      --accent-green: #4E8EA2;       /* Safe / Nominal Ocean Teal */
+      --accent-yellow: #7BBDE8;      /* Advisory Sky Blue */
 
-      /* Semantic Accents calibrated to Beige & Black Theme */
-      --accent-cyan: #141210;       /* Primary structural accent: Deep Black */
-      --accent-blue: #8c7355;       /* Dark Beige */
-      --accent-indigo: #5c4b37;     /* Deep Earth Bronze */
-      --accent-purple: #968065;     /* Warm Taupe */
-      --accent-red: #dc2626;        /* Structural Defect Alert Red */
-      --accent-green: #059669;      /* Nominal Green */
-      --accent-yellow: #d97706;     /* Advisory Amber */
-
-      --text-main: #141210;         /* Razor-sharp deep black */
-      --text-muted: #6e5c49;        /* Warm dark beige / espresso */
-      --text-dim: #99836d;          /* Soft dark beige */
+      --text-main: #BDD8E9;          /* Primary Light Ice Text */
+      --text-muted: #6EA2B3;         /* Secondary Soft Slate */
+      --text-dim: #49769F;           /* Subtle Steel Text */
 
       --radius-xl: 16px;
       --radius-lg: 12px;
       --radius-md: 8px;
       --radius-sm: 6px;
 
-      --shadow-card: 0 10px 28px -4px rgba(70, 55, 38, 0.07), 0 2px 8px -2px rgba(70, 55, 38, 0.04);
-      --shadow-glow: 0 0 20px rgba(140, 115, 85, 0.18);
+      --shadow-card: 0 10px 30px -4px rgba(0, 15, 30, 0.55), 0 2px 8px -2px rgba(0, 15, 30, 0.4);
+      --shadow-glow: 0 0 24px rgba(123, 189, 232, 0.3);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-track { background: var(--c-midnight); }
     ::-webkit-scrollbar-thumb {
-      background: #c8baa6;
+      background: var(--c-steel);
       border-radius: 6px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #8c7355;
+      background: var(--c-sky);
     }
 
     body {
@@ -79,14 +82,14 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
-      background-color: var(--bg-dark);
+      background-color: #001D39;
       background-image:
-        radial-gradient(ellipse 900px 500px at 15% 0%, rgba(140, 115, 85, 0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 800px 450px at 85% 10%, rgba(140, 115, 85, 0.06) 0%, transparent 55%),
-        radial-gradient(rgba(140, 115, 85, 0.12) 1px, transparent 1px);
+        radial-gradient(ellipse 900px 500px at 15% 0%, rgba(10, 65, 116, 0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 800px 450px at 85% 10%, rgba(78, 142, 162, 0.25) 0%, transparent 55%),
+        radial-gradient(rgba(110, 162, 179, 0.12) 1px, transparent 1px);
       background-size: 100% 100%, 100% 100%, 24px 24px;
       background-attachment: fixed;
-      color: var(--text-main);
+      color: #BDD8E9;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -102,61 +105,61 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #141210;
-      border-bottom: 1px solid #2a2520;
+      background: #001D39;
+      border-bottom: 1px solid #0A4174;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 4px 20px rgba(20, 18, 16, 0.15);
+      box-shadow: 0 4px 20px rgba(0, 15, 30, 0.6);
     }
 
     .brand { display: flex; align-items: center; gap: 14px; }
     .brand-icon {
       width: 40px; height: 40px; border-radius: 10px;
-      background: linear-gradient(135deg, rgba(222, 200, 171, 0.2), rgba(140, 115, 85, 0.3));
-      border: 1px solid rgba(222, 200, 171, 0.4);
+      background: linear-gradient(135deg, rgba(10, 65, 116, 0.8), rgba(78, 142, 162, 0.4));
+      border: 1px solid #7BBDE8;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 16px rgba(222, 200, 171, 0.2);
+      box-shadow: 0 0 16px rgba(123, 189, 232, 0.3);
       transition: transform 0.2s ease;
     }
     .brand-icon svg {
-      width: 22px; height: 22px; fill: none; stroke: #dec8ab;
+      width: 22px; height: 22px; fill: none; stroke: #7BBDE8;
       stroke-width: 2;
     }
     .brand-text h1 {
       font-family: var(--font-sans);
       font-size: 1.05rem; font-weight: 600; letter-spacing: -0.015em;
-      color: #f5efe6;
+      color: #BDD8E9;
       display: flex; align-items: center; gap: 8px;
     }
     .brand-text span {
       font-family: var(--font-sans);
-      font-size: 0.72rem; color: #b8a692;
+      font-size: 0.72rem; color: #6EA2B3;
       letter-spacing: 0.01em; font-weight: 400; display: flex; align-items: center; gap: 6px;
     }
     .brand-text span::before {
       content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-      background: #dec8ab; box-shadow: 0 0 6px #dec8ab;
+      background: #7BBDE8; box-shadow: 0 0 6px #7BBDE8;
     }
 
     .header-right { display: flex; align-items: center; gap: 14px; }
     .nav-tabs {
-      display: flex; background: #221d18;
-      padding: 4px; border-radius: 24px; border: 1px solid rgba(222, 200, 171, 0.15);
+      display: flex; background: #001D39;
+      padding: 4px; border-radius: 24px; border: 1px solid #49769F;
     }
     .nav-tab {
       padding: 7px 18px; border-radius: 18px; font-size: 0.82rem; font-weight: 500;
-      color: #b8a692; border: none; background: transparent; cursor: pointer;
+      color: #6EA2B3; border: none; background: transparent; cursor: pointer;
       display: flex; align-items: center; gap: 8px; transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
-    .nav-tab:hover { color: #f5efe6; }
+    .nav-tab:hover { color: #BDD8E9; }
     .nav-tab.active {
-      background: #dec8ab;
-      color: #141210; font-weight: 600;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      background: #7BBDE8;
+      color: #001D39; font-weight: 700;
+      box-shadow: 0 2px 10px rgba(123, 189, 232, 0.4);
     }
-    .nav-tab.active svg { stroke: #141210; }
+    .nav-tab.active svg { stroke: #001D39; }
 
     main {
       flex: 1; max-width: 1520px; margin: 0 auto;
@@ -175,35 +178,35 @@
     @media (max-width: 540px) { .metrics-bar { grid-template-columns: 1fr; } }
 
     .metric-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: #0A4174;
+      border: 1px solid #49769F;
       border-radius: var(--radius-lg);
       padding: 16px 18px;
       display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(189, 216, 233, 0.12);
       position: relative; overflow: hidden;
       transition: all 0.22s ease;
     }
     .metric-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, #8c7355, transparent);
-      opacity: 0.4; transition: opacity 0.2s;
+      background: linear-gradient(90deg, transparent, #7BBDE8, transparent);
+      opacity: 0.6; transition: opacity 0.2s;
     }
     .metric-card:hover {
       transform: translateY(-2px);
-      border-color: var(--beige-dark);
-      box-shadow: 0 14px 28px -4px rgba(60, 48, 35, 0.12), 0 0 14px rgba(140, 115, 85, 0.1);
+      border-color: #7BBDE8;
+      box-shadow: 0 14px 28px -4px rgba(0, 15, 30, 0.7), 0 0 16px rgba(123, 189, 232, 0.25);
     }
     .metric-card:hover::before { opacity: 1; }
     .metric-header { display: flex; justify-content: space-between; align-items: center; }
     .metric-title {
-      font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;
+      font-size: 0.72rem; color: #6EA2B3; text-transform: uppercase;
       letter-spacing: 0.04em; font-weight: 600; font-family: var(--font-sans);
     }
     .metric-card h3 {
       font-size: 1.38rem; font-weight: 700; font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
-      color: var(--text-main); letter-spacing: -0.02em;
+      color: #BDD8E9; letter-spacing: -0.02em;
     }
 
     .verdict-badge {
@@ -214,46 +217,46 @@
       font-family: var(--font-sans);
     }
     .verdict-crack {
-      background: #fee2e2;
+      background: rgba(220, 38, 38, 0.3);
       border: 1px solid #f87171;
-      color: #991b1b; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15);
+      color: #fecaca; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
       animation: pulse-crack-glow 1.2s infinite alternate;
     }
     @keyframes pulse-crack-glow {
       from { box-shadow: 0 0 4px rgba(220, 38, 38, 0.2); }
-      to { box-shadow: 0 0 14px rgba(220, 38, 38, 0.4); }
+      to { box-shadow: 0 0 14px rgba(220, 38, 38, 0.5); }
     }
     .verdict-clean {
-      background: #ecfdf5;
-      border: 1px solid #6ee7b7;
-      color: #065f46; box-shadow: 0 2px 8px rgba(5, 150, 105, 0.12);
+      background: #001D39;
+      border: 1px solid #7BBDE8;
+      color: #7BBDE8; box-shadow: 0 2px 8px rgba(123, 189, 232, 0.2);
     }
     .verdict-safe {
-      background: #ecfdf5;
-      border: 1px solid #6ee7b7;
-      color: #065f46; box-shadow: 0 2px 8px rgba(5, 150, 105, 0.12);
+      background: #001D39;
+      border: 1px solid #7BBDE8;
+      color: #7BBDE8; box-shadow: 0 2px 8px rgba(123, 189, 232, 0.2);
     }
     .verdict-idle {
-      background: #ede6da;
-      border: 1px solid #d4c6b2;
-      color: #6e5c49;
+      background: #001D39;
+      border: 1px solid #49769F;
+      color: #6EA2B3;
     }
     .verdict-ready {
-      background: #ede6da;
-      border: 1px solid #d4c6b2;
-      color: #6e5c49;
+      background: #001D39;
+      border: 1px solid #49769F;
+      color: #6EA2B3;
     }
 
     /* =========================================================================
        Action Control Bar
        ========================================================================= */
     .action-panel {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: #0A4174;
+      border: 1px solid #49769F;
       border-radius: var(--radius-xl);
       padding: 16px 24px;
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(189, 216, 233, 0.12);
       position: relative;
     }
 
@@ -263,34 +266,36 @@
     /* Hero "Take Picture & Deep Scan" Button */
     .btn-capture {
       padding: 11px 22px;
-      background: #141210;
-      border: 1px solid #332d26; border-radius: var(--radius-md);
-      color: #f5efe6; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      background: #7BBDE8;
+      border: 1px solid #BDD8E9; border-radius: var(--radius-md);
+      color: #001D39; font-size: 0.88rem; font-weight: 700; cursor: pointer;
       display: inline-flex; align-items: center; gap: 10px;
-      box-shadow: 0 4px 14px rgba(20, 18, 16, 0.25);
+      box-shadow: 0 4px 18px rgba(123, 189, 232, 0.35);
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
     .btn-capture:hover {
       transform: translateY(-2px);
-      background: #2b251f;
-      border-color: #8c7355;
-      box-shadow: 0 6px 20px rgba(20, 18, 16, 0.35);
+      background: #BDD8E9;
+      border-color: #7BBDE8;
+      color: #001D39;
+      box-shadow: 0 6px 24px rgba(123, 189, 232, 0.5);
     }
     .btn-capture:active { transform: translateY(0); }
     .btn-capture:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
     /* Direct Upload Image Trigger */
     #btnUploadImageTrigger {
-      background: #ede4d6 !important;
-      border: 1px solid #8c7355 !important;
-      color: #141210 !important;
-      box-shadow: 0 2px 8px rgba(140, 115, 85, 0.15) !important;
+      background: #001D39 !important;
+      border: 1px solid #4E8EA2 !important;
+      color: #BDD8E9 !important;
+      box-shadow: 0 2px 8px rgba(0, 15, 30, 0.4) !important;
     }
     #btnUploadImageTrigger:hover {
-      background: #e2d6c2 !important;
-      border-color: #5c4b37 !important;
-      box-shadow: 0 4px 14px rgba(140, 115, 85, 0.25) !important;
+      background: #4E8EA2 !important;
+      border-color: #7BBDE8 !important;
+      color: #001D39 !important;
+      box-shadow: 0 4px 14px rgba(78, 142, 162, 0.5) !important;
       transform: translateY(-2px);
     }
 
@@ -300,64 +305,64 @@
       font-family: var(--font-sans);
     }
     .btn-live-toggle.active {
-      background: #ecfdf5; border: 1px solid #6ee7b7;
-      color: #065f46; box-shadow: 0 2px 8px rgba(5, 150, 105, 0.12);
+      background: #4E8EA2; border: 1px solid #7BBDE8;
+      color: #001D39; box-shadow: 0 2px 10px rgba(78, 142, 162, 0.35);
     }
     .btn-live-toggle.paused {
-      background: #fef3c7; border: 1px solid #fcd34d;
-      color: #92400e; box-shadow: 0 2px 8px rgba(217, 119, 6, 0.12);
+      background: #001D39; border: 1px solid #49769F;
+      color: #BDD8E9; box-shadow: 0 2px 8px rgba(0, 15, 30, 0.3);
     }
 
     .btn-secondary {
-      background: #ede6da; border: 1px solid #c8baa6;
-      color: #141210; font-weight: 500; padding: 9px 16px; border-radius: var(--radius-md);
+      background: #001D39; border: 1px solid #49769F;
+      color: #BDD8E9; font-weight: 600; padding: 9px 16px; border-radius: var(--radius-md);
       cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem;
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
     .btn-secondary:hover {
-      background: #dfd4c4; border-color: #8c7355;
+      background: #4E8EA2; border-color: #7BBDE8; color: #001D39;
       transform: translateY(-1px);
     }
 
     .control-item { display: flex; align-items: center; gap: 8px; }
     .control-item label {
-      font-size: 0.74rem; font-weight: 600; color: var(--text-muted);
+      font-size: 0.74rem; font-weight: 600; color: #6EA2B3;
       text-transform: uppercase; letter-spacing: 0.04em; font-family: var(--font-sans);
     }
 
     select {
-      background: #ffffff; border: 1px solid #d4c6b2;
-      border-radius: var(--radius-md); padding: 8px 12px; color: var(--text-main);
+      background: #001D39; border: 1px solid #49769F;
+      border-radius: var(--radius-md); padding: 8px 12px; color: #BDD8E9;
       font-size: 0.82rem; outline: none; cursor: pointer; transition: all 0.2s;
       font-family: var(--font-sans);
     }
-    select:focus { border-color: #8c7355; box-shadow: 0 0 8px rgba(140, 115, 85, 0.25); }
+    select:focus { border-color: #7BBDE8; box-shadow: 0 0 10px rgba(123, 189, 232, 0.35); }
 
     input[type="range"] {
       width: 110px; height: 6px; border-radius: 4px;
-      background: #ded3c3; outline: none; -webkit-appearance: none;
+      background: #001D39; border: 1px solid #49769F; outline: none; -webkit-appearance: none;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
-      background: #141210; cursor: pointer; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      background: #7BBDE8; border: 1px solid #BDD8E9; cursor: pointer; box-shadow: 0 0 8px rgba(123, 189, 232, 0.5);
       transition: transform 0.15s;
     }
-    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
     input[type="checkbox"] {
       appearance: none; -webkit-appearance: none;
       width: 17px; height: 17px; border-radius: 4px;
-      background: #ffffff; border: 1.5px solid #8c7355;
+      background: #001D39; border: 1.5px solid #4E8EA2;
       cursor: pointer; outline: none; position: relative;
       transition: all 0.2s ease;
     }
     input[type="checkbox"]:checked {
-      background: #141210; border-color: #141210;
+      background: #7BBDE8; border-color: #7BBDE8;
     }
     input[type="checkbox"]:checked::after {
       content: ''; position: absolute; top: 2px; left: 5px;
-      width: 4px; height: 8px; border: solid #f5efe6;
+      width: 4px; height: 8px; border: solid #001D39;
       border-width: 0 2px 2px 0; transform: rotate(45deg);
     }
 
@@ -370,43 +375,43 @@
     @media (max-width: 1040px) { .inspection-grid { grid-template-columns: 1fr; } }
 
     .display-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: #0A4174;
+      border: 1px solid #49769F;
       border-radius: var(--radius-xl);
       padding: 18px;
       display: flex; flex-direction: column; gap: 12px; position: relative;
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(189, 216, 233, 0.12);
       transition: border-color 0.2s;
     }
-    .display-card:hover { border-color: #b8a284; }
+    .display-card:hover { border-color: #7BBDE8; }
 
     .display-header {
       display: flex; justify-content: space-between; align-items: center;
       font-size: 0.88rem; font-weight: 600; letter-spacing: -0.01em; font-family: var(--font-sans);
-      color: var(--text-main);
+      color: #BDD8E9;
     }
     .header-tags { display: flex; align-items: center; gap: 8px; }
 
     .tag-live {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: #ecfdf5; border: 1px solid #6ee7b7;
-      color: #065f46; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: #4E8EA2; border: 1px solid #7BBDE8;
+      color: #001D39; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-captured {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: #ede4d6; border: 1px solid #8c7355;
-      color: #141210; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: #001D39; border: 1px solid #6EA2B3;
+      color: #BDD8E9; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
 
     /* Tactical Viewport Frame */
     .viewport {
       position: relative; width: 100%; aspect-ratio: 4 / 3;
-      background: #0d0c0a; border-radius: var(--radius-md);
+      background: #001D39; border-radius: var(--radius-md);
       overflow: hidden; display: flex; align-items: center; justify-content: center;
-      border: 1.5px solid #2a2520;
-      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.85), 0 4px 16px rgba(40, 32, 24, 0.15);
+      border: 1.5px solid #0A4174;
+      box-shadow: inset 0 0 40px rgba(0, 15, 30, 0.95), 0 4px 16px rgba(0, 15, 30, 0.5);
     }
     video, img.viewport-img {
       width: 100%; height: 100%; object-fit: contain; display: block;
@@ -420,19 +425,19 @@
     }
     .hud-top { display: flex; justify-content: space-between; align-items: center; }
     .hud-chip {
-      background: rgba(18, 16, 14, 0.9); border: 1px solid rgba(222, 200, 171, 0.25);
+      background: rgba(0, 29, 57, 0.92); border: 1px solid rgba(110, 162, 179, 0.35);
       padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
-      color: #ded3c3; backdrop-filter: blur(8px);
+      color: #BDD8E9; backdrop-filter: blur(8px);
     }
 
     .reticle-box {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 65%; height: 65%; border: 1px dashed rgba(222, 200, 171, 0.4);
+      width: 65%; height: 65%; border: 1px dashed rgba(123, 189, 232, 0.45);
       border-radius: 8px; pointer-events: none;
     }
     .reticle-corner {
-      position: absolute; width: 14px; height: 14px; border: 2px solid #dec8ab;
+      position: absolute; width: 14px; height: 14px; border: 2px solid #7BBDE8;
     }
     .reticle-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
     .reticle-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
@@ -442,8 +447,8 @@
     /* Scanning Laser Sweep */
     .laser-scanner {
       position: absolute; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent 0%, rgba(222, 200, 171, 0.9) 50%, transparent 100%);
-      box-shadow: 0 0 14px 1px #dec8ab;
+      background: linear-gradient(90deg, transparent 0%, rgba(123, 189, 232, 0.95) 50%, transparent 100%);
+      box-shadow: 0 0 14px 1px #7BBDE8;
       z-index: 12; pointer-events: none;
       animation: laser-sweep 2.8s ease-in-out infinite alternate;
     }
@@ -465,8 +470,8 @@
 
     .split-layer-overlay {
       position: absolute; top: 0; left: 0; width: 50%; height: 100%;
-      overflow: hidden; border-right: 2px solid #dec8ab;
-      box-shadow: 2px 0 16px rgba(222, 200, 171, 0.4);
+      overflow: hidden; border-right: 2px solid #7BBDE8;
+      box-shadow: 2px 0 16px rgba(123, 189, 232, 0.45);
     }
     .split-layer-overlay img {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -476,45 +481,45 @@
     .split-handle {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 36px; height: 36px; border-radius: 50%;
-      background: #dec8ab;
-      box-shadow: 0 0 16px rgba(0, 0, 0, 0.4);
-      border: 2px solid #141210;
+      background: #7BBDE8;
+      box-shadow: 0 0 16px rgba(0, 15, 30, 0.8);
+      border: 2px solid #001D39;
       display: flex; align-items: center; justify-content: center;
       cursor: ew-resize; z-index: 25;
       transition: transform 0.15s ease;
     }
     .split-handle:hover { transform: translate(-50%, -50%) scale(1.1); }
-    .split-handle svg { width: 16px; height: 16px; fill: #141210; }
+    .split-handle svg { width: 16px; height: 16px; fill: #001D39; }
 
     /* Scanning Radar Overlay */
     .scanning-overlay {
-      position: absolute; inset: 0; background: rgba(18, 16, 14, 0.92);
+      position: absolute; inset: 0; background: rgba(0, 29, 57, 0.94);
       backdrop-filter: blur(14px); display: none; flex-direction: column;
       align-items: center; justify-content: center; gap: 14px; z-index: 40;
     }
     .scan-radar {
       width: 56px; height: 56px; border-radius: 50%;
-      border: 3px solid rgba(222, 200, 171, 0.2);
-      border-top-color: #dec8ab;
+      border: 3px solid rgba(110, 162, 179, 0.25);
+      border-top-color: #7BBDE8;
       animation: spin 0.75s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* View Mode Toolbar */
     .view-mode-bar {
-      display: flex; align-items: center; gap: 4px; background: #ede6da;
-      padding: 3px; border-radius: 8px; border: 1px solid #d4c6b2;
+      display: flex; align-items: center; gap: 4px; background: #001D39;
+      padding: 3px; border-radius: 8px; border: 1px solid #49769F;
     }
     .view-mode-btn {
       padding: 4px 11px; border-radius: 6px; font-size: 0.74rem; font-weight: 500;
-      color: #6e5c49; border: none; background: transparent; cursor: pointer;
+      color: #6EA2B3; border: none; background: transparent; cursor: pointer;
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
-    .view-mode-btn:hover { color: #141210; }
+    .view-mode-btn:hover { color: #BDD8E9; }
     .view-mode-btn.active {
-      background: #141210;
-      color: #f5efe6; font-weight: 600;
+      background: #7BBDE8;
+      color: #001D39; font-weight: 700;
     }
 
     /* Detected Cracks Inventory Table */
@@ -523,42 +528,42 @@
       font-family: var(--font-sans);
     }
     .crack-table th {
-      padding: 10px 14px; background: #ede6da; color: #6e5c49;
-      text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--card-border);
+      padding: 10px 14px; background: #001D39; color: #6EA2B3;
+      text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #49769F;
       font-family: var(--font-sans); font-size: 0.7rem; font-weight: 600;
     }
     .crack-table td {
-      padding: 10px 14px; border-bottom: 1px solid #ede5d8;
-      vertical-align: middle; color: var(--text-main);
+      padding: 10px 14px; border-bottom: 1px solid rgba(73, 118, 159, 0.25);
+      vertical-align: middle; color: #BDD8E9;
     }
-    .crack-table tr:hover { background: #f8f4ed; }
+    .crack-table tr:hover { background: rgba(78, 142, 162, 0.2); }
 
     .tag-severe {
       display: inline-block; padding: 2px 8px; border-radius: 10px;
-      background: #fee2e2; border: 1px solid #f87171;
-      color: #991b1b; font-weight: 600;
+      background: rgba(220, 38, 38, 0.35); border: 1px solid #f87171;
+      color: #fecaca; font-weight: 600;
     }
     .tag-moderate {
       display: inline-block; padding: 2px 8px; border-radius: 10px;
-      background: #fef3c7; border: 1px solid #fcd34d;
-      color: #92400e; font-weight: 600;
+      background: rgba(78, 142, 162, 0.3); border: 1px solid #7BBDE8;
+      color: #BDD8E9; font-weight: 600;
     }
     .tag-minor {
       display: inline-block; padding: 2px 8px; border-radius: 10px;
-      background: #ede4d6; border: 1px solid #8c7355;
-      color: #141210; font-weight: 600;
+      background: #001D39; border: 1px solid #6EA2B3;
+      color: #BDD8E9; font-weight: 600;
     }
 
     /* Dropzone for Uploads */
     .dropzone {
-      border: 2px dashed #8c7355; border-radius: var(--radius-lg);
+      border: 2px dashed #4E8EA2; border-radius: var(--radius-lg);
       padding: 38px 24px; text-align: center; cursor: pointer;
-      background: #fbf8f2;
+      background: #001D39; color: #BDD8E9;
       transition: all 0.2s ease;
     }
     .dropzone:hover {
-      border-color: #141210;
-      background: #f5eee2;
+      border-color: #7BBDE8;
+      background: #0A4174;
       transform: translateY(-2px);
     }
 
@@ -567,13 +572,14 @@
     }
     @media (max-width: 960px) { .sample-grid { grid-template-columns: repeat(2, 1fr); } }
     .sample-btn {
-      background: #ede6da; border: 1px solid #c8baa6;
-      border-radius: var(--radius-md); padding: 12px; font-size: 0.8rem; color: #141210;
+      background: #001D39; border: 1px solid #49769F;
+      border-radius: var(--radius-md); padding: 12px; font-size: 0.8rem; color: #BDD8E9;
       cursor: pointer; text-align: center; transition: all 0.2s ease;
     }
     .sample-btn:hover {
-      border-color: #8c7355;
-      background: #dfd4c4;
+      border-color: #7BBDE8;
+      background: #4E8EA2;
+      color: #001D39;
       transform: translateY(-2px);
     }
 
@@ -581,98 +587,98 @@
        MPU-6050 6-Axis Motion & IMU Telemetry Studio Dashboard
        ========================================================================= */
     .mpu-panel {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: #0A4174;
+      border: 1px solid #49769F;
       border-radius: var(--radius-xl);
       padding: 22px;
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(189, 216, 233, 0.12);
       display: flex; flex-direction: column; gap: 18px; position: relative;
       transition: all 0.2s ease;
     }
-    .mpu-panel:hover { border-color: #b8a284; }
+    .mpu-panel:hover { border-color: #7BBDE8; }
     .mpu-panel.shock-active {
       border-color: rgba(220, 38, 38, 0.85) !important;
-      box-shadow: 0 0 35px rgba(220, 38, 38, 0.35) !important;
+      box-shadow: 0 0 35px rgba(220, 38, 38, 0.45) !important;
       animation: flash-shock-border 0.6s infinite alternate;
     }
     @keyframes flash-shock-border {
       from { border-color: rgba(220, 38, 38, 0.4); box-shadow: 0 0 14px rgba(220, 38, 38, 0.2); }
-      to { border-color: rgba(220, 38, 38, 0.95); box-shadow: 0 0 35px rgba(220, 38, 38, 0.4); }
+      to { border-color: rgba(220, 38, 38, 0.95); box-shadow: 0 0 35px rgba(220, 38, 38, 0.5); }
     }
 
     .mpu-header {
       display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: gap; gap: 12px; border-bottom: 1px solid #ede5d8;
+      flex-wrap: gap; gap: 12px; border-bottom: 1px solid rgba(73, 118, 159, 0.35);
       padding-bottom: 14px;
     }
     .mpu-header-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .mpu-icon-glow {
       width: 38px; height: 38px; border-radius: 10px;
-      background: #ede4d6;
-      border: 1px solid #8c7355;
+      background: #001D39;
+      border: 1px solid #4E8EA2;
       display: flex; align-items: center; justify-content: center;
     }
-    .mpu-icon-glow svg { width: 20px; height: 20px; stroke: #141210; }
+    .mpu-icon-glow svg { width: 20px; height: 20px; stroke: #7BBDE8; }
     .mpu-title-text h2 {
       font-family: var(--font-sans);
       font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em;
-      color: var(--text-main); display: flex; align-items: center; gap: 8px;
+      color: #BDD8E9; display: flex; align-items: center; gap: 8px;
     }
-    .mpu-title-text span { font-size: 0.72rem; color: var(--text-muted); font-weight: 400; }
+    .mpu-title-text span { font-size: 0.72rem; color: #6EA2B3; font-weight: 400; }
     .mpu-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
     .tag-level {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: #ecfdf5; border: 1px solid #6ee7b7;
-      color: #065f46; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: #001D39; border: 1px solid #4E8EA2;
+      color: #7BBDE8; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-tilt {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: #ede4d6; border: 1px solid #8c7355;
-      color: #141210; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: #001D39; border: 1px solid #7BBDE8;
+      color: #BDD8E9; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-shock-alarm {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 600;
-      background: #fee2e2; border: 1px solid #f87171;
-      color: #991b1b; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: rgba(220, 38, 38, 0.35); border: 1px solid #f87171;
+      color: #fecaca; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .tag-shock-safe {
       display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px;
       border-radius: 12px; font-size: 0.7rem; font-weight: 500;
-      background: #ede6da; border: 1px solid #d4c6b2;
-      color: #6e5c49; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+      background: #001D39; border: 1px solid #49769F;
+      color: #6EA2B3; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
 
     .mpu-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .source-tab-btn {
       padding: 5px 12px; border-radius: 6px; font-size: 0.74rem; font-weight: 500;
-      background: #ede6da; border: 1px solid #c8baa6;
-      color: #141210; cursor: pointer; display: flex; align-items: center; gap: 6px;
+      background: #001D39; border: 1px solid #49769F;
+      color: #6EA2B3; cursor: pointer; display: flex; align-items: center; gap: 6px;
       transition: all 0.2s ease;
       font-family: var(--font-sans);
     }
-    .source-tab-btn:hover { background: #dfd4c4; color: #141210; }
+    .source-tab-btn:hover { background: #0A4174; color: #BDD8E9; }
     .source-tab-btn.active {
-      background: #141210;
-      border-color: #141210; color: #f5efe6; font-weight: 600;
+      background: #7BBDE8;
+      border-color: #7BBDE8; color: #001D39; font-weight: 700;
     }
 
     .mpu-config-drawer {
-      background: #ede6da; border: 1px solid #d4c6b2;
+      background: #001D39; border: 1px solid #49769F;
       border-radius: var(--radius-md); padding: 12px 16px;
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 12px; font-size: 0.8rem;
     }
     .config-inputs { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .config-input {
-      background: #ffffff; border: 1px solid #c8baa6;
-      border-radius: var(--radius-sm); padding: 6px 12px; color: var(--text-main);
+      background: #0A4174; border: 1px solid #49769F;
+      border-radius: var(--radius-sm); padding: 6px 12px; color: #BDD8E9;
       font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.78rem; outline: none; min-width: 220px;
     }
-    .config-input:focus { border-color: #8c7355; }
+    .config-input:focus { border-color: #7BBDE8; }
 
     .mpu-telemetry-grid {
       display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr; gap: 16px;
@@ -681,13 +687,13 @@
     @media (max-width: 700px) { .mpu-telemetry-grid { grid-template-columns: 1fr; } }
 
     .mpu-subcard {
-      background: #fbf9f5; border: 1px solid #ded3c3;
+      background: #001D39; border: 1px solid #49769F;
       border-radius: var(--radius-lg); padding: 14px 16px;
       display: flex; flex-direction: column; gap: 10px; position: relative;
     }
-    .mpu-subcard:hover { border-color: #8c7355; }
+    .mpu-subcard:hover { border-color: #7BBDE8; }
     .subcard-title {
-      font-size: 0.72rem; font-weight: 600; color: var(--text-muted);
+      font-size: 0.72rem; font-weight: 600; color: #6EA2B3;
       text-transform: uppercase; letter-spacing: 0.04em;
       display: flex; justify-content: space-between; align-items: center;
       font-family: var(--font-sans);
@@ -699,14 +705,14 @@
     }
     .horizon-bezel {
       width: 154px; height: 154px; border-radius: 50%;
-      position: relative; overflow: hidden; background: #0a0908;
-      border: 3px solid #2e261e;
-      box-shadow: 0 0 0 1px rgba(222, 200, 171, 0.15), 0 8px 24px rgba(0, 0, 0, 0.8), inset 0 0 16px rgba(0, 0, 0, 0.7);
+      position: relative; overflow: hidden; background: #001D39;
+      border: 3px solid #0A4174;
+      box-shadow: 0 0 0 1px rgba(110, 162, 179, 0.3), 0 8px 24px rgba(0, 15, 30, 0.95), inset 0 0 16px rgba(0, 15, 30, 0.8);
     }
     .horizon-disk {
       position: absolute; width: 320px; height: 320px; top: -83px; left: -83px;
       border-radius: 50%;
-      background: linear-gradient(180deg, #524434 0%, #877259 49.5%, #f5eedf 50%, #2e261d 50.8%, #14110d 100%);
+      background: linear-gradient(180deg, #0A4174 0%, #49769F 49.5%, #BDD8E9 50%, #4E8EA2 50.8%, #001D39 100%);
       transition: transform 0.06s cubic-bezier(0.1, 0.8, 0.3, 1);
       display: flex; align-items: center; justify-content: center;
     }
@@ -718,37 +724,37 @@
     .aircraft-pip {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 8px; height: 8px; border-radius: 50%;
-      background: #dec8ab; box-shadow: 0 0 8px rgba(222, 200, 171, 0.6);
+      background: #7BBDE8; box-shadow: 0 0 8px #7BBDE8;
     }
     .aircraft-wing-left {
       position: absolute; top: 50%; left: 6px; width: 22px; height: 3px;
-      background: #dec8ab; transform: translateY(-50%); box-shadow: 0 0 6px rgba(222, 200, 171, 0.6);
+      background: #7BBDE8; transform: translateY(-50%); box-shadow: 0 0 6px #7BBDE8;
     }
     .aircraft-wing-right {
       position: absolute; top: 50%; right: 6px; width: 22px; height: 3px;
-      background: #dec8ab; transform: translateY(-50%); box-shadow: 0 0 6px rgba(222, 200, 171, 0.6);
+      background: #7BBDE8; transform: translateY(-50%); box-shadow: 0 0 6px #7BBDE8;
     }
     .roll-indicator-pip {
       position: absolute; top: 3px; left: 50%; transform: translateX(-50%);
       width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent;
-      border-top: 7px solid #dec8ab; z-index: 12;
+      border-top: 7px solid #7BBDE8; z-index: 12;
     }
 
     /* 3D Probe Sensor Board */
     .probe-3d-scene { perspective: 450px; width: 140px; height: 72px; margin: 4px auto 0; }
     .probe-3d-board {
       width: 100%; height: 100%;
-      background: linear-gradient(135deg, #2a2219 0%, #17130e 100%);
-      border: 1.5px solid #a89276; border-radius: 8px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+      background: linear-gradient(135deg, #0A4174 0%, #001D39 100%);
+      border: 1.5px solid #4E8EA2; border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(0, 15, 30, 0.8);
       transform-style: preserve-3d; transition: transform 0.08s cubic-bezier(0.1, 0.8, 0.3, 1);
       display: flex; align-items: center; justify-content: center; gap: 10px; padding: 6px; position: relative;
     }
     .probe-chip {
-      width: 32px; height: 32px; background: #0d0c0a; border: 1px solid #6b5c4b;
+      width: 32px; height: 32px; background: #001D39; border: 1px solid #49769F;
       border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-size: 7px; font-weight: 600; color: #dec8ab; font-family: var(--font-mono);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+      font-size: 7px; font-weight: 700; color: #7BBDE8; font-family: var(--font-mono);
+      box-shadow: 0 2px 6px rgba(0, 15, 30, 0.6);
     }
     .probe-axis-labels {
       font-size: 8px; font-weight: 600; font-family: var(--font-mono);
@@ -762,33 +768,33 @@
       font-size: 0.74rem; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
     }
     .vector-track {
-      position: relative; height: 8px; background: #e5dacb;
+      position: relative; height: 8px; background: #0A4174;
       border-radius: 4px; overflow: hidden;
     }
     .vector-center-zero {
       position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
-      background: #8c7355; z-index: 2;
+      background: #49769F; z-index: 2;
     }
     .vector-fill { position: absolute; top: 0; bottom: 0; border-radius: 4px; transition: all 0.08s linear; }
 
     .gyro-spin-icon {
       width: 34px; height: 34px; border-radius: 50%;
-      border: 2px dashed #8c7355;
+      border: 2px dashed #4E8EA2;
       display: flex; align-items: center; justify-content: center;
       transition: transform 0.1s linear;
     }
 
     /* Oscilloscope Strip Chart */
     .waveform-card {
-      background: #fbf9f5; border: 1px solid #ded3c3;
+      background: #0A4174; border: 1px solid #49769F;
       border-radius: var(--radius-lg); padding: 14px 16px;
       display: flex; flex-direction: column; gap: 10px;
     }
     .waveform-canvas-box {
-      width: 100%; height: 120px; background: #141210;
-      border-radius: var(--radius-sm); border: 1px solid #2a2520;
+      width: 100%; height: 120px; background: #001D39;
+      border-radius: var(--radius-sm); border: 1px solid #49769F;
       position: relative; overflow: hidden;
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.75);
+      box-shadow: inset 0 0 20px rgba(0, 15, 30, 0.9);
     }
     #mpuCanvas { width: 100%; height: 100%; display: block; }
 
@@ -803,18 +809,18 @@
     .toast-item {
       pointer-events: auto;
       padding: 10px 18px; border-radius: 10px;
-      background: #141210;
-      border: 1px solid #8c7355;
-      color: #f5efe6; font-size: 0.82rem; font-weight: 500;
-      box-shadow: 0 8px 24px rgba(20, 18, 16, 0.25);
+      background: #001D39;
+      border: 1px solid #7BBDE8;
+      color: #BDD8E9; font-size: 0.82rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0, 15, 30, 0.7);
       display: flex; align-items: center; gap: 10px;
       animation: toast-slide-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       transition: opacity 0.25s, transform 0.25s;
       font-family: var(--font-sans);
     }
     .toast-item.fade-out { opacity: 0; transform: translateY(8px) scale(0.96); }
-    .toast-success { border-color: #059669; }
-    .toast-warning { border-color: #dc2626; }
+    .toast-success { border-color: #4E8EA2; }
+    .toast-warning { border-color: #f87171; }
     @keyframes toast-slide-in {
       from { opacity: 0; transform: translateY(16px) scale(0.95); }
       to { opacity: 1; transform: translateY(0) scale(1); }
@@ -906,7 +912,7 @@
         <button class="btn-capture" id="btnCapturePhoto" onclick="capturePhotoForDeepScan()" title="Capture full-resolution photo for multi-tile pinpoint accuracy">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           <span id="btnCaptureText">📸 Take Picture & Deep Scan</span>
-          <kbd style="font-size: 0.65rem; background: #2b251f; padding: 2px 7px; border-radius: 4px; border: 1px solid #4a3e31; color: #dec8ab; font-family: var(--font-mono); font-weight: 600; margin-left: 2px;">SPACE</kbd>
+          <kbd style="font-size: 0.65rem; background: #0A4174; padding: 2px 7px; border-radius: 4px; border: 1px solid #49769F; color: #BDD8E9; font-family: var(--font-mono); font-weight: 600; margin-left: 2px;">SPACE</kbd>
         </button>
 
         <!-- Direct Upload Image Button -->
@@ -1012,35 +1018,35 @@
             <div class="viewport-hud">
               <div class="hud-top">
                 <span class="hud-chip" id="camResChip">1280 × 720</span>
-                <span class="hud-chip" id="camTimecodeChip" style="color: #dec8ab; border-color: rgba(222, 200, 171, 0.35);">REC 00:00:00.0</span>
+                <span class="hud-chip" id="camTimecodeChip" style="color: #7BBDE8; border-color: rgba(110, 162, 179, 0.35);">REC 00:00:00.0</span>
                 <span class="hud-chip" id="camFpsChip">30 FPS</span>
               </div>
               <!-- Live MPU-6050 Camera Mini HUD -->
               <div class="hud-bottom" id="camMpuHud" style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%;">
-                <span class="hud-chip" style="background: rgba(14, 12, 10, 0.9); border-color: rgba(222, 200, 171, 0.35); color: #dec8ab;">
-                  IMU: P: <strong id="hudPitch" style="color: #dec8ab;">+0.0°</strong> | R: <strong id="hudRoll" style="color: #f43f5e;">+0.0°</strong> | <span id="hudG" style="color: #c4ad8e;">1.00G</span>
+                <span class="hud-chip" style="background: rgba(0, 29, 57, 0.92); border-color: rgba(110, 162, 179, 0.35); color: #BDD8E9;">
+                  IMU: P: <strong id="hudPitch" style="color: #7BBDE8;">+0.0°</strong> | R: <strong id="hudRoll" style="color: #6EA2B3;">+0.0°</strong> | <span id="hudG" style="color: #BDD8E9;">1.00G</span>
                 </span>
-                <span class="hud-chip" id="hudShockFlag" style="display: none; background: rgba(244, 63, 94, 0.9); color: #fff; font-weight: 600; border-color: #fb7185;">
+                <span class="hud-chip" id="hudShockFlag" style="display: none; background: #001D39; color: #7BBDE8; font-weight: 600; border: 1px solid #7BBDE8;">
                   ⚠️ SHOCK DETECTED
                 </span>
               </div>
             </div>
 
             <!-- Drag and drop zone overlay for direct image upload -->
-            <div id="viewportDropOverlay" style="position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; background: rgba(14, 12, 10, 0.95); border: 2px dashed #dec8ab; border-radius: var(--radius-md); z-index: 25; backdrop-filter: blur(8px); pointer-events: none;">
-              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#dec8ab" stroke-width="2" style="margin-bottom: 10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-              <strong style="font-size: 1.05rem; color: #f5efe6;">Drop Image to Detect Cracks</strong>
-              <span style="font-size: 0.78rem; color: #dec8ab; margin-top: 4px;">AI multi-tile precision scan will analyze instantly</span>
+            <div id="viewportDropOverlay" style="position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; background: rgba(0, 29, 57, 0.95); border: 2px dashed #7BBDE8; border-radius: var(--radius-md); z-index: 25; backdrop-filter: blur(8px); pointer-events: none;">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#7BBDE8" stroke-width="2" style="margin-bottom: 10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              <strong style="font-size: 1.05rem; color: #BDD8E9;">Drop Image to Detect Cracks</strong>
+              <span style="font-size: 0.78rem; color: #6EA2B3; margin-top: 4px;">AI multi-tile precision scan will analyze instantly</span>
             </div>
 
             <!-- Idle / Permission Overlay -->
-            <div id="camIdleOverlay" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(14, 12, 10, 0.94); z-index: 10;">
+            <div id="camIdleOverlay" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0, 29, 57, 0.94); z-index: 10;">
               <div class="scan-radar" style="margin-bottom: 14px;"></div>
-              <p style="font-weight: 600; color: #f5efe6; font-size: 1.02rem;" id="idleOverlayTitle">Camera Viewfinder Ready</p>
-              <p style="font-size: 0.78rem; color: #dec8ab; margin-top: 4px; text-align: center; max-width: 320px;" id="idleOverlaySubtitle">Click below to allow camera access and begin live inspection</p>
+              <p style="font-weight: 600; color: #BDD8E9; font-size: 1.02rem;" id="idleOverlayTitle">Camera Viewfinder Ready</p>
+              <p style="font-size: 0.78rem; color: #6EA2B3; margin-top: 4px; text-align: center; max-width: 320px;" id="idleOverlaySubtitle">Click below to allow camera access and begin live inspection</p>
               <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
-                <button class="btn-capture" id="btnOverlayStartCam" style="padding: 8px 18px; font-size: 0.82rem; background: #141210; border: 1px solid #8c7355; color: #f5efe6;" onclick="startViewfinder(true)">📷 Allow & Start Camera</button>
-                <button class="btn-capture" style="padding: 8px 18px; font-size: 0.82rem; background: #ede4d6; border: 1px solid #8c7355; color: #141210;" onclick="openImagePicker()">📁 Or Upload Image File</button>
+                <button class="btn-capture" id="btnOverlayStartCam" style="padding: 8px 18px; font-size: 0.82rem; background: #7BBDE8; border: 1px solid #BDD8E9; color: #001D39; font-weight: 700;" onclick="startViewfinder(true)">📷 Allow & Start Camera</button>
+                <button class="btn-capture" style="padding: 8px 18px; font-size: 0.82rem; background: #0A4174; border: 1px solid #4E8EA2; color: #BDD8E9;" onclick="openImagePicker()">📁 Or Upload Image File</button>
               </div>
             </div>
           </div>
@@ -1069,8 +1075,8 @@
             <!-- Scanning Spinner / Animation (Used during Deep Scan on photo) -->
             <div class="scanning-overlay" id="scanningOverlay">
               <div class="scan-radar"></div>
-              <strong style="color: #fff; font-size: 1rem;" id="scanStatusTitle">🔬 Multi-Tile Deep Precision Scan In Progress...</strong>
-              <p style="font-size: 0.8rem; color: #a0aec0; text-align: center; max-width: 380px; line-height: 1.45;" id="scanStatusDesc">
+              <strong style="color: #BDD8E9; font-size: 1rem;" id="scanStatusTitle">🔬 Multi-Tile Deep Precision Scan In Progress...</strong>
+              <p style="font-size: 0.8rem; color: #6EA2B3; text-align: center; max-width: 380px; line-height: 1.45;" id="scanStatusDesc">
                 Analyzing high-resolution photo across overlapping patches with sub-millimeter flaw localization.
               </p>
             </div>
@@ -1152,7 +1158,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M12 2a14.5 14.5 0 0 0 0 20M2 12h20"/>
-                <circle cx="12" cy="12" r="3" fill="#dec8ab"/>
+                <circle cx="12" cy="12" r="3" fill="#7BBDE8"/>
               </svg>
             </div>
             <div class="mpu-title-text">
@@ -1167,7 +1173,7 @@
           </div>
 
           <div class="mpu-toolbar">
-            <div class="view-mode-bar" style="background: rgba(14, 12, 10, 0.7); border: 1px solid rgba(222, 200, 171, 0.1);">
+            <div class="view-mode-bar" style="background: #001D39; border: 1px solid #49769F;">
               <button class="source-tab-btn active" id="tabSrcPush" onclick="setMpuSource('push')">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v10m0 0l4-4m-4 4L8 8M3 17v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"/></svg>
                 Direct Push (No ESP32 IP Needed)
@@ -1213,7 +1219,7 @@
             <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
               <span class="tag-level" style="font-size: 0.72rem; padding: 4px 10px;">★ NO ESP32 IP NEEDED</span>
               <span style="font-size: 0.76rem; color: var(--text-muted);">In your ESP32 Arduino code, set:</span>
-              <code style="background: rgba(10, 9, 8, 0.85); padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(222, 200, 171, 0.35); color: #dec8ab; font-family: var(--font-mono); font-size: 0.82rem;">
+              <code style="background: #001D39; padding: 5px 12px; border-radius: 6px; border: 1px solid #49769F; color: #BDD8E9; font-family: var(--font-mono); font-size: 0.82rem;">
                 pushServerHost = "<span id="pushHostIpText">10.169.71.221</span>";
               </code>
               <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.74rem;" onclick="copyPushIp()" title="Copy host IP to clipboard">
@@ -1281,19 +1287,19 @@
                   <div class="pitch-ladder">
                     <svg viewBox="-80 -80 160 160" width="100%" height="100%" style="overflow: visible;">
                       <!-- Ladder ticks: 0 is center white line -->
-                      <line x1="-35" y1="0" x2="35" y2="0" stroke="#ffffff" stroke-width="2.5" />
+                      <line x1="-35" y1="0" x2="35" y2="0" stroke="#7BBDE8" stroke-width="2.5" />
                       <!-- +10 deg pitch -->
-                      <line x1="-20" y1="-22" x2="20" y2="-22" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" />
-                      <text x="24" y="-20" fill="rgba(255,255,255,0.8)" font-size="8" font-family="'Geist Mono', 'JetBrains Mono', monospace">+10</text>
+                      <line x1="-20" y1="-22" x2="20" y2="-22" stroke="#BDD8E9" stroke-width="1.5" />
+                      <text x="24" y="-20" fill="#BDD8E9" font-size="8" font-family="'Geist Mono', 'JetBrains Mono', monospace">+10</text>
                       <!-- +20 deg pitch -->
-                      <line x1="-14" y1="-44" x2="14" y2="-44" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" />
-                      <text x="18" y="-42" fill="rgba(255,255,255,0.8)" font-size="8" font-family="'Geist Mono', 'JetBrains Mono', monospace">+20</text>
+                      <line x1="-14" y1="-44" x2="14" y2="-44" stroke="#BDD8E9" stroke-width="1.5" />
+                      <text x="18" y="-42" fill="#BDD8E9" font-size="8" font-family="'Geist Mono', 'JetBrains Mono', monospace">+20</text>
                       <!-- -10 deg pitch -->
-                      <line x1="-20" y1="22" x2="20" y2="22" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" />
-                      <text x="24" y="25" fill="rgba(255,255,255,0.8)" font-size="8" font-family="'Geist Mono', 'JetBrains Mono', monospace">-10</text>
+                      <line x1="-20" y1="22" x2="20" y2="22" stroke="#BDD8E9" stroke-width="1.5" />
+                      <text x="24" y="25" fill="#BDD8E9" font-size="8" font-family="'Geist Mono', 'JetBrains Mono', monospace">-10</text>
                       <!-- -20 deg pitch -->
-                      <line x1="-14" y1="44" x2="14" y2="44" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" />
-                      <text x="18" y="47" fill="rgba(255,255,255,0.8)" font-size="8" font-family="'Geist Mono', 'JetBrains Mono', monospace">-20</text>
+                      <line x1="-14" y1="44" x2="14" y2="44" stroke="#BDD8E9" stroke-width="1.5" />
+                      <text x="18" y="47" fill="#BDD8E9" font-size="8" font-family="'Geist Mono', 'JetBrains Mono', monospace">-20</text>
                     </svg>
                   </div>
                 </div>
@@ -1307,14 +1313,14 @@
               </div>
 
               <!-- Digital Readout: Pitch & Roll -->
-              <div style="display: flex; justify-content: space-around; width: 100%; border-top: 1px solid #ded3c3; padding-top: 8px;">
+              <div style="display: flex; justify-content: space-around; width: 100%; border-top: 1px solid #49769F; padding-top: 8px;">
                 <div style="text-align: center;">
                   <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Pitch (θ)</span>
-                  <div id="readoutPitch" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #141210;">+0.00°</div>
+                  <div id="readoutPitch" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #7BBDE8;">+0.00°</div>
                 </div>
                 <div style="text-align: center;">
                   <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Roll (φ)</span>
-                  <div id="readoutRoll" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #8c7355;">+0.00°</div>
+                  <div id="readoutRoll" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.15rem; font-weight: 600; color: #6EA2B3;">+0.00°</div>
                 </div>
               </div>
 
@@ -1326,9 +1332,9 @@
                     <span>6050</span>
                   </div>
                   <div class="probe-axis-labels">
-                    <span style="color: #dec8ab;">X → Pitch</span>
-                    <span style="color: #c4ad8e;">Y ↑ Roll</span>
-                    <span style="color: #f5eedf;">Z ⊙ 1.0G</span>
+                    <span style="color: #7BBDE8;">X → Pitch</span>
+                    <span style="color: #6EA2B3;">Y ↑ Roll</span>
+                    <span style="color: #BDD8E9;">Z ⊙ 1.0G</span>
                   </div>
                 </div>
               </div>
@@ -1339,14 +1345,14 @@
           <div class="mpu-subcard">
             <div class="subcard-title">
               <span>Accelerometer Vectors</span>
-              <span id="readoutTotalG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: #141210; font-weight: 600;">1.000 G</span>
+              <span id="readoutTotalG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: #BDD8E9; font-weight: 600;">1.000 G</span>
             </div>
 
             <!-- Total G-Force Hero Meter -->
-            <div style="background: #ede6da; padding: 10px; border-radius: 8px; border: 1px solid #ded2c1; display: flex; justify-content: space-between; align-items: baseline;">
+            <div style="background: #001D39; padding: 10px; border-radius: 8px; border: 1px solid #49769F; display: flex; justify-content: space-between; align-items: baseline;">
               <div>
                 <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Total Gravity Vector</span>
-                <h4 id="heroTotalG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: var(--text-main);">1.002 <span style="font-size: 0.8rem; color: #8c7355;">G</span></h4>
+                <h4 id="heroTotalG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: #BDD8E9;">1.002 <span style="font-size: 0.8rem; color: #7BBDE8;">G</span></h4>
               </div>
               <span id="gStateBadge" class="tag-level" style="font-size: 0.65rem;">Nominal 1.0G</span>
             </div>
@@ -1356,48 +1362,48 @@
               <!-- Ax -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #141210; font-weight: 600;">Ax (Surge / Tilt X)</span>
-                  <span id="readoutAx" style="color: #141210;">+0.000 g</span>
+                  <span style="color: #7BBDE8; font-weight: 600;">Ax (Surge / Tilt X)</span>
+                  <span id="readoutAx" style="color: #7BBDE8;">+0.000 g</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barAx" style="background: #141210; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barAx" style="background: #7BBDE8; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Ay -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #8c7355; font-weight: 600;">Ay (Sway / Tilt Y)</span>
-                  <span id="readoutAy" style="color: #8c7355;">+0.000 g</span>
+                  <span style="color: #6EA2B3; font-weight: 600;">Ay (Sway / Tilt Y)</span>
+                  <span id="readoutAy" style="color: #6EA2B3;">+0.000 g</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barAy" style="background: #8c7355; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barAy" style="background: #6EA2B3; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Az -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #5c4b37; font-weight: 600;">Az (Normal Gravity)</span>
-                  <span id="readoutAz" style="color: #5c4b37;">+1.000 g</span>
+                  <span style="color: #4E8EA2; font-weight: 600;">Az (Normal Gravity)</span>
+                  <span id="readoutAz" style="color: #4E8EA2;">+1.000 g</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barAz" style="background: #5c4b37; left: 50%; width: 50%;"></div>
+                  <div class="vector-fill" id="barAz" style="background: #4E8EA2; left: 50%; width: 50%;"></div>
                 </div>
               </div>
             </div>
 
             <!-- Dynamic Vibration Level -->
-            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid #ded3c3;">
+            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(73, 118, 159, 0.35);">
               <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px;">
                 <span>Vibration Intensity (ΔG)</span>
-                <span id="readoutDeltaG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text-main);">0.012 G</span>
+                <span id="readoutDeltaG" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; color: #BDD8E9;">0.012 G</span>
               </div>
               <div class="vector-track" style="height: 6px;">
-                <div id="barVibration" style="height: 100%; width: 5%; background: var(--accent-green); border-radius: 4px; transition: width 0.1s linear, background 0.2s;"></div>
+                <div id="barVibration" style="height: 100%; width: 5%; background: #7BBDE8; border-radius: 4px; transition: width 0.1s linear, background 0.2s;"></div>
               </div>
             </div>
           </div>
@@ -1409,13 +1415,13 @@
               <span id="gyroStatePill" class="tag-level" style="font-size: 0.65rem;">STABLE</span>
             </div>
 
-            <div style="display: flex; align-items: center; justify-content: space-between; background: #ede6da; padding: 10px 14px; border-radius: 8px; border: 1px solid #ded2c1;">
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #001D39; padding: 10px 14px; border-radius: 8px; border: 1px solid #49769F;">
               <div>
                 <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Angular Velocity</span>
-                <h4 id="heroAngularRate" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: var(--text-main);">0.0 <span style="font-size: 0.8rem; color: #8c7355;">°/s</span></h4>
+                <h4 id="heroAngularRate" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: #BDD8E9;">0.0 <span style="font-size: 0.8rem; color: #7BBDE8;">°/s</span></h4>
               </div>
               <div class="gyro-spin-icon" id="gyroSpinRotor">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#141210" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 12a10 10 0 0 1 18.36-5.36L21.5 8M22 12a10 10 0 0 1-18.36 5.36L2.5 16"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7BBDE8" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 12a10 10 0 0 1 18.36-5.36L21.5 8M22 12a10 10 0 0 1-18.36 5.36L2.5 16"/></svg>
               </div>
             </div>
 
@@ -1423,43 +1429,43 @@
               <!-- Gx -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #5c4b37; font-weight: 600;">Gx (Roll Rate)</span>
-                  <span id="readoutGx" style="color: #5c4b37; font-weight: 600;">+0.00 °/s</span>
+                  <span style="color: #7BBDE8; font-weight: 600;">Gx (Roll Rate)</span>
+                  <span id="readoutGx" style="color: #7BBDE8; font-weight: 600;">+0.00 °/s</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barGx" style="background: #5c4b37; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barGx" style="background: #7BBDE8; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Gy -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #141210; font-weight: 600;">Gy (Pitch Rate)</span>
-                  <span id="readoutGy" style="color: #141210; font-weight: 600;">+0.00 °/s</span>
+                  <span style="color: #6EA2B3; font-weight: 600;">Gy (Pitch Rate)</span>
+                  <span id="readoutGy" style="color: #6EA2B3; font-weight: 600;">+0.00 °/s</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barGy" style="background: #141210; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barGy" style="background: #6EA2B3; left: 50%; width: 0%;"></div>
                 </div>
               </div>
 
               <!-- Gz -->
               <div class="vector-meter-row">
                 <div class="vector-label-row">
-                  <span style="color: #8c7355; font-weight: 600;">Gz (Yaw Rate)</span>
-                  <span id="readoutGz" style="color: #8c7355; font-weight: 600;">+0.00 °/s</span>
+                  <span style="color: #4E8EA2; font-weight: 600;">Gz (Yaw Rate)</span>
+                  <span id="readoutGz" style="color: #4E8EA2; font-weight: 600;">+0.00 °/s</span>
                 </div>
                 <div class="vector-track">
                   <div class="vector-center-zero"></div>
-                  <div class="vector-fill" id="barGz" style="background: #8c7355; left: 50%; width: 0%;"></div>
+                  <div class="vector-fill" id="barGz" style="background: #4E8EA2; left: 50%; width: 0%;"></div>
                 </div>
               </div>
             </div>
 
-            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid #ded3c3; font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(73, 118, 159, 0.35); font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between;">
               <span>Rotational Stability:</span>
-              <strong id="rotationalStabilityText" style="color: var(--accent-green);">Steady</strong>
+              <strong id="rotationalStabilityText" style="color: #7BBDE8;">Steady</strong>
             </div>
           </div>
 
@@ -1471,10 +1477,10 @@
             </div>
 
             <!-- Temperature Card -->
-            <div style="background: #ede6da; padding: 10px 14px; border-radius: 8px; border: 1px solid #ded2c1; display: flex; justify-content: space-between; align-items: center;">
+            <div style="background: #001D39; padding: 10px 14px; border-radius: 8px; border: 1px solid #49769F; display: flex; justify-content: space-between; align-items: center;">
               <div>
                 <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Die Temperature</span>
-                <h4 id="readoutTemp" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: var(--text-main);">26.5 <span style="font-size: 0.8rem; color: #b45309;">°C</span></h4>
+                <h4 id="readoutTemp" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.35rem; font-weight: 600; color: #BDD8E9;">26.5 <span style="font-size: 0.8rem; color: #7BBDE8;">°C</span></h4>
               </div>
               <div style="text-align: right;">
                 <span id="tempStatusPill" class="tag-level" style="font-size: 0.65rem;">OPTIMAL</span>
@@ -1483,7 +1489,7 @@
             </div>
 
             <!-- Shock & Impact Event Log -->
-            <div style="background: #ede6da; padding: 10px 14px; border-radius: 8px; border: 1px solid #ded2c1; display: flex; flex-direction: column; gap: 4px;">
+            <div style="background: #001D39; padding: 10px 14px; border-radius: 8px; border: 1px solid #49769F; display: flex; flex-direction: column; gap: 4px;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Shock Detection</span>
                 <span id="shockCounterBadge" class="tag-shock-safe" style="font-size: 0.65rem;">0 SHOCKS</span>
@@ -1500,11 +1506,11 @@
             <div style="padding-top: 6px; font-size: 0.72rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
               <div style="display: flex; justify-content: space-between;">
                 <span>Link Quality:</span>
-                <span id="linkQualityText" style="color: var(--accent-green); font-weight: 600;">100% Solid</span>
+                <span id="linkQualityText" style="color: #7BBDE8; font-weight: 600;">100% Solid</span>
               </div>
               <div style="display: flex; justify-content: space-between;">
                 <span>Packets Received:</span>
-                <span id="packetsReceivedCount" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-main);">0 pkts</span>
+                <span id="packetsReceivedCount" style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: #BDD8E9;">0 pkts</span>
               </div>
             </div>
           </div>
@@ -1519,16 +1525,16 @@
                 📈 Real-Time Telemetry Waveform Oscilloscope
               </span>
               <div style="display: flex; align-items: center; gap: 12px; font-size: 0.72rem; font-family: var(--font-mono);">
-                <span style="color: #dec8ab; display: flex; align-items: center; gap: 4px;">
-                  <span style="width: 8px; height: 8px; background: #dec8ab; border-radius: 50%; display: inline-block;"></span>
+                <span style="color: #7BBDE8; display: flex; align-items: center; gap: 4px;">
+                  <span style="width: 8px; height: 8px; background: #7BBDE8; border-radius: 50%; display: inline-block;"></span>
                   Pitch (θ)
                 </span>
-                <span style="color: #c4ad8e; display: flex; align-items: center; gap: 4px;">
-                  <span style="width: 8px; height: 8px; background: #c4ad8e; border-radius: 50%; display: inline-block;"></span>
+                <span style="color: #6EA2B3; display: flex; align-items: center; gap: 4px;">
+                  <span style="width: 8px; height: 8px; background: #6EA2B3; border-radius: 50%; display: inline-block;"></span>
                   Roll (φ)
                 </span>
-                <span style="color: #968065; display: flex; align-items: center; gap: 4px;">
-                  <span style="width: 8px; height: 8px; background: #968065; border-radius: 50%; display: inline-block;"></span>
+                <span style="color: #BDD8E9; display: flex; align-items: center; gap: 4px;">
+                  <span style="width: 8px; height: 8px; background: #BDD8E9; border-radius: 50%; display: inline-block;"></span>
                   Total G-Force
                 </span>
               </div>
@@ -1537,7 +1543,7 @@
             <div style="display: flex; align-items: center; gap: 8px;">
               <button class="source-tab-btn" onclick="toggleWaveformPause()" id="btnPauseWaveform">⏸ Pause</button>
               <button class="source-tab-btn" onclick="clearWaveform()">🗑 Clear</button>
-              <select id="canvasScaleSelect" onchange="changeWaveformScale(this.value)" style="padding: 4px 8px; font-size: 0.72rem; background: #ede6da; border: 1px solid #d4c6b2; color: #141210; border-radius: 4px;">
+              <select id="canvasScaleSelect" onchange="changeWaveformScale(this.value)" style="padding: 4px 8px; font-size: 0.72rem; background: #001D39; border: 1px solid #49769F; color: #BDD8E9; border-radius: 4px;">
                 <option value="15">±15° Scale</option>
                 <option value="45" selected>±45° Scale</option>
                 <option value="90">±90° Scale</option>
@@ -1769,15 +1775,15 @@
           idleOverlay.innerHTML = `
             <div style="max-width: 380px; text-align: center; padding: 20px;">
               <div style="font-size: 2.2rem; margin-bottom: 8px;">🔒</div>
-              <h4 style="color: #f5efe6; font-size: 1rem; margin-bottom: 6px;">Browser Security Restriction</h4>
-              <p style="font-size: 0.78rem; color: #dec8ab; line-height: 1.4; margin-bottom: 14px;">
+              <h4 style="color: #BDD8E9; font-size: 1rem; margin-bottom: 6px;">Browser Security Restriction</h4>
+              <p style="font-size: 0.78rem; color: #6EA2B3; line-height: 1.4; margin-bottom: 14px;">
                 ${isNetworkHttp 
                   ? `Webcam access is restricted by browsers on network IPs (<code>${location.hostname}</code>). Please open on <strong>localhost</strong> or use HTTPS to grant camera permissions.` 
                   : `Your browser environment does not support or has disabled webcam access.`}
               </p>
               <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
-                ${isNetworkHttp ? `<a href="http://localhost:${location.port || 5050}" style="text-decoration: none; padding: 8px 18px; border-radius: 6px; background: #141210; border: 1px solid #8c7355; color: #f5efe6; font-size: 0.82rem; font-weight: 600;">Open on http://localhost:${location.port || 5050}</a>` : ''}
-                <button class="btn-capture" style="padding: 7px 16px; font-size: 0.78rem; background: #ede4d6; border: 1px solid #8c7355; color: #141210;" onclick="openImagePicker()">📁 Or Upload Image File</button>
+                ${isNetworkHttp ? `<a href="http://localhost:${location.port || 5050}" style="text-decoration: none; padding: 8px 18px; border-radius: 6px; background: #7BBDE8; border: 1px solid #BDD8E9; color: #001D39; font-size: 0.82rem; font-weight: 700;">Open on http://localhost:${location.port || 5050}</a>` : ''}
+                <button class="btn-capture" style="padding: 7px 16px; font-size: 0.78rem; background: #0A4174; border: 1px solid #4E8EA2; color: #BDD8E9;" onclick="openImagePicker()">📁 Or Upload Image File</button>
               </div>
             </div>
           `;
@@ -1794,8 +1800,8 @@
           idleOverlay.style.display = 'flex';
           idleOverlay.innerHTML = `
             <div class="scan-radar" style="margin-bottom: 12px;"></div>
-            <p style="font-weight: 600; color: #f5efe6; font-size: 1rem;">Connecting to Camera...</p>
-            <p style="font-size: 0.76rem; color: #dec8ab; margin-top: 4px;">Please click "Allow" in your browser prompt</p>
+            <p style="font-weight: 600; color: #BDD8E9; font-size: 1rem;">Connecting to Camera...</p>
+            <p style="font-size: 0.76rem; color: #6EA2B3; margin-top: 4px;">Please click "Allow" in your browser prompt</p>
           `;
         }
 
@@ -1906,17 +1912,17 @@
           idleOverlay.innerHTML = `
             <div style="max-width: 380px; text-align: center; padding: 20px;">
               <div style="font-size: 2.2rem; margin-bottom: 8px;">${isDenied ? '🚫' : '⚠️'}</div>
-              <h4 style="color: #f5efe6; font-size: 1rem; margin-bottom: 6px;">
+              <h4 style="color: #BDD8E9; font-size: 1rem; margin-bottom: 6px;">
                 ${isDenied ? 'Camera Permission Denied' : 'Camera Unavailable'}
               </h4>
-              <p style="font-size: 0.78rem; color: #dec8ab; line-height: 1.4; margin-bottom: 14px;">
+              <p style="font-size: 0.78rem; color: #6EA2B3; line-height: 1.4; margin-bottom: 14px;">
                 ${isDenied
                   ? 'Your browser blocked camera access. Click the 🔒 or 📷 icon next to your URL bar, switch Camera to <strong>Allow</strong>, and click Retry below.'
                   : (err.message || 'Unable to open camera stream. Ensure no other application (Zoom, FaceTime) is locking the webcam.')}
               </p>
               <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                <button class="btn-capture" onclick="startViewfinder(true)" style="padding: 8px 16px; font-size: 0.8rem; background: #141210; border: 1px solid #8c7355; color: #f5efe6;">🔄 Retry Camera</button>
-                <button class="btn-capture" onclick="openImagePicker()" style="padding: 8px 16px; font-size: 0.8rem; background: #ede4d6; border: 1px solid #8c7355; color: #141210;">📁 Upload Image</button>
+                <button class="btn-capture" onclick="startViewfinder(true)" style="padding: 8px 16px; font-size: 0.8rem; background: #7BBDE8; border: 1px solid #BDD8E9; color: #001D39; font-weight: 700;">🔄 Retry Camera</button>
+                <button class="btn-capture" onclick="openImagePicker()" style="padding: 8px 16px; font-size: 0.8rem; background: #0A4174; border: 1px solid #4E8EA2; color: #BDD8E9;">📁 Upload Image</button>
               </div>
             </div>
           `;
@@ -2554,7 +2560,7 @@
 
       // 3. Accelerometer & Total G-Force
       document.getElementById('readoutTotalG').innerText = `${totalG.toFixed(3)} G`;
-      document.getElementById('heroTotalG').innerHTML = `${totalG.toFixed(3)} <span style="font-size: 0.8rem; color: #8c7355;">G</span>`;
+      document.getElementById('heroTotalG').innerHTML = `${totalG.toFixed(3)} <span style="font-size: 0.8rem; color: #7BBDE8;">G</span>`;
 
       // G-force state pill
       const gPill = document.getElementById('gStateBadge');
@@ -2585,7 +2591,7 @@
       } else if (deltaG > 0.12) {
         vibBar.style.background = 'var(--accent-yellow)';
       } else {
-        vibBar.style.background = 'var(--accent-green)';
+        vibBar.style.background = '#7BBDE8';
       }
 
       // 4. Gyroscope Rotation Rates
@@ -2597,7 +2603,7 @@
       document.getElementById('readoutGz').innerText = `${gzSign}${gz.toFixed(2)} °/s`;
 
       const angRate = Math.sqrt(gx*gx + gy*gy + gz*gz);
-      document.getElementById('heroAngularRate').innerHTML = `${angRate.toFixed(1)} <span style="font-size: 0.8rem; color: #8c7355;">°/s</span>`;
+      document.getElementById('heroAngularRate').innerHTML = `${angRate.toFixed(1)} <span style="font-size: 0.8rem; color: #7BBDE8;">°/s</span>`;
 
       // Rotate rotor icon
       currentGyroRotation += (gx + gy + gz) * 0.45;
@@ -2616,12 +2622,12 @@
         gyroPill.className = 'tag-tilt';
         gyroPill.innerText = 'ROTATING';
         stabText.innerText = 'Angular Drift';
-        stabText.style.color = '#b45309';
+        stabText.style.color = '#7BBDE8';
       } else {
         gyroPill.className = 'tag-level';
         gyroPill.innerText = 'STABLE';
         stabText.innerText = 'Steady / Fixed';
-        stabText.style.color = '#059669';
+        stabText.style.color = '#BDD8E9';
       }
 
       updateBipolarMeter('Gx', gx, 100.0);
@@ -2629,7 +2635,7 @@
       updateBipolarMeter('Gz', gz, 100.0);
 
       // 5. Temperature
-      document.getElementById('readoutTemp').innerHTML = `${temp.toFixed(1)} <span style="font-size: 0.8rem; color: #b45309;">°C</span>`;
+      document.getElementById('readoutTemp').innerHTML = `${temp.toFixed(1)} <span style="font-size: 0.8rem; color: #7BBDE8;">°C</span>`;
       const tempF = (temp * 9/5) + 32;
       document.getElementById('readoutTempF').innerText = `${tempF.toFixed(1)} °F`;
       const tempPill = document.getElementById('tempStatusPill');
@@ -2777,7 +2783,7 @@
 
       // Background grid
       const midY = h / 2;
-      mpuCtx.strokeStyle = 'rgba(222, 200, 171, 0.08)';
+      mpuCtx.strokeStyle = 'rgba(73, 118, 159, 0.2)';
       mpuCtx.lineWidth = 1;
 
       // Horizontal gridlines: +scale/2, 0, -scale/2
@@ -2790,14 +2796,14 @@
       });
 
       // Luminous center zero line
-      mpuCtx.strokeStyle = 'rgba(222, 200, 171, 0.22)';
+      mpuCtx.strokeStyle = 'rgba(123, 189, 232, 0.4)';
       mpuCtx.beginPath();
       mpuCtx.moveTo(0, midY);
       mpuCtx.lineTo(w, midY);
       mpuCtx.stroke();
 
       // Zero and scale labels
-      mpuCtx.fillStyle = 'rgba(222, 200, 171, 0.4)';
+      mpuCtx.fillStyle = 'rgba(189, 216, 233, 0.7)';
       mpuCtx.font = "9px 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace";
       mpuCtx.fillText(`+${waveformScale}°`, 8, midY - (h * 0.38));
       mpuCtx.fillText("0°", 8, midY - 2);
@@ -2808,10 +2814,10 @@
       const stepX = w / (MAX_WAVEFORM_POINTS - 1);
       const scaleDeg = waveformScale;
 
-      // 1. Draw Pitch trace (Glowing Warm Beige)
+      // 1. Draw Pitch trace (Glowing Sky Blue #7BBDE8)
       mpuCtx.shadowBlur = 8;
-      mpuCtx.shadowColor = '#dec8ab';
-      mpuCtx.strokeStyle = '#dec8ab';
+      mpuCtx.shadowColor = '#7BBDE8';
+      mpuCtx.strokeStyle = '#7BBDE8';
       mpuCtx.lineWidth = 2.2;
       mpuCtx.beginPath();
       waveformPoints.forEach((pt, idx) => {
@@ -2823,9 +2829,9 @@
       });
       mpuCtx.stroke();
 
-      // 2. Draw Roll trace (Mid Beige)
-      mpuCtx.shadowColor = '#c4ad8e';
-      mpuCtx.strokeStyle = '#c4ad8e';
+      // 2. Draw Roll trace (Soft Slate Seafoam #6EA2B3)
+      mpuCtx.shadowColor = '#6EA2B3';
+      mpuCtx.strokeStyle = '#6EA2B3';
       mpuCtx.lineWidth = 2.2;
       mpuCtx.beginPath();
       waveformPoints.forEach((pt, idx) => {
@@ -2837,9 +2843,9 @@
       });
       mpuCtx.stroke();
 
-      // 3. Draw Total G-Force trace (Dark Beige dashed line)
+      // 3. Draw Total G-Force trace (Light Ice Blue dashed line #BDD8E9)
       mpuCtx.shadowBlur = 0; // Turn off glow for subtle reference line
-      mpuCtx.strokeStyle = 'rgba(150, 128, 101, 0.75)';
+      mpuCtx.strokeStyle = 'rgba(189, 216, 233, 0.75)';
       mpuCtx.setLineDash([4, 4]);
       mpuCtx.lineWidth = 1.5;
       mpuCtx.beginPath();
@@ -2860,14 +2866,14 @@
       const headRollY = midY - (Math.max(-1.1, Math.min(1.1, lastPt.r / scaleDeg)) * (h * 0.42));
 
       mpuCtx.shadowBlur = 10;
-      mpuCtx.shadowColor = '#dec8ab';
-      mpuCtx.fillStyle = '#dec8ab';
+      mpuCtx.shadowColor = '#7BBDE8';
+      mpuCtx.fillStyle = '#7BBDE8';
       mpuCtx.beginPath();
       mpuCtx.arc(headX, headPitchY, 4, 0, Math.PI * 2);
       mpuCtx.fill();
 
-      mpuCtx.shadowColor = '#c4ad8e';
-      mpuCtx.fillStyle = '#c4ad8e';
+      mpuCtx.shadowColor = '#6EA2B3';
+      mpuCtx.fillStyle = '#6EA2B3';
       mpuCtx.beginPath();
       mpuCtx.arc(headX, headRollY, 4, 0, Math.PI * 2);
       mpuCtx.fill();
@@ -3161,12 +3167,12 @@
 
     const dropzone = document.getElementById('dropzone');
     if (dropzone) {
-      dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.style.borderColor = '#141210'; dropzone.style.background = '#ede4d6'; });
-      dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = '#8c7355'; dropzone.style.background = '#fbf8f2'; });
+      dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.style.borderColor = '#7BBDE8'; dropzone.style.background = '#0A4174'; });
+      dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = '#49769F'; dropzone.style.background = '#001D39'; });
       dropzone.addEventListener('drop', (e) => {
         e.preventDefault();
-        dropzone.style.borderColor = '#8c7355';
-        dropzone.style.background = '#fbf8f2';
+        dropzone.style.borderColor = '#49769F';
+        dropzone.style.background = '#001D39';
         if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
           handleUploadedImage(e.dataTransfer.files[0]);
         }
