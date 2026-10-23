@@ -39,12 +39,323 @@ except ImportError:
         os.execv(str(_venv_py), [str(_venv_py)] + sys.argv)
     raise
 
+import threading
+
+try:
+    cv2.setNumThreads(1)
+except Exception:
+    pass
+
+import json
+import math
+import urllib.request
+from typing import Optional
+
+try:
+    import serial
+    import serial.tools.list_ports as serial_ports
+except ImportError:
+    serial = None
+    serial_ports = None
+
 from predict import CrackPredictor, INPUT_SIZE
 
 app = Flask(__name__, template_folder="templates")
 predictors: dict[str, CrackPredictor] = {}
 SAMPLE_DIR = Path(__file__).resolve().parent / "sample_images"
 _frame_count = 0
+_inference_lock = threading.Lock()
+
+
+class MPU6050Manager:
+    """
+    Thread-safe ingestion manager for MPU-6050 6-Axis IMU sensor telemetry.
+    Supports:
+      - Direct USB Serial port streaming (115200 baud JSON lines)
+      - Wi-Fi HTTP polling (from ESP32-CAM http://<ip>/telemetry)
+      - Browser Web Serial client feeds via /api/mpu/feed
+      - Realistic physics-based simulation with dynamic vibration & tilt
+    """
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.connected = False
+        self.connection_type = "disconnected"  # "serial", "wifi", "simulation", "client"
+        self.connection_target = ""
+        self.stop_event = threading.Event()
+        self.worker_thread: Optional[threading.Thread] = None
+        self.serial_obj = None
+
+        # Calibration Tare offsets
+        self.tare_pitch = 0.0
+        self.tare_roll = 0.0
+
+        # Latest raw & calibrated telemetry
+        now = time.time()
+        self.latest = {
+            "pitch": 0.0,
+            "roll": 0.0,
+            "raw_pitch": 0.0,
+            "raw_roll": 0.0,
+            "ax": 0.0,
+            "ay": 0.0,
+            "az": 1.0,
+            "gx": 0.0,
+            "gy": 0.0,
+            "gz": 0.0,
+            "temp": 25.0,
+            "shock": False,
+            "total_g": 1.0,
+            "timestamp": now,
+        }
+        self.history: list[dict] = []  # sliding window of last 60 points for charts
+        self.history_max = 60
+        self.last_update = now
+        self.shock_count = 0
+        self.last_shock_time = None
+        self.packets_received = 0
+
+    def update_reading(self, data: dict, source: Optional[str] = None):
+        with self.lock:
+            try:
+                raw_pitch = float(data.get("pitch", self.latest.get("raw_pitch", 0.0)))
+                raw_roll = float(data.get("roll", self.latest.get("raw_roll", 0.0)))
+                ax = float(data.get("ax", self.latest.get("ax", 0.0)))
+                ay = float(data.get("ay", self.latest.get("ay", 0.0)))
+                az = float(data.get("az", self.latest.get("az", 1.0)))
+                gx = float(data.get("gx", self.latest.get("gx", 0.0)))
+                gy = float(data.get("gy", self.latest.get("gy", 0.0)))
+                gz = float(data.get("gz", self.latest.get("gz", 0.0)))
+                temp = float(data.get("temp", self.latest.get("temp", 25.0)))
+                shock = bool(data.get("shock", False))
+                total_g = math.sqrt(ax * ax + ay * ay + az * az)
+
+                now = time.time()
+                # Apply tare offset
+                cal_pitch = round(raw_pitch - self.tare_pitch, 2)
+                cal_roll = round(raw_roll - self.tare_roll, 2)
+
+                if shock and (not self.latest.get("shock", False) or (now - (self.last_shock_time or 0) > 1.2)):
+                    self.shock_count += 1
+                    self.last_shock_time = now
+
+                self.latest = {
+                    "pitch": cal_pitch,
+                    "roll": cal_roll,
+                    "raw_pitch": round(raw_pitch, 2),
+                    "raw_roll": round(raw_roll, 2),
+                    "ax": round(ax, 3),
+                    "ay": round(ay, 3),
+                    "az": round(az, 3),
+                    "gx": round(gx, 2),
+                    "gy": round(gy, 2),
+                    "gz": round(gz, 2),
+                    "temp": round(temp, 1),
+                    "shock": shock,
+                    "total_g": round(total_g, 3),
+                    "timestamp": now,
+                }
+                self.packets_received += 1
+                self.last_update = now
+
+                if source:
+                    self.connected = True
+                    self.connection_type = source
+
+                self.history.append({
+                    "t": round(now, 2),
+                    "p": cal_pitch,
+                    "r": cal_roll,
+                    "g": round(total_g, 3),
+                    "s": 1 if shock else 0
+                })
+                if len(self.history) > self.history_max:
+                    self.history.pop(0)
+            except Exception as e:
+                pass
+
+    def tare(self):
+        with self.lock:
+            self.tare_pitch = self.latest.get("raw_pitch", 0.0)
+            self.tare_roll = self.latest.get("raw_roll", 0.0)
+            self.latest["pitch"] = 0.0
+            self.latest["roll"] = 0.0
+
+    def reset_tare(self):
+        with self.lock:
+            self.tare_pitch = 0.0
+            self.tare_roll = 0.0
+            self.latest["pitch"] = self.latest.get("raw_pitch", 0.0)
+            self.latest["roll"] = self.latest.get("raw_roll", 0.0)
+
+    def trigger_test_shock(self):
+        with self.lock:
+            self.latest["shock"] = True
+            self.latest["ax"] += 1.85
+            self.latest["az"] += 1.45
+            self.latest["total_g"] = math.sqrt(
+                self.latest["ax"] ** 2 + self.latest["ay"] ** 2 + self.latest["az"] ** 2
+            )
+            self.shock_count += 1
+            self.last_shock_time = time.time()
+
+    def connect_serial(self, port: str, baud: int = 115200) -> bool:
+        self.disconnect()
+        if not serial:
+            raise RuntimeError("pyserial module is not installed.")
+        self.stop_event.clear()
+        self.connection_target = port
+        self.connection_type = "serial"
+        self.worker_thread = threading.Thread(target=self._serial_worker, args=(port, baud), daemon=True)
+        self.worker_thread.start()
+        return True
+
+    def connect_wifi(self, url: str) -> bool:
+        self.disconnect()
+        self.stop_event.clear()
+        if not url.startswith("http://") and not url.startswith("https://"):
+            url = f"http://{url}"
+        if not url.endswith("/telemetry") and not "/telemetry" in url:
+            url = f"{url.rstrip('/')}/telemetry"
+        self.connection_target = url
+        self.connection_type = "wifi"
+        self.worker_thread = threading.Thread(target=self._wifi_worker, args=(url,), daemon=True)
+        self.worker_thread.start()
+        return True
+
+    def start_simulation(self) -> bool:
+        self.disconnect()
+        self.stop_event.clear()
+        self.connection_target = "Physics Simulator"
+        self.connection_type = "simulation"
+        self.worker_thread = threading.Thread(target=self._sim_worker, daemon=True)
+        self.worker_thread.start()
+        return True
+
+    def disconnect(self):
+        self.stop_event.set()
+        if self.serial_obj:
+            try:
+                self.serial_obj.close()
+            except Exception:
+                pass
+            self.serial_obj = None
+        if self.worker_thread and self.worker_thread.is_alive():
+            self.worker_thread.join(timeout=0.6)
+        self.worker_thread = None
+        with self.lock:
+            self.connected = False
+            self.connection_type = "disconnected"
+            self.connection_target = ""
+
+    def _serial_worker(self, port: str, baud: int):
+        try:
+            ser = serial.Serial(port, baudrate=baud, timeout=1.0)
+            self.serial_obj = ser
+            with self.lock:
+                self.connected = True
+            while not self.stop_event.is_set():
+                line = ser.readline().decode("utf-8", errors="ignore").strip()
+                if line.startswith("{") and line.endswith("}"):
+                    try:
+                        data = json.loads(line)
+                        self.update_reading(data, source="serial")
+                    except json.JSONDecodeError:
+                        pass
+        except Exception as e:
+            print(f"[MPU-6050] Serial worker connection ended: {e}")
+        finally:
+            with self.lock:
+                self.connected = False
+
+    def _wifi_worker(self, url: str):
+        with self.lock:
+            self.connected = True
+        consecutive_fails = 0
+        while not self.stop_event.is_set():
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": "MPU6050Studio/1.0"})
+                with urllib.request.urlopen(req, timeout=1.2) as resp:
+                    if resp.status == 200:
+                        payload = resp.read().decode("utf-8")
+                        data = json.loads(payload)
+                        self.update_reading(data, source="wifi")
+                        consecutive_fails = 0
+            except Exception:
+                consecutive_fails += 1
+                if consecutive_fails > 10:
+                    with self.lock:
+                        self.connected = False
+            time.sleep(0.06)  # ~16 Hz polling
+
+    def _sim_worker(self):
+        with self.lock:
+            self.connected = True
+        t = 0.0
+        while not self.stop_event.is_set():
+            t += 0.05
+            # Realistic slight structural sway / probe movement
+            p = math.sin(t * 1.2) * 5.5 + math.cos(t * 0.4) * 2.0
+            r = math.cos(t * 0.9) * 4.2 + math.sin(t * 0.3) * 1.5
+            rad_p = math.radians(p)
+            rad_r = math.radians(r)
+            ax = -math.sin(rad_p) + (math.sin(t * 8.0) * 0.015)
+            ay = math.sin(rad_r) * math.cos(rad_p) + (math.cos(t * 7.0) * 0.015)
+            az = math.cos(rad_r) * math.cos(rad_p) + (math.sin(t * 9.0) * 0.01)
+            gx = math.cos(t * 0.9) * 4.2 * 0.9 + (math.sin(t * 11.0) * 0.2)
+            gy = -math.sin(t * 1.2) * 5.5 * 1.2 + (math.cos(t * 13.0) * 0.2)
+            gz = math.sin(t * 0.5) * 1.1
+            temp = 26.5 + math.sin(t * 0.05) * 0.8
+            shock = (math.sin(t * 0.2) > 0.985)
+
+            self.update_reading({
+                "pitch": p,
+                "roll": r,
+                "ax": ax,
+                "ay": ay,
+                "az": az,
+                "gx": gx,
+                "gy": gy,
+                "gz": gz,
+                "temp": temp,
+                "shock": shock
+            }, source="simulation")
+            time.sleep(0.05)
+
+    @staticmethod
+    def list_serial_ports() -> list[dict]:
+        ports = []
+        if serial_ports:
+            try:
+                for p in serial_ports.comports():
+                    ports.append({
+                        "port": p.device,
+                        "description": p.description,
+                        "hwid": p.hwid or ""
+                    })
+            except Exception:
+                pass
+        return ports
+
+    def get_status(self) -> dict:
+        with self.lock:
+            now = time.time()
+            stale = (now - self.last_update) > 2.5 if self.connected else True
+            return {
+                "success": True,
+                "connected": self.connected and not stale,
+                "source": self.connection_type,
+                "target": self.connection_target,
+                "latest": self.latest,
+                "history": self.history[-40:],
+                "tare": {"pitch": self.tare_pitch, "roll": self.tare_roll},
+                "shock_count": self.shock_count,
+                "last_shock_time": self.last_shock_time,
+                "packets_received": self.packets_received,
+                "is_stale": stale,
+            }
+
+
+mpu_manager = MPU6050Manager()
 
 
 def resolve_device(engine: str = "fast") -> str:
@@ -125,6 +436,8 @@ def get_info():
         "epoch": pred.metadata.get("epoch", 4),
         "valid_iou": round(float(pred.metadata.get("valid_iou", 0.6544)), 4),
         "samples": samples,
+        "local_ip": get_local_ip(),
+        "push_url": f"http://{get_local_ip()}:5050/api/mpu/feed",
     })
 
 
@@ -157,8 +470,16 @@ def predict_frame():
 
     device_name = resolve_device(engine)
     pred = get_predictor(device_name)
-    # Fast full-frame inference
-    prob_map = pred.predict_full(frame_rgb)
+
+    # Non-blocking lock: if model is currently processing a frame, drop this frame immediately.
+    # This prevents request queuing, GPU contention, and eliminates laptop freezing.
+    if not _inference_lock.acquire(blocking=False):
+        return jsonify({"success": False, "skipped": True}), 200
+
+    try:
+        prob_map = pred.predict_full(frame_rgb)
+    finally:
+        _inference_lock.release()
 
     infer_ms = (time.perf_counter() - t0) * 1000.0
 
@@ -284,14 +605,17 @@ def run_deep_scan():
     engine = data.get("engine", "fast")
     device_name = resolve_device(engine)
     pred = get_predictor(device_name)
-    gentle_delay = 0.015 if engine in ("gentle", "cpu") else 0.002
-    scan_res = pred.deep_scan(
-        img_rgb,
-        threshold=threshold,
-        use_tta=use_tta,
-        work_size=896,
-        gentle_delay=gentle_delay,
-    )
+    gentle_delay = 0.020 if engine in ("gentle", "cpu") else 0.005
+
+    with _inference_lock:
+        scan_res = pred.deep_scan(
+            img_rgb,
+            threshold=threshold,
+            use_tta=use_tta,
+            work_size=896,
+            gentle_delay=gentle_delay,
+        )
+        pred.clear_cache()
 
     # Render visualizations
     annotated_rgb = pred.render_pinpoint_overlay(img_rgb, scan_res)
@@ -349,7 +673,9 @@ def run_predict():
         return jsonify({"error": "No valid image payload provided"}), 400
 
     pred = get_predictor()
-    res = pred.predict(img_rgb, mode=mode, threshold=threshold)
+    with _inference_lock:
+        res = pred.predict(img_rgb, mode=mode, threshold=threshold)
+        pred.clear_cache()
 
     # Render visualizations
     overlay_rgb = pred.render_overlay(img_rgb, res["binary_mask"])
@@ -376,11 +702,131 @@ def run_predict():
     })
 
 
+# =========================================================================
+# MPU-6050 6-Axis IMU & Orientation Telemetry Endpoints
+# =========================================================================
+
+@app.route("/api/mpu/telemetry", methods=["GET"])
+def get_mpu_telemetry():
+    """Returns real-time MPU-6050 pitch, roll, 3-axis accel, gyro & vibration."""
+    return jsonify(mpu_manager.get_status())
+
+
+@app.route("/api/mpu/ports", methods=["GET"])
+def get_mpu_ports():
+    """Scans and lists active serial ports (USB-TTL, FTDI, CP2102, CH340)."""
+    return jsonify({
+        "success": True,
+        "ports": mpu_manager.list_serial_ports()
+    })
+
+
+@app.route("/api/mpu/connect", methods=["POST"])
+def connect_mpu():
+    """Connect to MPU-6050 via USB Serial, Wi-Fi HTTP, or Simulation."""
+    data = request.get_json(force=True)
+    conn_type = data.get("type", "simulation")
+
+    try:
+        if conn_type == "serial":
+            port = data.get("port")
+            if not port:
+                return jsonify({"success": False, "error": "No serial port specified"}), 400
+            baud = int(data.get("baud", 115200))
+            mpu_manager.connect_serial(port, baud=baud)
+            return jsonify({"success": True, "message": f"Connected to {port} @ {baud} baud"})
+        elif conn_type == "wifi":
+            url = data.get("url")
+            if not url:
+                return jsonify({"success": False, "error": "No Wi-Fi endpoint URL specified"}), 400
+            mpu_manager.connect_wifi(url)
+            return jsonify({"success": True, "message": f"Polling Wi-Fi endpoint: {url}"})
+        elif conn_type == "simulation":
+            mpu_manager.start_simulation()
+            return jsonify({"success": True, "message": "Simulation active"})
+        else:
+            return jsonify({"success": False, "error": f"Unknown connection type: {conn_type}"}), 400
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/mpu/disconnect", methods=["POST"])
+def disconnect_mpu():
+    """Disconnects active MPU-6050 telemetry thread."""
+    mpu_manager.disconnect()
+    return jsonify({"success": True, "message": "Disconnected"})
+
+
+@app.route("/api/mpu/tare", methods=["POST"])
+def tare_mpu():
+    """Zeroes reference orientation angles to calibrate level horizon."""
+    data = request.get_json(force=True) if request.data else {}
+    action = data.get("action", "set")
+    if action == "reset":
+        mpu_manager.reset_tare()
+        return jsonify({"success": True, "message": "Tare reset to raw angles"})
+    else:
+        mpu_manager.tare()
+        return jsonify({"success": True, "message": "Zeroed current orientation"})
+
+
+@app.route("/api/mpu/simulate_shock", methods=["POST"])
+def simulate_shock():
+    """Triggers an instantaneous high-G shock wave to test alarm & alerting."""
+    mpu_manager.trigger_test_shock()
+    return jsonify({"success": True, "message": "Test shock triggered"})
+
+
+def get_local_ip() -> str:
+    """Returns the local LAN IP address of this machine (e.g. 10.169.71.221)."""
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = "127.0.0.1"
+    finally:
+        s.close()
+    return ip
+
+
+@app.route("/api/mpu/feed", methods=["POST", "GET"])
+def feed_mpu():
+    """
+    Receives direct telemetry push from ESP32 over Wi-Fi or client Web Serial.
+    NO ESP32 IP is needed when ESP32 pushes data to this endpoint!
+    Supports both JSON POST and URL query parameters.
+    """
+    if request.method == "POST":
+        data = request.get_json(force=True, silent=True)
+        if not data:
+            data = request.form.to_dict()
+    else:
+        data = request.args.to_dict()
+
+    if not data:
+        return jsonify({"success": False, "error": "Empty payload"}), 400
+
+    client_ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown")
+    if client_ip in ("127.0.0.1", "::1", "localhost"):
+        source = "Client Web Serial"
+    else:
+        source = f"ESP32 ({client_ip})"
+
+    mpu_manager.update_reading(data, source=source)
+    return jsonify({
+        "success": True,
+        "source": source,
+        "packets_received": mpu_manager.packets_received
+    })
+
+
 def find_open_port(starting_port: int = 5050, max_attempts: int = 20) -> int:
     import socket
     for p in range(starting_port, starting_port + max_attempts):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            if s.connect_ex(("127.0.0.1", p)) != 0:
+            if s.connect_ex(("0.0.0.0", p)) != 0:
                 return p
     return starting_port
 
@@ -392,6 +838,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     port = find_open_port(args.port)
-    print(f"\n🚀 UNet Crack Inspection Studio starting on http://localhost:{port}")
-    print(f"👉 Open in your browser: http://localhost:{port}\n")
-    app.run(host="127.0.0.1", port=port, debug=False)
+    local_ip = get_local_ip()
+    print(f"\n🚀 UNet Crack Inspection Studio starting:")
+    print(f"👉 Local Browser : http://localhost:{port}")
+    print(f"👉 Network / ESP32: http://{local_ip}:{port}")
+    print(f"👉 ESP32 Push URL: http://{local_ip}:{port}/api/mpu/feed\n")
+    print(f"💡 TIP: In your ESP32 code, set pushServerHost = \"{local_ip}\" to stream data without knowing ESP32's IP!\n")
+    app.run(host="0.0.0.0", port=port, debug=False)

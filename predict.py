@@ -41,8 +41,12 @@ except ImportError:
 
 from unet_model import get_default_device, load_unet16_model
 
-# Cap PyTorch to 2 CPU threads to preserve 75%+ of laptop CPU capacity for macOS UI
+# Cap PyTorch to 2 CPU threads and OpenCV to 1 thread to keep 85%+ CPU headroom for macOS WindowServer
 torch.set_num_threads(2)
+try:
+    cv2.setNumThreads(1)
+except Exception:
+    pass
 
 # ImageNet normalization parameters
 _MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
@@ -102,11 +106,13 @@ class CrackPredictor:
             logits = self.model(tensor)
             probs = torch.sigmoid(logits)[:, 0].cpu().numpy()
 
-        # Free Apple Silicon unified memory buffers immediately
-        if self.device.type == "mps":
-            torch.mps.empty_cache()
-
+        del tensor, logits
         return probs
+
+    def clear_cache(self) -> None:
+        """Free unified memory buffers when idle or after deep scans."""
+        if self.device.type == "mps" and hasattr(torch, "mps"):
+            torch.mps.empty_cache()
 
     def predict_full(self, img_rgb: np.ndarray) -> np.ndarray:
         """

@@ -104,12 +104,15 @@
 
     /* Global Metrics HUD */
     .metrics-bar {
-      display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 14px;
+      display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr 1.15fr; gap: 14px;
     }
-    @media (max-width: 1024px) {
+    @media (max-width: 1200px) {
+      .metrics-bar { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
       .metrics-bar { grid-template-columns: repeat(2, 1fr); }
     }
-    @media (max-width: 640px) {
+    @media (max-width: 520px) {
       .metrics-bar { grid-template-columns: 1fr; }
     }
 
@@ -379,6 +382,460 @@
       cursor: pointer; text-align: center; transition: all 0.2s;
     }
     .sample-btn:hover { border-color: var(--accent-cyan); background: rgba(0, 210, 255, 0.12); transform: translateY(-2px); }
+
+    /* =========================================================================
+       MPU-6050 6-Axis Motion & IMU Telemetry Dashboard Styles
+       ========================================================================= */
+    .mpu-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+    .mpu-panel:hover {
+      border-color: rgba(0, 210, 255, 0.28);
+    }
+    .mpu-panel.shock-active {
+      border-color: rgba(255, 42, 95, 0.85) !important;
+      box-shadow: 0 0 35px rgba(255, 42, 95, 0.45) !important;
+      animation: flash-shock-border 0.6s infinite alternate;
+    }
+    @keyframes flash-shock-border {
+      from { border-color: rgba(255, 42, 95, 0.4); box-shadow: 0 0 15px rgba(255, 42, 95, 0.25); }
+      to { border-color: rgba(255, 42, 95, 1.0); box-shadow: 0 0 40px rgba(255, 42, 95, 0.7); }
+    }
+
+    .mpu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 14px;
+    }
+    .mpu-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .mpu-icon-glow {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(138, 43, 226, 0.25));
+      border: 1px solid rgba(0, 210, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 14px rgba(0, 210, 255, 0.3);
+    }
+    .mpu-icon-glow svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--accent-cyan);
+    }
+    .mpu-title-text h2 {
+      font-size: 1.08rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mpu-title-text span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.4px;
+    }
+    .mpu-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag-level {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: rgba(0, 230, 118, 0.12);
+      border: 1px solid rgba(0, 230, 118, 0.4);
+      color: var(--accent-green);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tag-tilt {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: rgba(0, 210, 255, 0.12);
+      border: 1px solid rgba(0, 210, 255, 0.35);
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tag-shock-alarm {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: rgba(255, 42, 95, 0.2);
+      border: 1px solid rgba(255, 42, 95, 0.7);
+      color: #ff3b6c;
+      font-family: 'JetBrains Mono', monospace;
+      animation: pulse-dot 1.2s infinite;
+    }
+    .tag-shock-safe {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Connection Toolbar */
+    .mpu-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .source-tab-btn {
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .source-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+    }
+    .source-tab-btn.active {
+      background: rgba(0, 210, 255, 0.18);
+      border-color: rgba(0, 210, 255, 0.45);
+      color: var(--accent-cyan);
+    }
+
+    /* Source config drawer */
+    .mpu-config-drawer {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.8rem;
+    }
+    .config-inputs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .config-input {
+      background: rgba(4, 7, 13, 0.8);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      outline: none;
+      min-width: 220px;
+    }
+    .config-input:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    /* 4-column telemetry grid */
+    .mpu-telemetry-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 1200px) {
+      .mpu-telemetry-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 680px) {
+      .mpu-telemetry-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mpu-subcard {
+      background: rgba(8, 12, 22, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+    }
+    .mpu-subcard:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    .subcard-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* 3D Attitude Horizon */
+    .horizon-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 0;
+    }
+    .horizon-bezel {
+      width: 154px;
+      height: 154px;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+      background: #090e17;
+      border: 3px solid #1e293b;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.8), inset 0 0 16px rgba(0,0,0,0.7);
+    }
+    .horizon-disk {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      top: -83px;
+      left: -83px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #0284c7 0%, #38bdf8 49.5%, #ffffff 50%, #334155 50.8%, #0f172a 100%);
+      transition: transform 0.06s cubic-bezier(0.1, 0.8, 0.3, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pitch-ladder {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    /* Fixed aircraft symbol */
+    .aircraft-reticle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 74px;
+      height: 18px;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .aircraft-pip {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #facc15;
+      box-shadow: 0 0 8px #facc15;
+    }
+    .aircraft-wing-left {
+      position: absolute;
+      top: 50%;
+      left: 6px;
+      width: 22px;
+      height: 3px;
+      background: #facc15;
+      transform: translateY(-50%);
+      box-shadow: 0 0 6px #facc15;
+    }
+    .aircraft-wing-right {
+      position: absolute;
+      top: 50%;
+      right: 6px;
+      width: 22px;
+      height: 3px;
+      background: #facc15;
+      transform: translateY(-50%);
+      box-shadow: 0 0 6px #facc15;
+    }
+    .roll-indicator-pip {
+      position: absolute;
+      top: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 7px solid #facc15;
+      z-index: 12;
+    }
+
+    /* 3D Probe Board */
+    .probe-3d-scene {
+      perspective: 450px;
+      width: 140px;
+      height: 72px;
+      margin: 4px auto 0;
+    }
+    .probe-3d-board {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+      border: 1.5px solid #10b981;
+      border-radius: 8px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+      transform-style: preserve-3d;
+      transition: transform 0.08s cubic-bezier(0.1, 0.8, 0.3, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 6px;
+      position: relative;
+    }
+    .probe-chip {
+      width: 32px;
+      height: 32px;
+      background: #0f172a;
+      border: 1px solid #64748b;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 7px;
+      font-weight: 800;
+      color: #cbd5e1;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .probe-axis-labels {
+      font-size: 8px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    /* Vector Meters */
+    .vector-meter-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .vector-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.74rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .vector-track {
+      position: relative;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .vector-center-zero {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.3);
+      z-index: 2;
+    }
+    .vector-fill {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border-radius: 4px;
+      transition: all 0.08s linear;
+    }
+
+    /* Gyroscope Dial / Display */
+    .gyro-spin-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px dashed rgba(0, 210, 255, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s linear;
+    }
+
+    /* Oscilloscope Strip Chart Canvas */
+    .waveform-card {
+      background: rgba(8, 12, 22, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .waveform-canvas-box {
+      width: 100%;
+      height: 120px;
+      background: #04070d;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+    #mpuCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -399,6 +856,10 @@
         <button class="nav-tab active" id="tabCamera" onclick="switchMainTab('camera')">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
           Live Camera & Deep Scan
+        </button>
+        <button class="nav-tab" id="tabTelemetry" onclick="switchMainTab('telemetry')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20M2 12h20"/><circle cx="12" cy="12" r="3"/></svg>
+          MPU-6050 Telemetry
         </button>
         <button class="nav-tab" id="tabUpload" onclick="switchMainTab('upload')">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -448,6 +909,17 @@
           <span id="statFps" style="font-size: 0.7rem; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace;">-- FPS</span>
         </div>
         <h3 id="statLatency">-- ms</h3>
+      </div>
+
+      <div class="metric-card" id="cardMpuQuick" style="cursor: pointer;" onclick="scrollToOrSwitchTelemetry()" title="Click to inspect MPU-6050 6-Axis IMU readings">
+        <div class="metric-header">
+          <span class="metric-title">MPU-6050 Tilt & IMU</span>
+          <span id="mpuQuickStatus" style="font-size: 0.68rem; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace;">● STANDBY</span>
+        </div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 6px;">
+          <h3 id="statPitchRoll" style="font-size: 1.05rem; white-space: nowrap;">P: +0.0° R: +0.0°</h3>
+          <span id="statShockBadge" class="tag-shock-safe" style="font-size: 0.65rem; padding: 2px 7px;">SAFE</span>
+        </div>
       </div>
     </div>
 
@@ -559,6 +1031,15 @@
                 <span class="hud-chip" id="camResChip">1280 × 720</span>
                 <span class="hud-chip" id="camFpsChip">30 FPS</span>
               </div>
+              <!-- Live MPU-6050 Camera Mini HUD -->
+              <div class="hud-bottom" id="camMpuHud" style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%;">
+                <span class="hud-chip" style="background: rgba(4, 7, 13, 0.85); border-color: rgba(0, 210, 255, 0.35); color: #00d2ff;">
+                  IMU: P: <strong id="hudPitch" style="color: #00d2ff;">+0.0°</strong> | R: <strong id="hudRoll" style="color: #f43f5e;">+0.0°</strong> | <span id="hudG" style="color: #cbd5e1;">1.00G</span>
+                </span>
+                <span class="hud-chip" id="hudShockFlag" style="display: none; background: rgba(255, 42, 95, 0.9); color: #fff; font-weight: 700; border-color: #ff3b6c;">
+                  ⚠️ SHOCK DETECTED
+                </span>
+              </div>
             </div>
 
             <!-- Idle / Permission Overlay -->
@@ -655,6 +1136,415 @@
           </table>
         </div>
       </div>
+
+      <!-- =========================================================================
+           MPU-6050 6-Axis Motion & IMU Telemetry Studio Dashboard Section
+           ========================================================================= -->
+      <div class="mpu-panel" id="mpuSection" style="margin-top: 20px;">
+        <div class="mpu-header">
+          <div class="mpu-header-left">
+            <div class="mpu-icon-glow">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 2a14.5 14.5 0 0 0 0 20M2 12h20"/>
+                <circle cx="12" cy="12" r="3" fill="#00d2ff"/>
+              </svg>
+            </div>
+            <div class="mpu-title-text">
+              <h2>MPU-6050 6-Axis IMU & Structural Orientation Telemetry</h2>
+              <span>Real-Time Pitch & Roll Complementary Filter • 3D Horizon • Accel & Gyro Vectors • Shock Alert</span>
+            </div>
+            <div class="mpu-badges">
+              <span id="mpuConnBadge" class="tag-live">● CONNECTED (20 Hz)</span>
+              <span id="mpuLevelBadge" class="tag-level">LEVEL (±0.0°)</span>
+              <span id="mpuShockBadge" class="tag-shock-safe">SHOCK: SAFE</span>
+            </div>
+          </div>
+
+          <div class="mpu-toolbar">
+            <div class="view-mode-bar" style="background: rgba(0,0,0,0.5);">
+              <button class="source-tab-btn active" id="tabSrcPush" onclick="setMpuSource('push')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v10m0 0l4-4m-4 4L8 8M3 17v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2"/></svg>
+                Direct Push (No ESP32 IP Needed)
+              </button>
+              <button class="source-tab-btn" id="tabSrcWifi" onclick="setMpuSource('wifi')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+                Pull via ESP32 IP
+              </button>
+              <button class="source-tab-btn" id="tabSrcSerial" onclick="setMpuSource('serial')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+                USB Cable
+              </button>
+              <button class="source-tab-btn" id="tabSrcSim" onclick="setMpuSource('sim')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Simulator
+              </button>
+            </div>
+
+            <!-- Tare Zero Angle Button -->
+            <button class="btn-secondary" onclick="tareHorizon()" title="Tare / Zero Horizon angle relative to current orientation" style="padding: 6px 12px; font-size: 0.76rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
+              <span>Zero Horizon</span>
+            </button>
+
+            <!-- Test Shock Waveform Button -->
+            <button class="btn-secondary" onclick="triggerTestShock()" title="Inject a test shock pulse to verify alarm chime & flashing" style="padding: 6px 12px; font-size: 0.76rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              <span>Test Shock</span>
+            </button>
+
+            <!-- Toggle Camera HUD Overlay -->
+            <button class="btn-secondary" id="btnToggleHud" onclick="toggleCameraHud()" title="Show or hide live telemetry on top of video viewfinder" style="padding: 6px 12px; font-size: 0.76rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span id="hudToggleText">HUD: ON</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Connection Configuration Drawer -->
+        <div class="mpu-config-drawer" id="mpuConfigDrawer">
+          <!-- 1. Direct Push Drawer (Recommended - NO ESP32 IP NEEDED) -->
+          <div id="drawerPush" class="config-inputs" style="width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <span class="tag-level" style="font-size: 0.72rem; padding: 4px 10px;">★ NO ESP32 IP NEEDED</span>
+              <span style="font-size: 0.76rem; color: var(--text-muted);">In your ESP32 Arduino code, set:</span>
+              <code style="background: rgba(0,0,0,0.65); padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(0, 210, 255, 0.4); color: #00d2ff; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;">
+                pushServerHost = "<span id="pushHostIpText">10.169.71.221</span>";
+              </code>
+              <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.74rem;" onclick="copyPushIp()" title="Copy host IP to clipboard">
+                📋 Copy IP
+              </button>
+            </div>
+            <span style="color: var(--text-muted); font-size: 0.74rem;">The ESP32 pushes sensor readings straight to your dashboard over Wi-Fi!</span>
+          </div>
+
+          <!-- 2. Wi-Fi Pull via ESP32 IP Form -->
+          <div id="drawerWifi" class="config-inputs" style="width: 100%; display: none; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="color: var(--text-muted); font-size: 0.75rem;">ESP32 IP / Endpoint:</span>
+              <input type="text" id="wifiUrlInput" class="config-input" value="http://192.168.1.100/telemetry" placeholder="http://<ESP32_IP>/telemetry">
+              <button class="btn-capture" style="padding: 6px 14px; font-size: 0.78rem;" onclick="connectWifiMpu()">Connect to ESP32 IP</button>
+            </div>
+            <span style="color: var(--text-muted); font-size: 0.72rem;">Check Arduino Serial Monitor to find your ESP32's assigned IP</span>
+          </div>
+
+          <!-- 3. Serial Port Config Form -->
+          <div id="drawerSerial" class="config-inputs" style="width: 100%; display: none; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span style="color: var(--text-muted); font-size: 0.75rem;">Serial Port:</span>
+              <select id="serialPortSelect" class="config-input" style="min-width: 180px;"></select>
+              <select id="serialBaudSelect" class="config-input" style="min-width: 110px;">
+                <option value="115200" selected>115200 Baud</option>
+                <option value="921600">921600 Baud</option>
+                <option value="57600">57600 Baud</option>
+                <option value="9600">9600 Baud</option>
+              </select>
+              <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.76rem;" onclick="refreshSerialPorts()">🔄 Refresh</button>
+              <button class="btn-capture" style="padding: 6px 14px; font-size: 0.78rem;" onclick="connectSerialMpu()">Connect USB</button>
+            </div>
+            <span style="color: var(--text-muted); font-size: 0.72rem;">No Wi-Fi or IP needed. Streams over USB cable.</span>
+          </div>
+
+          <!-- 4. Simulator Config Form -->
+          <div id="drawerSim" class="config-inputs" style="width: 100%; display: none; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <button class="btn-capture" style="padding: 6px 16px; font-size: 0.78rem;" onclick="startSimMpu()">
+                ▶ Run Physics Motion Simulator
+              </button>
+              <span style="color: var(--text-muted); font-size: 0.74rem;">Generates realistic structural sway, dynamic G-forces, and thermal drift</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4-Column Core Telemetry Metrics & Instruments -->
+        <div class="mpu-telemetry-grid">
+
+          <!-- Instrument 1: 3D Attitude Indicator & Pitch/Roll Readout -->
+          <div class="mpu-subcard">
+            <div class="subcard-title">
+              <span>Attitude Horizon & 3D Tilt</span>
+              <span id="horizonStatusPill" class="tag-level" style="font-size: 0.65rem;">LEVEL</span>
+            </div>
+
+            <div class="horizon-container">
+              <!-- Circular Artificial Horizon Bezel -->
+              <div class="horizon-bezel">
+                <div class="roll-indicator-pip"></div>
+                <!-- Inner rotating & pitching disk -->
+                <div class="horizon-disk" id="horizonDisk">
+                  <!-- Pitch ladder tick markings -->
+                  <div class="pitch-ladder">
+                    <svg viewBox="-80 -80 160 160" width="100%" height="100%" style="overflow: visible;">
+                      <!-- Ladder ticks: 0 is center white line -->
+                      <line x1="-35" y1="0" x2="35" y2="0" stroke="#ffffff" stroke-width="2.5" />
+                      <!-- +10 deg pitch -->
+                      <line x1="-20" y1="-22" x2="20" y2="-22" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" />
+                      <text x="24" y="-20" fill="rgba(255,255,255,0.8)" font-size="8" font-family="'JetBrains Mono', monospace">+10</text>
+                      <!-- +20 deg pitch -->
+                      <line x1="-14" y1="-44" x2="14" y2="-44" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" />
+                      <text x="18" y="-42" fill="rgba(255,255,255,0.8)" font-size="8" font-family="'JetBrains Mono', monospace">+20</text>
+                      <!-- -10 deg pitch -->
+                      <line x1="-20" y1="22" x2="20" y2="22" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" />
+                      <text x="24" y="25" fill="rgba(255,255,255,0.8)" font-size="8" font-family="'JetBrains Mono', monospace">-10</text>
+                      <!-- -20 deg pitch -->
+                      <line x1="-14" y1="44" x2="14" y2="44" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" />
+                      <text x="18" y="47" fill="rgba(255,255,255,0.8)" font-size="8" font-family="'JetBrains Mono', monospace">-20</text>
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Fixed Yellow Center Aircraft Reticle -->
+                <div class="aircraft-reticle">
+                  <div class="aircraft-wing-left"></div>
+                  <div class="aircraft-pip"></div>
+                  <div class="aircraft-wing-right"></div>
+                </div>
+              </div>
+
+              <!-- Digital Readout: Pitch & Roll -->
+              <div style="display: flex; justify-content: space-around; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+                <div style="text-align: center;">
+                  <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Pitch (θ)</span>
+                  <div id="readoutPitch" style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 800; color: #00d2ff;">+0.00°</div>
+                </div>
+                <div style="text-align: center;">
+                  <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Roll (φ)</span>
+                  <div id="readoutRoll" style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 800; color: #f43f5e;">+0.00°</div>
+                </div>
+              </div>
+
+              <!-- 3D Sensor Probe PCB Animation -->
+              <div class="probe-3d-scene" title="3D live visualization of physical MPU-6050 board">
+                <div class="probe-3d-board" id="probe3dBoard">
+                  <div class="probe-chip">
+                    <span>MPU</span>
+                    <span>6050</span>
+                  </div>
+                  <div class="probe-axis-labels">
+                    <span style="color: #ef4444;">X → Pitch</span>
+                    <span style="color: #10b981;">Y ↑ Roll</span>
+                    <span style="color: #3b82f6;">Z ⊙ 1.0G</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instrument 2: 3-Axis Accelerometer & Total G-Force -->
+          <div class="mpu-subcard">
+            <div class="subcard-title">
+              <span>Accelerometer Vectors</span>
+              <span id="readoutTotalG" style="font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan); font-weight: 700;">1.000 G</span>
+            </div>
+
+            <!-- Total G-Force Hero Meter -->
+            <div style="background: rgba(4,7,13,0.5); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: baseline;">
+              <div>
+                <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Total Gravity Vector</span>
+                <h4 id="heroTotalG" style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 800; color: #fff;">1.002 <span style="font-size: 0.8rem; color: var(--accent-cyan);">G</span></h4>
+              </div>
+              <span id="gStateBadge" class="tag-level" style="font-size: 0.65rem;">Nominal 1.0G</span>
+            </div>
+
+            <!-- Bipolar Linear Gauges for Ax, Ay, Az -->
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
+              <!-- Ax -->
+              <div class="vector-meter-row">
+                <div class="vector-label-row">
+                  <span style="color: #00d2ff; font-weight: 700;">Ax (Surge / Tilt X)</span>
+                  <span id="readoutAx" style="color: #00d2ff;">+0.000 g</span>
+                </div>
+                <div class="vector-track">
+                  <div class="vector-center-zero"></div>
+                  <div class="vector-fill" id="barAx" style="background: #00d2ff; left: 50%; width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- Ay -->
+              <div class="vector-meter-row">
+                <div class="vector-label-row">
+                  <span style="color: #a855f7; font-weight: 700;">Ay (Sway / Tilt Y)</span>
+                  <span id="readoutAy" style="color: #a855f7;">+0.000 g</span>
+                </div>
+                <div class="vector-track">
+                  <div class="vector-center-zero"></div>
+                  <div class="vector-fill" id="barAy" style="background: #a855f7; left: 50%; width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- Az -->
+              <div class="vector-meter-row">
+                <div class="vector-label-row">
+                  <span style="color: #38bdf8; font-weight: 700;">Az (Normal Gravity)</span>
+                  <span id="readoutAz" style="color: #38bdf8;">+1.000 g</span>
+                </div>
+                <div class="vector-track">
+                  <div class="vector-center-zero"></div>
+                  <div class="vector-fill" id="barAz" style="background: #38bdf8; left: 50%; width: 50%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Vibration Level -->
+            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06);">
+              <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px;">
+                <span>Vibration Intensity (ΔG)</span>
+                <span id="readoutDeltaG" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #fff;">0.012 G</span>
+              </div>
+              <div class="vector-track" style="height: 6px;">
+                <div id="barVibration" style="height: 100%; width: 5%; background: var(--accent-green); border-radius: 4px; transition: width 0.1s linear, background 0.2s;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instrument 3: 3-Axis Gyroscope Angular Velocity -->
+          <div class="mpu-subcard">
+            <div class="subcard-title">
+              <span>Gyroscope Rates</span>
+              <span id="gyroStatePill" class="tag-level" style="font-size: 0.65rem;">STABLE</span>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(4,7,13,0.5); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+              <div>
+                <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Angular Velocity</span>
+                <h4 id="heroAngularRate" style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 800; color: #fff;">0.0 <span style="font-size: 0.8rem; color: #f43f5e;">°/s</span></h4>
+              </div>
+              <div class="gyro-spin-icon" id="gyroSpinRotor">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 12a10 10 0 0 1 18.36-5.36L21.5 8M22 12a10 10 0 0 1-18.36 5.36L2.5 16"/></svg>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
+              <!-- Gx -->
+              <div class="vector-meter-row">
+                <div class="vector-label-row">
+                  <span style="color: #cbd5e1; font-weight: 600;">Gx (Roll Rate)</span>
+                  <span id="readoutGx" style="color: #f43f5e; font-weight: 700;">+0.00 °/s</span>
+                </div>
+                <div class="vector-track">
+                  <div class="vector-center-zero"></div>
+                  <div class="vector-fill" id="barGx" style="background: #f43f5e; left: 50%; width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- Gy -->
+              <div class="vector-meter-row">
+                <div class="vector-label-row">
+                  <span style="color: #cbd5e1; font-weight: 600;">Gy (Pitch Rate)</span>
+                  <span id="readoutGy" style="color: #00d2ff; font-weight: 700;">+0.00 °/s</span>
+                </div>
+                <div class="vector-track">
+                  <div class="vector-center-zero"></div>
+                  <div class="vector-fill" id="barGy" style="background: #00d2ff; left: 50%; width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- Gz -->
+              <div class="vector-meter-row">
+                <div class="vector-label-row">
+                  <span style="color: #cbd5e1; font-weight: 600;">Gz (Yaw Rate)</span>
+                  <span id="readoutGz" style="color: #eab308; font-weight: 700;">+0.00 °/s</span>
+                </div>
+                <div class="vector-track">
+                  <div class="vector-center-zero"></div>
+                  <div class="vector-fill" id="barGz" style="background: #eab308; left: 50%; width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+              <span>Rotational Stability:</span>
+              <strong id="rotationalStabilityText" style="color: var(--accent-green);">Steady</strong>
+            </div>
+          </div>
+
+          <!-- Instrument 4: Temperature, Shock & Health Diagnostics -->
+          <div class="mpu-subcard">
+            <div class="subcard-title">
+              <span>Sensor Health & Shock</span>
+              <span id="packetRatePill" class="tag-live" style="font-size: 0.65rem;">20.0 Hz</span>
+            </div>
+
+            <!-- Temperature Card -->
+            <div style="background: rgba(4,7,13,0.5); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Die Temperature</span>
+                <h4 id="readoutTemp" style="font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 800; color: #fff;">26.5 <span style="font-size: 0.8rem; color: #f59e0b;">°C</span></h4>
+              </div>
+              <div style="text-align: right;">
+                <span id="tempStatusPill" class="tag-level" style="font-size: 0.65rem;">OPTIMAL</span>
+                <div id="readoutTempF" style="font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px;">79.7 °F</div>
+              </div>
+            </div>
+
+            <!-- Shock & Impact Event Log -->
+            <div style="background: rgba(4,7,13,0.5); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Shock Detection</span>
+                <span id="shockCounterBadge" class="tag-shock-safe" style="font-size: 0.65rem;">0 SHOCKS</span>
+              </div>
+              <div id="shockStatusDisplay" style="font-size: 0.76rem; font-weight: 600; color: var(--text-muted); margin-top: 2px;">
+                No physical impact detected.
+              </div>
+              <div id="lastShockTimeDisplay" style="font-size: 0.68rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+                Last Impact: None recorded
+              </div>
+            </div>
+
+            <!-- Packet & Link Diagnostics -->
+            <div style="padding-top: 6px; font-size: 0.72rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>Link Quality:</span>
+                <span id="linkQualityText" style="color: var(--accent-green); font-weight: 700;">100% Solid</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Packets Received:</span>
+                <span id="packetsReceivedCount" style="font-family: 'JetBrains Mono', monospace; color: var(--text-main);">0 pkts</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Real-Time Waveform / Oscilloscope Strip Chart (Canvas) -->
+        <div class="waveform-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px;">
+                📈 Real-Time Telemetry Waveform Oscilloscope
+              </span>
+              <div style="display: flex; align-items: center; gap: 12px; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace;">
+                <span style="color: #00d2ff; display: flex; align-items: center; gap: 4px;">
+                  <span style="width: 8px; height: 8px; background: #00d2ff; border-radius: 50%; display: inline-block;"></span>
+                  Pitch (θ)
+                </span>
+                <span style="color: #f43f5e; display: flex; align-items: center; gap: 4px;">
+                  <span style="width: 8px; height: 8px; background: #f43f5e; border-radius: 50%; display: inline-block;"></span>
+                  Roll (φ)
+                </span>
+                <span style="color: #eab308; display: flex; align-items: center; gap: 4px;">
+                  <span style="width: 8px; height: 8px; background: #eab308; border-radius: 50%; display: inline-block;"></span>
+                  Total G-Force
+                </span>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button class="source-tab-btn" onclick="toggleWaveformPause()" id="btnPauseWaveform">⏸ Pause</button>
+              <button class="source-tab-btn" onclick="clearWaveform()">🗑 Clear</button>
+              <select id="canvasScaleSelect" onchange="changeWaveformScale(this.value)" style="padding: 4px 8px; font-size: 0.72rem; background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 4px;">
+                <option value="15">±15° Scale</option>
+                <option value="45" selected>±45° Scale</option>
+                <option value="90">±90° Scale</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="waveform-canvas-box">
+            <canvas id="mpuCanvas" width="1200" height="120"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Upload Photo & Benchmark Samples View Section -->
@@ -749,6 +1639,12 @@
           badge.innerText = `CPU • IoU ${(data.valid_iou * 100).toFixed(1)}%`;
         }
 
+        // Auto-detect local laptop IP for ESP32 push config
+        if (data.local_ip) {
+          const pushIpEl = document.getElementById('pushHostIpText');
+          if (pushIpEl) pushIpEl.innerText = data.local_ip;
+        }
+
         // Engine default
         const engineSelect = document.getElementById('engineSelect');
         if (data.has_mps || data.has_cuda) {
@@ -784,6 +1680,9 @@
 
         // Setup Split handle dragging events
         initSplitDrag();
+
+        // Initialize MPU-6050 6-Axis IMU Telemetry
+        initMpuTelemetry();
 
         // Start Live Camera
         await startViewfinder();
@@ -852,13 +1751,13 @@
     async function processLiveStreamLoop() {
       if (!isLiveScanning || isPhotoFrozen || !video || video.readyState < 2) {
         if (isLiveScanning && !isPhotoFrozen) {
-          setTimeout(() => requestAnimationFrame(processLiveStreamLoop), 100);
+          setTimeout(processLiveStreamLoop, 120);
         }
         return;
       }
 
+      // If a frame is currently in-flight, exit without spin-waiting on the main thread
       if (isProcessingFrame) {
-        requestAnimationFrame(processLiveStreamLoop);
         return;
       }
 
@@ -866,17 +1765,17 @@
       const loopStart = performance.now();
 
       try {
-        // Render current video frame to scaled off-screen canvas for high inference throughput
+        // Render directly to model native width (448px) to reduce payload size by 65% and save CPU
         const vw = video.videoWidth || 640;
         const vh = video.videoHeight || 480;
-        const targetWidth = Math.min(640, vw);
+        const targetWidth = Math.min(448, vw);
         const targetHeight = Math.round(vh * (targetWidth / vw));
 
         offscreenCanvas.width = targetWidth;
         offscreenCanvas.height = targetHeight;
         offscreenCtx.drawImage(video, 0, 0, targetWidth, targetHeight);
 
-        const frameDataUrl = offscreenCanvas.toDataURL("image/jpeg", 0.75);
+        const frameDataUrl = offscreenCanvas.toDataURL("image/jpeg", 0.70);
         const engine = document.getElementById('engineSelect')?.value || 'fast';
         const useClahe = document.getElementById('claheChk')?.checked || false;
 
@@ -894,6 +1793,11 @@
 
         if (resp.ok) {
           const res = await resp.json();
+          // If server was busy and skipped this frame, wait for next scheduled cycle
+          if (res.skipped) {
+            return;
+          }
+
           if (res.success && isLiveScanning && !isPhotoFrozen) {
             currentLiveResult = res;
 
@@ -929,7 +1833,8 @@
       } finally {
         isProcessingFrame = false;
         if (isLiveScanning && !isPhotoFrozen) {
-          requestAnimationFrame(processLiveStreamLoop);
+          // 90ms gentle pause yields 75%+ CPU/GPU rest cycle back to macOS WindowServer
+          setTimeout(() => requestAnimationFrame(processLiveStreamLoop), 90);
         }
       }
     }
@@ -991,11 +1896,13 @@
       isLiveScanning = false;
       isPhotoFrozen = true;
 
-      // 2. Capture FULL uncompressed sensor resolution from video
-      offscreenCanvas.width = video.videoWidth;
-      offscreenCanvas.height = video.videoHeight;
+      // 2. Capture high-res inspection frame (capped to 1024px to eliminate browser memory spikes)
+      const maxDim = 1024;
+      const scale = Math.min(1.0, maxDim / Math.max(video.videoWidth, video.videoHeight));
+      offscreenCanvas.width = Math.round(video.videoWidth * scale);
+      offscreenCanvas.height = Math.round(video.videoHeight * scale);
       offscreenCtx.drawImage(video, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
-      const highResDataUrl = offscreenCanvas.toDataURL("image/jpeg", 0.95);
+      const highResDataUrl = offscreenCanvas.toDataURL("image/jpeg", 0.86);
 
       // 3. Freeze Left Viewfinder UI
       frozenImg.src = highResDataUrl;
@@ -1245,15 +2152,729 @@
     // Main Tab Switching
     function switchMainTab(tab) {
       appMode = tab;
-      document.getElementById('tabCamera').classList.toggle('active', tab === 'camera');
-      document.getElementById('tabUpload').classList.toggle('active', tab === 'upload');
+      document.getElementById('tabCamera')?.classList.toggle('active', tab === 'camera');
+      document.getElementById('tabTelemetry')?.classList.toggle('active', tab === 'telemetry');
+      document.getElementById('tabUpload')?.classList.toggle('active', tab === 'upload');
 
-      document.getElementById('cameraViewSection').style.display = tab === 'camera' ? 'block' : 'none';
-      document.getElementById('uploadViewSection').style.display = tab === 'upload' ? 'block' : 'none';
+      const camSection = document.getElementById('cameraViewSection');
+      const uploadSection = document.getElementById('uploadViewSection');
+      const mpuSec = document.getElementById('mpuSection');
+      const actionPanel = document.querySelector('.action-panel');
+      const inspectionGrid = document.querySelector('.inspection-grid');
 
       if (tab === 'camera') {
+        if (camSection) camSection.style.display = 'block';
+        if (uploadSection) uploadSection.style.display = 'none';
+        if (actionPanel) actionPanel.style.display = 'flex';
+        if (inspectionGrid) inspectionGrid.style.display = 'grid';
+        if (mpuSec) mpuSec.style.display = 'flex';
         if (!mediaStream) startViewfinder();
+      } else if (tab === 'telemetry') {
+        if (camSection) camSection.style.display = 'block';
+        if (uploadSection) uploadSection.style.display = 'none';
+        if (actionPanel) actionPanel.style.display = 'none';
+        if (inspectionGrid) inspectionGrid.style.display = 'none';
+        if (mpuSec) {
+          mpuSec.style.display = 'flex';
+          mpuSec.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else if (tab === 'upload') {
+        if (camSection) camSection.style.display = 'none';
+        if (uploadSection) uploadSection.style.display = 'block';
       }
+    }
+
+    function scrollToOrSwitchTelemetry() {
+      if (appMode !== 'camera' && appMode !== 'telemetry') {
+        switchMainTab('camera');
+      }
+      const mpuSec = document.getElementById('mpuSection');
+      if (mpuSec) {
+        mpuSec.scrollIntoView({ behavior: 'smooth' });
+        mpuSec.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease';
+        mpuSec.style.borderColor = 'var(--accent-cyan)';
+        mpuSec.style.boxShadow = '0 0 35px rgba(0, 210, 255, 0.45)';
+        setTimeout(() => {
+          mpuSec.style.borderColor = '';
+          mpuSec.style.boxShadow = '';
+        }, 1200);
+      }
+    }
+
+    // =========================================================================
+    // MPU-6050 6-Axis IMU & Orientation Telemetry Controller
+    // =========================================================================
+    let mpuState = {
+      connected: false,
+      source: 'wifi',
+      target: '',
+      latest: {
+        pitch: 0.0, roll: 0.0,
+        ax: 0.0, ay: 0.0, az: 1.0,
+        gx: 0.0, gy: 0.0, gz: 0.0,
+        temp: 25.0, shock: false,
+        total_g: 1.0, timestamp: Date.now()
+      },
+      history: [],
+      shock_count: 0,
+      last_shock_time: null,
+      packets_received: 0,
+      is_stale: true
+    };
+
+    let mpuPollingInterval = null;
+    let isWaveformPaused = false;
+    let waveformScale = 45; // ±45 degrees
+    let waveformPoints = [];
+    const MAX_WAVEFORM_POINTS = 160;
+    let currentGyroRotation = 0;
+    let showCameraHud = true;
+    let shockAlarmActive = false;
+    let shockResetTimer = null;
+    let webSerialPort = null;
+    let webSerialReader = null;
+    let webSerialActive = false;
+
+    // Initialize MPU-6050 telemetry system
+    function initMpuTelemetry() {
+      // 1. Start canvas oscilloscope animation loop
+      initWaveformCanvas();
+
+      // 2. Refresh serial ports list
+      refreshSerialPorts();
+
+      // 3. Start telemetry polling loop (16 Hz / 60ms)
+      if (mpuPollingInterval) clearInterval(mpuPollingInterval);
+      mpuPollingInterval = setInterval(fetchMpuTelemetry, 60);
+
+      // 4. Initial fetch
+      fetchMpuTelemetry();
+    }
+
+    // Fetch latest telemetry from backend
+    async function fetchMpuTelemetry() {
+      // If Web Serial is streaming directly on client, skip polling backend
+      if (webSerialActive) return;
+
+      try {
+        const resp = await fetch("/api/mpu/telemetry");
+        if (resp.ok) {
+          const data = await resp.json();
+          mpuState = data;
+          updateMpuUI(data);
+        }
+      } catch (e) {
+        console.warn("MPU telemetry poll error:", e);
+      }
+    }
+
+    // Update all MPU dashboard instruments and HUD
+    function updateMpuUI(data) {
+      const cur = data.latest || {};
+      const pitch = typeof cur.pitch === 'number' ? cur.pitch : 0.0;
+      const roll = typeof cur.roll === 'number' ? cur.roll : 0.0;
+      const ax = typeof cur.ax === 'number' ? cur.ax : 0.0;
+      const ay = typeof cur.ay === 'number' ? cur.ay : 0.0;
+      const az = typeof cur.az === 'number' ? cur.az : 1.0;
+      const gx = typeof cur.gx === 'number' ? cur.gx : 0.0;
+      const gy = typeof cur.gy === 'number' ? cur.gy : 0.0;
+      const gz = typeof cur.gz === 'number' ? cur.gz : 0.0;
+      const temp = typeof cur.temp === 'number' ? cur.temp : 25.0;
+      const totalG = typeof cur.total_g === 'number' ? cur.total_g : Math.sqrt(ax*ax + ay*ay + az*az);
+      const isShock = Boolean(cur.shock);
+      const isConn = Boolean(data.connected);
+
+      // 1. Connection Status Badges
+      const connBadge = document.getElementById('mpuConnBadge');
+      const quickStatus = document.getElementById('mpuQuickStatus');
+      if (isConn) {
+        const srcLabel = data.source ? data.source.toUpperCase() : 'ACTIVE';
+        connBadge.className = 'tag-live';
+        connBadge.innerText = `● ${srcLabel} STREAM (20 Hz)`;
+        quickStatus.innerText = `● ${srcLabel}`;
+        quickStatus.style.color = 'var(--accent-green)';
+      } else {
+        connBadge.className = 'tag-shock-safe';
+        connBadge.innerText = `○ DISCONNECTED`;
+        quickStatus.innerText = `○ STANDBY`;
+        quickStatus.style.color = 'var(--text-muted)';
+      }
+
+      // 2. Attitude Horizon & Pitch/Roll Readouts
+      const pClamp = Math.max(-50, Math.min(50, pitch));
+      const rClamp = Math.max(-180, Math.min(180, roll));
+      const disk = document.getElementById('horizonDisk');
+      if (disk) {
+        // Horizon disk transforms with pitch translation (2.0px per deg) and roll rotation
+        disk.style.transform = `rotate(${-rClamp}deg) translateY(${pClamp * 2.0}px)`;
+      }
+
+      // 3D Probe Board
+      const probeBoard = document.getElementById('probe3dBoard');
+      if (probeBoard) {
+        probeBoard.style.transform = `rotateX(${pClamp * 0.9}deg) rotateZ(${-rClamp * 0.9}deg)`;
+      }
+
+      const pSign = pitch >= 0 ? '+' : '';
+      const rSign = roll >= 0 ? '+' : '';
+      document.getElementById('readoutPitch').innerText = `${pSign}${pitch.toFixed(2)}°`;
+      document.getElementById('readoutRoll').innerText = `${rSign}${roll.toFixed(2)}°`;
+
+      // Top Quick Glance HUD card
+      document.getElementById('statPitchRoll').innerText = `P: ${pSign}${pitch.toFixed(1)}° R: ${rSign}${roll.toFixed(1)}°`;
+
+      // Levelness Status
+      const isLevel = Math.abs(pitch) <= 1.5 && Math.abs(roll) <= 1.5;
+      const levelBadge = document.getElementById('mpuLevelBadge');
+      const horizonPill = document.getElementById('horizonStatusPill');
+      if (isLevel) {
+        levelBadge.className = 'tag-level';
+        levelBadge.innerText = 'LEVEL (±0.0°)';
+        horizonPill.className = 'tag-level';
+        horizonPill.innerText = 'LEVEL';
+      } else {
+        levelBadge.className = 'tag-tilt';
+        levelBadge.innerText = `TILTED (${pSign}${pitch.toFixed(1)}°, ${rSign}${roll.toFixed(1)}°)`;
+        horizonPill.className = 'tag-tilt';
+        horizonPill.innerText = 'INCLINED';
+      }
+
+      // 3. Accelerometer & Total G-Force
+      document.getElementById('readoutTotalG').innerText = `${totalG.toFixed(3)} G`;
+      document.getElementById('heroTotalG').innerHTML = `${totalG.toFixed(3)} <span style="font-size: 0.8rem; color: var(--accent-cyan);">G</span>`;
+
+      // G-force state pill
+      const gPill = document.getElementById('gStateBadge');
+      const deltaG = Math.abs(totalG - 1.0);
+      if (deltaG > 0.45 || isShock) {
+        gPill.className = 'tag-shock-alarm';
+        gPill.innerText = 'HIGH DYNAMIC G';
+      } else if (deltaG > 0.12) {
+        gPill.className = 'tag-tilt';
+        gPill.innerText = 'ACCELERATING';
+      } else {
+        gPill.className = 'tag-level';
+        gPill.innerText = 'Nominal 1.0G';
+      }
+
+      // Ax, Ay, Az Numeric & Bipolar Meters
+      updateBipolarMeter('Ax', ax, 2.0);
+      updateBipolarMeter('Ay', ay, 2.0);
+      updateBipolarMeter('Az', az, 2.0);
+
+      // Vibration intensity
+      document.getElementById('readoutDeltaG').innerText = `${deltaG.toFixed(3)} G`;
+      const vibBar = document.getElementById('barVibration');
+      const vibPct = Math.min(100, (deltaG / 0.50) * 100);
+      vibBar.style.width = `${Math.max(4, vibPct)}%`;
+      if (deltaG > 0.35) {
+        vibBar.style.background = 'var(--accent-red)';
+      } else if (deltaG > 0.12) {
+        vibBar.style.background = 'var(--accent-yellow)';
+      } else {
+        vibBar.style.background = 'var(--accent-green)';
+      }
+
+      // 4. Gyroscope Rotation Rates
+      const gxSign = gx >= 0 ? '+' : '';
+      const gySign = gy >= 0 ? '+' : '';
+      const gzSign = gz >= 0 ? '+' : '';
+      document.getElementById('readoutGx').innerText = `${gxSign}${gx.toFixed(2)} °/s`;
+      document.getElementById('readoutGy').innerText = `${gySign}${gy.toFixed(2)} °/s`;
+      document.getElementById('readoutGz').innerText = `${gzSign}${gz.toFixed(2)} °/s`;
+
+      const angRate = Math.sqrt(gx*gx + gy*gy + gz*gz);
+      document.getElementById('heroAngularRate').innerHTML = `${angRate.toFixed(1)} <span style="font-size: 0.8rem; color: #f43f5e;">°/s</span>`;
+
+      // Rotate rotor icon
+      currentGyroRotation += (gx + gy + gz) * 0.45;
+      const rotor = document.getElementById('gyroSpinRotor');
+      if (rotor) rotor.style.transform = `rotate(${currentGyroRotation}deg)`;
+
+      // Gyro state pill & text
+      const gyroPill = document.getElementById('gyroStatePill');
+      const stabText = document.getElementById('rotationalStabilityText');
+      if (angRate > 25.0) {
+        gyroPill.className = 'tag-shock-alarm';
+        gyroPill.innerText = 'HIGH ROTATION';
+        stabText.innerText = 'Rapid Tumbling';
+        stabText.style.color = '#ff3b6c';
+      } else if (angRate > 4.0) {
+        gyroPill.className = 'tag-tilt';
+        gyroPill.innerText = 'ROTATING';
+        stabText.innerText = 'Angular Drift';
+        stabText.style.color = '#f59e0b';
+      } else {
+        gyroPill.className = 'tag-level';
+        gyroPill.innerText = 'STABLE';
+        stabText.innerText = 'Steady / Fixed';
+        stabText.style.color = '#00e676';
+      }
+
+      updateBipolarMeter('Gx', gx, 100.0);
+      updateBipolarMeter('Gy', gy, 100.0);
+      updateBipolarMeter('Gz', gz, 100.0);
+
+      // 5. Temperature
+      document.getElementById('readoutTemp').innerHTML = `${temp.toFixed(1)} <span style="font-size: 0.8rem; color: #f59e0b;">°C</span>`;
+      const tempF = (temp * 9/5) + 32;
+      document.getElementById('readoutTempF').innerText = `${tempF.toFixed(1)} °F`;
+      const tempPill = document.getElementById('tempStatusPill');
+      if (temp > 60) {
+        tempPill.className = 'tag-shock-alarm';
+        tempPill.innerText = 'OVERHEAT';
+      } else if (temp > 45) {
+        tempPill.className = 'tag-tilt';
+        tempPill.innerText = 'WARM';
+      } else {
+        tempPill.className = 'tag-level';
+        tempPill.innerText = 'OPTIMAL';
+      }
+
+      // 6. Shock & Vibration Detection Alerts
+      const shockBadge = document.getElementById('mpuShockBadge');
+      const statShockBadge = document.getElementById('statShockBadge');
+      const shockCounterBadge = document.getElementById('shockCounterBadge');
+      const shockStatusDisplay = document.getElementById('shockStatusDisplay');
+      const lastShockTimeDisplay = document.getElementById('lastShockTimeDisplay');
+      const hudShockFlag = document.getElementById('hudShockFlag');
+      const mpuPanel = document.getElementById('mpuSection');
+
+      const shockCount = data.shock_count || 0;
+      shockCounterBadge.innerText = `${shockCount} SHOCK${shockCount === 1 ? '' : 'S'}`;
+
+      if (data.last_shock_time) {
+        const elapsedSec = Math.round(Date.now() / 1000 - data.last_shock_time);
+        lastShockTimeDisplay.innerText = `Last Impact: ${elapsedSec < 3 ? 'Just now!' : elapsedSec + 's ago'}`;
+      }
+
+      if (isShock) {
+        shockAlarmActive = true;
+        if (shockResetTimer) clearTimeout(shockResetTimer);
+
+        mpuPanel.classList.add('shock-active');
+        shockBadge.className = 'tag-shock-alarm';
+        shockBadge.innerText = '⚠️ IMPACT DETECTED!';
+        statShockBadge.className = 'tag-shock-alarm';
+        statShockBadge.innerText = '⚠️ IMPACT!';
+        shockStatusDisplay.innerHTML = `<span style="color:#ff3b6c; font-weight:700;">⚠️ Sudden physical impact detected!</span>`;
+        if (hudShockFlag) hudShockFlag.style.display = 'block';
+
+        // Play audio alert chime
+        playAlertChime();
+
+        // Auto-clear visual alert after 1.8 seconds of tranquility
+        shockResetTimer = setTimeout(() => {
+          shockAlarmActive = false;
+          mpuPanel.classList.remove('shock-active');
+          shockBadge.className = 'tag-shock-safe';
+          shockBadge.innerText = 'SHOCK: SAFE';
+          statShockBadge.className = 'tag-shock-safe';
+          statShockBadge.innerText = 'SAFE';
+          shockStatusDisplay.innerText = 'No physical impact detected.';
+          if (hudShockFlag) hudShockFlag.style.display = 'none';
+        }, 1800);
+      }
+
+      // 7. Diagnostics
+      if (typeof data.packets_received === 'number') {
+        document.getElementById('packetsReceivedCount').innerText = `${data.packets_received.toLocaleString()} pkts`;
+      }
+
+      // 8. Viewfinder Mini HUD
+      if (showCameraHud) {
+        document.getElementById('hudPitch').innerText = `${pSign}${pitch.toFixed(1)}°`;
+        document.getElementById('hudRoll').innerText = `${rSign}${roll.toFixed(1)}°`;
+        document.getElementById('hudG').innerText = `${totalG.toFixed(2)}G`;
+      }
+
+      // 9. Append to waveform oscilloscope array
+      if (!isWaveformPaused) {
+        waveformPoints.push({
+          t: Date.now(),
+          p: pitch,
+          r: roll,
+          g: totalG,
+          s: isShock
+        });
+        if (waveformPoints.length > MAX_WAVEFORM_POINTS) {
+          waveformPoints.shift();
+        }
+      }
+    }
+
+    // Helper for bipolar linear progress bars (-scale to +scale, center zero)
+    function updateBipolarMeter(name, val, maxScale) {
+      const readout = document.getElementById(`readout${name}`);
+      const bar = document.getElementById(`bar${name}`);
+      if (!readout || !bar) return;
+
+      const sign = val >= 0 ? '+' : '';
+      const unit = name.startsWith('G') ? '°/s' : 'g';
+      const dec = name.startsWith('G') ? 2 : 3;
+      readout.innerText = `${sign}${val.toFixed(dec)} ${unit}`;
+
+      const pct = Math.min(50, (Math.abs(val) / maxScale) * 50);
+      if (val >= 0) {
+        bar.style.left = '50%';
+        bar.style.width = `${pct}%`;
+      } else {
+        bar.style.left = `${50 - pct}%`;
+        bar.style.width = `${pct}%`;
+      }
+    }
+
+    // =========================================================================
+    // Real-Time Oscilloscope Waveform Canvas Renderer
+    // =========================================================================
+    let mpuCanvas, mpuCtx;
+
+    function initWaveformCanvas() {
+      mpuCanvas = document.getElementById('mpuCanvas');
+      if (!mpuCanvas) return;
+      mpuCtx = mpuCanvas.getContext('2d');
+
+      function resize() {
+        const rect = mpuCanvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        mpuCanvas.width = Math.round(rect.width * dpr);
+        mpuCanvas.height = Math.round(rect.height * dpr);
+        mpuCtx.scale(dpr, dpr);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      requestAnimationFrame(renderWaveformLoop);
+    }
+
+    function renderWaveformLoop() {
+      if (mpuCanvas && mpuCtx) {
+        drawMpuWaveform();
+      }
+      requestAnimationFrame(renderWaveformLoop);
+    }
+
+    function drawMpuWaveform() {
+      const rect = mpuCanvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      if (w === 0 || h === 0) return;
+
+      mpuCtx.clearRect(0, 0, w, h);
+
+      // Background grid
+      const midY = h / 2;
+      mpuCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      mpuCtx.lineWidth = 1;
+
+      // Horizontal gridlines: +scale/2, 0, -scale/2
+      [-1, -0.5, 0, 0.5, 1].forEach(fac => {
+        const y = midY - (fac * (h * 0.42));
+        mpuCtx.beginPath();
+        mpuCtx.moveTo(0, y);
+        mpuCtx.lineTo(w, y);
+        mpuCtx.stroke();
+      });
+
+      // Luminous center zero line
+      mpuCtx.strokeStyle = 'rgba(0, 210, 255, 0.2)';
+      mpuCtx.beginPath();
+      mpuCtx.moveTo(0, midY);
+      mpuCtx.lineTo(w, midY);
+      mpuCtx.stroke();
+
+      // Zero and scale labels
+      mpuCtx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+      mpuCtx.font = "9px 'JetBrains Mono', monospace";
+      mpuCtx.fillText(`+${waveformScale}°`, 8, midY - (h * 0.38));
+      mpuCtx.fillText("0°", 8, midY - 2);
+      mpuCtx.fillText(`-${waveformScale}°`, 8, midY + (h * 0.42));
+
+      if (waveformPoints.length < 2) return;
+
+      const stepX = w / (MAX_WAVEFORM_POINTS - 1);
+      const scaleDeg = waveformScale;
+
+      // 1. Draw Pitch trace (Cyan)
+      mpuCtx.strokeStyle = '#00d2ff';
+      mpuCtx.lineWidth = 2;
+      mpuCtx.beginPath();
+      waveformPoints.forEach((pt, idx) => {
+        const x = idx * stepX;
+        const normY = Math.max(-1.1, Math.min(1.1, pt.p / scaleDeg));
+        const y = midY - (normY * (h * 0.42));
+        if (idx === 0) mpuCtx.moveTo(x, y);
+        else mpuCtx.lineTo(x, y);
+      });
+      mpuCtx.stroke();
+
+      // 2. Draw Roll trace (Magenta)
+      mpuCtx.strokeStyle = '#f43f5e';
+      mpuCtx.lineWidth = 2;
+      mpuCtx.beginPath();
+      waveformPoints.forEach((pt, idx) => {
+        const x = idx * stepX;
+        const normY = Math.max(-1.1, Math.min(1.1, pt.r / scaleDeg));
+        const y = midY - (normY * (h * 0.42));
+        if (idx === 0) mpuCtx.moveTo(x, y);
+        else mpuCtx.lineTo(x, y);
+      });
+      mpuCtx.stroke();
+
+      // 3. Draw Total G-Force trace (Yellow dashed line, scaled around nominal 1.0G)
+      mpuCtx.strokeStyle = 'rgba(234, 179, 8, 0.65)';
+      mpuCtx.setLineDash([4, 4]);
+      mpuCtx.lineWidth = 1.5;
+      mpuCtx.beginPath();
+      waveformPoints.forEach((pt, idx) => {
+        const x = idx * stepX;
+        // Total G: 1.0G is center, ±1.0G mapped across chart
+        const normG = Math.max(-1.1, Math.min(1.1, (pt.g - 1.0) / 1.0));
+        const y = midY - (normG * (h * 0.42));
+        if (idx === 0) mpuCtx.moveTo(x, y);
+        else mpuCtx.lineTo(x, y);
+      });
+      mpuCtx.stroke();
+      mpuCtx.setLineDash([]); // Reset dash
+
+      // Current head point dot
+      const lastPt = waveformPoints[waveformPoints.length - 1];
+      const headX = (waveformPoints.length - 1) * stepX;
+      const headPitchY = midY - (Math.max(-1.1, Math.min(1.1, lastPt.p / scaleDeg)) * (h * 0.42));
+      const headRollY = midY - (Math.max(-1.1, Math.min(1.1, lastPt.r / scaleDeg)) * (h * 0.42));
+
+      mpuCtx.fillStyle = '#00d2ff';
+      mpuCtx.beginPath();
+      mpuCtx.arc(headX, headPitchY, 3.5, 0, Math.PI * 2);
+      mpuCtx.fill();
+
+      mpuCtx.fillStyle = '#f43f5e';
+      mpuCtx.beginPath();
+      mpuCtx.arc(headX, headRollY, 3.5, 0, Math.PI * 2);
+      mpuCtx.fill();
+    }
+
+    function toggleWaveformPause() {
+      isWaveformPaused = !isWaveformPaused;
+      const btn = document.getElementById('btnPauseWaveform');
+      if (btn) btn.innerText = isWaveformPaused ? '▶ Resume' : '⏸ Pause';
+    }
+
+    function clearWaveform() {
+      waveformPoints = [];
+    }
+
+    function changeWaveformScale(val) {
+      waveformScale = parseFloat(val) || 45;
+    }
+
+    // =========================================================================
+    // Connection Management & Source Selection
+    // =========================================================================
+    function copyPushIp() {
+      const ip = document.getElementById('pushHostIpText')?.innerText || '10.169.71.221';
+      navigator.clipboard.writeText(ip).then(() => {
+        alert(`Copied laptop IP: ${ip}\nPaste this into pushServerHost in your ESP32 Arduino code!`);
+      }).catch(() => {
+        prompt("Copy your laptop's IP address:", ip);
+      });
+    }
+
+    function setMpuSource(src) {
+      document.querySelectorAll('.source-tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tabSrc${src.charAt(0).toUpperCase() + src.slice(1)}`)?.classList.add('active');
+
+      const drawerPush = document.getElementById('drawerPush');
+      const drawerWifi = document.getElementById('drawerWifi');
+      const drawerSerial = document.getElementById('drawerSerial');
+      const drawerWebSerial = document.getElementById('drawerWebSerial');
+      const drawerSim = document.getElementById('drawerSim');
+
+      if (drawerPush) drawerPush.style.display = src === 'push' ? 'flex' : 'none';
+      if (drawerWifi) drawerWifi.style.display = src === 'wifi' ? 'flex' : 'none';
+      if (drawerSerial) drawerSerial.style.display = src === 'serial' ? 'flex' : 'none';
+      if (drawerWebSerial) drawerWebSerial.style.display = src === 'webserial' ? 'flex' : 'none';
+      if (drawerSim) drawerSim.style.display = src === 'sim' ? 'flex' : 'none';
+    }
+
+    async function connectWifiMpu() {
+      const url = document.getElementById('wifiUrlInput').value.trim();
+      if (!url) return alert("Please enter an ESP32-CAM IP or URL.");
+      try {
+        const resp = await fetch("/api/mpu/connect", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "wifi", url: url })
+        });
+        const res = await resp.json();
+        if (res.success) {
+          alert(`Connecting to Wi-Fi telemetry at: ${url}`);
+          fetchMpuTelemetry();
+        } else {
+          alert(`Wi-Fi Connect Error: ${res.error}`);
+        }
+      } catch (err) {
+        alert("Wi-Fi Connect Error: " + err.message);
+      }
+    }
+
+    async function refreshSerialPorts() {
+      try {
+        const resp = await fetch("/api/mpu/ports");
+        if (resp.ok) {
+          const data = await resp.json();
+          const sel = document.getElementById('serialPortSelect');
+          sel.innerHTML = '';
+          (data.ports || []).forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.port;
+            opt.text = `${p.port} (${p.description || 'USB'})`;
+            sel.appendChild(opt);
+          });
+          if (!data.ports || data.ports.length === 0) {
+            const opt = document.createElement('option');
+            opt.value = "";
+            opt.text = "No USB ports detected";
+            sel.appendChild(opt);
+          }
+        }
+      } catch (err) {
+        console.warn("Serial ports scan error:", err);
+      }
+    }
+
+    async function connectSerialMpu() {
+      const port = document.getElementById('serialPortSelect').value;
+      const baud = document.getElementById('serialBaudSelect').value;
+      if (!port) return alert("No serial port selected. Ensure ESP32 is plugged in and click Refresh.");
+      try {
+        const resp = await fetch("/api/mpu/connect", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "serial", port: port, baud: parseInt(baud) })
+        });
+        const res = await resp.json();
+        if (res.success) {
+          alert(`Connecting to serial port: ${port} @ ${baud} baud`);
+          fetchMpuTelemetry();
+        } else {
+          alert(`Serial Connect Error: ${res.error}`);
+        }
+      } catch (err) {
+        alert("Serial Connect Error: " + err.message);
+      }
+    }
+
+    // Direct Browser Web Serial API connection (Chrome, Edge, Opera)
+    async function connectWebSerial() {
+      if (!('serial' in navigator)) {
+        return alert("Web Serial API is supported in Chrome, Edge, and Chromium-based browsers. On other browsers, use the 'USB Serial' or 'Wi-Fi' mode.");
+      }
+
+      try {
+        webSerialPort = await navigator.serial.requestPort();
+        await webSerialPort.open({ baudRate: 115200 });
+        webSerialActive = true;
+        document.getElementById('webSerialStatusText').innerText = "● Web Serial Connected! Ingesting 20Hz JSON stream...";
+        document.getElementById('webSerialStatusText').style.color = "var(--accent-green)";
+
+        const decoder = new TextDecoderStream();
+        const readableStreamClosed = webSerialPort.readable.pipeTo(decoder.writable);
+        webSerialReader = decoder.readable.getReader();
+
+        let lineBuf = "";
+        while (webSerialActive) {
+          const { value, done } = await webSerialReader.read();
+          if (done) break;
+          if (value) {
+            lineBuf += value;
+            let lines = lineBuf.split('\n');
+            lineBuf = lines.pop(); // keep partial line
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+                try {
+                  const parsed = JSON.parse(trimmed);
+                  updateMpuUI({
+                    connected: true,
+                    source: "Web Serial",
+                    latest: parsed,
+                    shock_count: mpuState.shock_count + (parsed.shock ? 1 : 0),
+                    last_shock_time: parsed.shock ? Date.now() / 1000 : mpuState.last_shock_time,
+                    packets_received: (mpuState.packets_received || 0) + 1
+                  });
+                  // Optionally sync with backend
+                  fetch("/api/mpu/feed", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(parsed)
+                  }).catch(() => {});
+                } catch (pe) {}
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Web Serial error:", err);
+        alert("Web Serial error: " + err.message);
+        webSerialActive = false;
+        document.getElementById('webSerialStatusText').innerText = "Direct browser-to-hardware serial streaming (No server restart required)";
+        document.getElementById('webSerialStatusText').style.color = "var(--text-muted)";
+      }
+    }
+
+    async function startSimMpu() {
+      try {
+        const resp = await fetch("/api/mpu/connect", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "simulation" })
+        });
+        const res = await resp.json();
+        if (res.success) {
+          fetchMpuTelemetry();
+        }
+      } catch (err) {
+        alert("Simulation Error: " + err.message);
+      }
+    }
+
+    async function tareHorizon() {
+      try {
+        const resp = await fetch("/api/mpu/tare", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "set" })
+        });
+        const res = await resp.json();
+        if (res.success) {
+          fetchMpuTelemetry();
+        }
+      } catch (err) {
+        alert("Tare Error: " + err.message);
+      }
+    }
+
+    async function triggerTestShock() {
+      try {
+        const resp = await fetch("/api/mpu/simulate_shock", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        });
+        if (resp.ok) {
+          fetchMpuTelemetry();
+        }
+      } catch (err) {
+        console.warn("Shock test error:", err);
+      }
+    }
+
+    function toggleCameraHud() {
+      showCameraHud = !showCameraHud;
+      const hud = document.getElementById('camMpuHud');
+      const text = document.getElementById('hudToggleText');
+      if (hud) hud.style.display = showCameraHud ? 'flex' : 'none';
+      if (text) text.innerText = showCameraHud ? 'HUD: ON' : 'HUD: OFF';
     }
 
     // Benchmark Sample Scanner
