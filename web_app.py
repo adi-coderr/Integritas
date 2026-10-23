@@ -61,6 +61,7 @@ except ImportError:
 from predict import CrackPredictor, INPUT_SIZE
 
 app = Flask(__name__, template_folder="templates")
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024  # Support up to 50MB high-res inspection uploads
 predictors: dict[str, CrackPredictor] = {}
 SAMPLE_DIR = Path(__file__).resolve().parent / "sample_images"
