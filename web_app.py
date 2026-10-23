@@ -468,7 +468,7 @@ class MPU6050Manager:
     def get_status(self) -> dict:
         with self.lock:
             now = time.time()
-            stale = (now - self.last_update) > 4.0 if self.connected else True
+            stale = (now - self.last_update) > 6.0 if self.connected else True
             return {
                 "success": True,
                 "connected": self.connected and not stale,
@@ -946,7 +946,7 @@ def feed_mpu():
 
     client_ip = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown")
     if client_ip in ("127.0.0.1", "::1", "localhost"):
-        source = "Client Web Serial"
+        source = data.get("source") or "ESP32 Wi-Fi (Direct)"
     else:
         source = f"ESP32 ({client_ip})"
 
@@ -961,6 +961,32 @@ def feed_mpu():
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
 
+current_app_port = 5050
+
+
+def forward_reading_to_other_ports(payload: dict, skip_port: int = 5050):
+    """
+    Syncs telemetry across local ports (e.g. 5050 and 5051) so that whichever port
+    the user has opened in their browser, live data is always rendered.
+    """
+    import urllib.request
+    try:
+        data_bytes = json.dumps(payload).encode("utf-8")
+        for p in range(5050, 5056):
+            if p != skip_port:
+                try:
+                    req = urllib.request.Request(
+                        f"http://127.0.0.1:{p}/api/sensor",
+                        data=data_bytes,
+                        headers={"Content-Type": "application/json"}
+                    )
+                    with urllib.request.urlopen(req, timeout=0.15):
+                        pass
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
 
 class ThreadedBridgeServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
@@ -970,7 +996,8 @@ class ThreadedBridgeServer(ThreadingMixIn, HTTPServer):
 class Port3000BridgeHandler(BaseHTTPRequestHandler):
     """
     Lightweight threaded bridge listener on port 3000 for ESP32 Wi-Fi HTTP client.
-    Handles POST requests to /api/sensor seamlessly with keep-alive support.
+    Handles POST requests to /api/sensor seamlessly with connection-close signaling
+    to prevent dirty socket buffers on ESP32 HTTPClient.
     """
     protocol_version = "HTTP/1.1"
 
@@ -986,28 +1013,45 @@ class Port3000BridgeHandler(BaseHTTPRequestHandler):
                     data = mpu_manager.parse_line(body)
             if data:
                 client_ip = self.client_address[0] if self.client_address else "unknown"
-                mpu_manager.update_reading(data, source=f"ESP32 Wi-Fi ({client_ip}:3000)")
-                resp = b'{"success":true,"message":"Reading ingested"}'
+                source_label = f"ESP32 Wi-Fi ({client_ip}:3000)"
+                data["source"] = source_label
+                mpu_manager.update_reading(data, source=source_label)
+
+                # Sync to other local ports (e.g. 5051) if running in another terminal
+                threading.Thread(
+                    target=forward_reading_to_other_ports,
+                    args=(dict(data), current_app_port),
+                    daemon=True
+                ).start()
+
+                resp = b'{"success":true}'
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Content-Length", str(len(resp)))
-                self.send_header("Connection", "keep-alive")
+                self.send_header("Connection", "close")
                 self.end_headers()
                 self.wfile.write(resp)
+                self.wfile.flush()
+                self.close_connection = True
                 return
         except Exception:
             pass
         self.send_response(400)
         self.send_header("Content-Length", "0")
+        self.send_header("Connection", "close")
         self.end_headers()
+        self.close_connection = True
 
     def do_GET(self):
         resp = b'{"status":"ready","bridge":"port-3000","endpoint":"/api/sensor"}'
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(resp)))
+        self.send_header("Connection", "close")
         self.end_headers()
         self.wfile.write(resp)
+        self.wfile.flush()
+        self.close_connection = True
 
     def log_message(self, format, *args):
         # Suppress high-frequency push request logs in terminal
@@ -1046,6 +1090,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     port = find_open_port(args.port)
+    current_app_port = port
     local_ip = get_local_ip()
     print(f"\n🚀 UNet Crack Inspection Studio starting:")
     print(f"👉 Local Browser : http://localhost:{port}")
