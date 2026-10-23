@@ -1,298 +1,313 @@
 /*
- * ESP32 + MPU-6050 (6-Axis Accelerometer & Gyroscope)
- * ----------------------------------------------------
- * Built using native ESP32 Wire.h (NO external libraries required!)
- * 
- * Hardware Connections:
- *   MPU-6050 VCC  --> ESP32 3.3V (or 5V if board has 3.3V LDO)
- *   MPU-6050 GND  --> ESP32 GND
- *   MPU-6050 SCL  --> ESP32 GPIO 22 (Default I2C Clock)
- *   MPU-6050 SDA  --> ESP32 GPIO 21 (Default I2C Data)
- *   MPU-6050 AD0  --> GND (sets I2C address to 0x68)
- * 
- * Features:
- *   - Auto-detects MPU6050 at 0x68 or 0x69
- *   - Automatic startup calibration (gyro & accel zeroing)
- *   - Real-time Pitch & Roll tilt angles via Complementary Filter
- *   - Total G-force and vibration magnitude calculation
- *   - High-speed 115200 baud serial telemetry (JSON & human-readable)
- */
+  MPU6050 -> WiFi -> your dashboard (push every ~200 ms)
+  ------------------------------------------------------
+  Sends JSON like:
+  {"device":"esp32-mpu6050","mpu_ok":true,"ax":0.01,"ay":-0.02,"az":1.00,
+   "gx":0.5,"gy":-0.3,"gz":0.1,"temp":30.5,"pitch":0.8,"roll":-1.1,
+   "rssi":-55,"uptime_ms":12345}
 
+  MPU6050 pins are auto-detected:
+    SDA=GPIO14 SCL=GPIO15 | SDA=GPIO21 SCL=GPIO22 | SDA=GPIO26 SCL=GPIO27
+
+  Serial Monitor: 115200 baud. It shows WiFi status, the ESP32 IP,
+  which server ports answer, and the HTTP code of every push.
+*/
+
+#include <Arduino.h>
 #include <Wire.h>
 #include <WiFi.h>
+#include <HTTPClient.h>
+#include <math.h>
 
-// =========================================================================
-// Wi-Fi & Direct Web Dashboard Push (Optional: Leave blank for pure USB Serial)
-// If pushServerHost is set, ESP32 pushes telemetry directly to your webpage!
-// You DO NOT need to know or look up what IP your router gave the ESP32!
-// =========================================================================
-const char *ssid             = "realme X7 5G";  // Replace with your WiFi SSID
-const char *password         = "620720113";     // Replace with your WiFi Password
-const char *pushServerHost   = "10.169.71.17"; // Replace with your laptop's Wi-Fi IP (shown on webpage)
-const int   pushServerPort   = 5050;             // Port of web_app.py
-const bool  enableDirectPush = true;            // Push data directly to webpage (NO ESP32 IP NEEDED!)
+// ===================== EDIT THESE =====================
+const char* WIFI_SSID = "realme X7 5G";        // must be a 2.4 GHz network
+const char* WIFI_PASS = "620720113";
 
-// I2C Address (0x68 is default when AD0 is GND or floating)
-int mpuAddress = 0x68;
+const char* pushServerHost = "10.169.71.221";    // from your dashboard banner
+const int   pushServerPort = 3000;               // port your dashboard server runs on
+const char* pushServerPath = "/api/sensor";      // route that receives the readings
+// ======================================================
 
-// Raw 16-bit register values
-int16_t rawAccX, rawAccY, rawAccZ;
-int16_t rawTemp;
-int16_t rawGyroX, rawGyroY, rawGyroZ;
+const unsigned long READ_INTERVAL_MS  = 100;
+const unsigned long POST_INTERVAL_MS  = 200;     // push rate when the server answers
+const unsigned long RETRY_INTERVAL_MS = 2000;    // wait after a failed push
 
-// Calibration offsets
-float offsetAccX = 0, offsetAccY = 0, offsetAccZ = 0;
-float offsetGyroX = 0, offsetGyroY = 0, offsetGyroZ = 0;
+struct PinPair {
+  int sda;
+  int scl;
+  const char* name;
+};
 
-// Filtered Orientation angles (degrees)
-float pitch = 0.0;
-float roll  = 0.0;
+const PinPair PAIRS[] = {
+  {14, 15, "SDA=GPIO14, SCL=GPIO15"},
+  {21, 22, "SDA=GPIO21, SCL=GPIO22"},
+  {26, 27, "SDA=GPIO26, SCL=GPIO27"}
+};
+const int NUM_PAIRS = sizeof(PAIRS) / sizeof(PAIRS[0]);
 
-// Timing
-unsigned long prevTime = 0;
+uint8_t mpuAddr = 0x68;
+bool connected = false;
+int failCount = 0;
 
-// Sensitivity scales (Default: Accel ±2g -> 16384 LSB/g, Gyro ±250 deg/s -> 131.0 LSB/deg/s)
-const float ACC_SCALE  = 16384.0;
-const float GYRO_SCALE = 131.0;
+float ax = 0, ay = 0, az = 0, gx = 0, gy = 0, gz = 0, tempC = 0, pitchDeg = 0, rollDeg = 0;
+bool mpuOk = false;
 
-// Function prototypes
-bool initMPU();
-void calibrateMPU();
-void readMPU();
+WiFiClient client;
+HTTPClient http;
+int lastHttpCode = 0;
+bool lastPushOk = false;
+unsigned long lastRead = 0, lastPost = 0, lastPrint = 0, lastSearch = 0, lastWifi = 0;
+unsigned long postDelay = POST_INTERVAL_MS;
 
-void setup() {
-  Serial.begin(115200);
-  while (!Serial && millis() < 3000); // Wait for serial console
-
-  Serial.println();
-  Serial.println(F("========================================"));
-  Serial.println(F("    ESP32 + MPU-6050 IMU Telemetry      "));
-  Serial.println(F("========================================"));
-
-  // Initialize I2C on ESP32 default pins: SDA=21, SCL=22
-  Wire.begin(21, 22);
-  Wire.setClock(400000); // 400kHz Fast I2C
-
-  // Initialize and wake up MPU-6050
-  if (!initMPU()) {
-    Serial.println(F("[ERROR] MPU-6050 not detected!"));
-    Serial.println(F("Please check wiring: SDA -> GPIO 21, SCL -> GPIO 22, VCC -> 3.3V, GND -> GND"));
-    while (true) {
-      delay(1000);
-    }
-  }
-
-  Serial.println(F("[OK] MPU-6050 initialized successfully."));
-  Serial.println(F("[INFO] Calibrating sensor... Keep ESP32 flat and still!"));
-  
-  calibrateMPU();
-  
-  Serial.println(F("[OK] Calibration complete. Streaming data...\n"));
-
-  // Initialize Wi-Fi for Direct Web Push if configured
-  if (strlen(ssid) > 0 && strcmp(ssid, "YOUR_WIFI_SSID") != 0) {
-    Serial.print(F("[WiFi] Connecting to "));
-    Serial.println(ssid);
-    WiFi.begin(ssid, password);
-    unsigned long wifiStart = millis();
-    while (WiFi.status() != WL_CONNECTED && millis() - wifiStart < 7000) {
-      delay(350);
-      Serial.print(F("."));
-    }
-    Serial.println();
-    if (WiFi.status() == WL_CONNECTED) {
-      Serial.print(F("[WiFi] Connected! IP: "));
-      Serial.println(WiFi.localIP());
-      if (enableDirectPush && strlen(pushServerHost) > 0) {
-        Serial.print(F("[PUSH] Telemetry streaming directly to: http://"));
-        Serial.print(pushServerHost);
-        Serial.print(F(":"));
-        Serial.print(pushServerPort);
-        Serial.println(F("/api/mpu/feed"));
-        Serial.println(F("[PUSH] -> No ESP32 IP needed on the dashboard!"));
-      }
-    } else {
-      Serial.println(F("[WiFi] Not connected. Running in pure USB-Serial mode."));
-    }
-  }
-
-  prevTime = micros();
+// ---------------- MPU6050 ----------------
+static bool probe(uint8_t addr) {
+  Wire.beginTransmission(addr);
+  return Wire.endTransmission() == 0;
 }
 
-// Push telemetry JSON directly to Laptop Web Server over Wi-Fi
-void pushTelemetryToWeb(const char *jsonStr) {
-  WiFiClient client;
-  client.setTimeout(250);
-  if (!client.connect(pushServerHost, pushServerPort)) {
-    return;
-  }
-  client.setNoDelay(true);
-
-  client.print(F("POST /api/mpu/feed HTTP/1.1\r\nHost: "));
-  client.print(pushServerHost);
-  client.print(F("\r\nContent-Type: application/json\r\nConnection: close\r\nContent-Length: "));
-  client.print(strlen(jsonStr));
-  client.print(F("\r\n\r\n"));
-  client.print(jsonStr);
-
-  unsigned long t0 = millis();
-  while (client.connected() && millis() - t0 < 30) {
-    if (client.available()) break;
-    delay(1);
-  }
-  client.stop();
+static bool writeReg(uint8_t reg, uint8_t val) {
+  Wire.beginTransmission(mpuAddr);
+  Wire.write(reg);
+  Wire.write(val);
+  return Wire.endTransmission() == 0;
 }
 
-void loop() {
-  // Read sensor registers
-  readMPU();
-
-  // Calculate elapsed time (dt in seconds)
-  unsigned long currentTime = micros();
-  float dt = (currentTime - prevTime) / 1000000.0;
-  prevTime = currentTime;
-
-  // Convert raw readings to physical units
-  float ax = (rawAccX - offsetAccX) / ACC_SCALE;
-  float ay = (rawAccY - offsetAccY) / ACC_SCALE;
-  float az = (rawAccZ - offsetAccZ) / ACC_SCALE;
-
-  float gx = (rawGyroX - offsetGyroX) / GYRO_SCALE;
-  float gy = (rawGyroY - offsetGyroY) / GYRO_SCALE;
-  float gz = (rawGyroZ - offsetGyroZ) / GYRO_SCALE;
-
-  // Temperature in Celsius (MPU-6050 formula)
-  float tempC = (rawTemp / 340.0) + 36.53;
-
-  // Compute Accelerometer Angles (degrees)
-  float accPitch = atan2(ay, sqrt(ax * ax + az * az)) * 180.0 / PI;
-  float accRoll  = atan2(-ax, az) * 180.0 / PI;
-
-  // Complementary Filter: 96% Gyro (smooth, fast) + 4% Accel (eliminates long-term drift)
-  pitch = 0.96 * (pitch + gx * dt) + 0.04 * accPitch;
-  roll  = 0.96 * (roll + gy * dt) + 0.04 * accRoll;
-
-  // Total dynamic acceleration magnitude (1.0 = resting 1G gravity)
-  float totalG = sqrt(ax * ax + ay * ay + az * az);
-
-  // Check vibration / shock threshold
-  bool shockDetected = (abs(totalG - 1.0) > 0.45);
-
-  // Build JSON telemetry string
-  char jsonBuf[220];
-  snprintf(jsonBuf, sizeof(jsonBuf),
-           "{\"pitch\":%.2f,\"roll\":%.2f,\"ax\":%.3f,\"ay\":%.3f,\"az\":%.3f,"
-           "\"gx\":%.2f,\"gy\":%.2f,\"gz\":%.2f,\"temp\":%.1f,\"shock\":%s}",
-           pitch, roll, ax, ay, az, gx, gy, gz, tempC,
-           shockDetected ? "true" : "false");
-
-  // Output 1: Serial (115200 baud)
-  Serial.println(jsonBuf);
-
-  // Output 2: Direct Wi-Fi Push to Laptop Web Server (NO ESP32 IP NEEDED!)
-  if (enableDirectPush && WiFi.status() == WL_CONNECTED && strlen(pushServerHost) > 0) {
-    static unsigned long lastPushTime = 0;
-    if (millis() - lastPushTime >= 50) { // ~20 Hz
-      lastPushTime = millis();
-      pushTelemetryToWeb(jsonBuf);
-    }
-  }
-
-  delay(50); // ~20 Hz update rate
-}
-
-/**
- * Initialize and verify MPU-6050 connection
- */
-bool initMPU() {
-  // Check default address 0x68
-  Wire.beginTransmission(0x68);
-  if (Wire.endTransmission() == 0) {
-    mpuAddress = 0x68;
-  } else {
-    // Check secondary address 0x69 (if AD0 is pulled HIGH)
-    Wire.beginTransmission(0x69);
-    if (Wire.endTransmission() == 0) {
-      mpuAddress = 0x69;
-    } else {
-      return false;
-    }
-  }
-
-  // Wake up MPU-6050: Write 0 to PWR_MGMT_1 register (0x6B)
-  Wire.beginTransmission(mpuAddress);
-  Wire.write(0x6B);
-  Wire.write(0x00);
-  if (Wire.endTransmission() != 0) return false;
-
-  // Set Accelerometer range to ±2g (Register 0x1C)
-  Wire.beginTransmission(mpuAddress);
-  Wire.write(0x1C);
-  Wire.write(0x00);
-  Wire.endTransmission();
-
-  // Set Gyroscope range to ±250 deg/s (Register 0x1B)
-  Wire.beginTransmission(mpuAddress);
-  Wire.write(0x1B);
-  Wire.write(0x00);
-  Wire.endTransmission();
-
+static bool readRegs(uint8_t reg, uint8_t* buf, uint8_t len) {
+  Wire.beginTransmission(mpuAddr);
+  Wire.write(reg);
+  if (Wire.endTransmission(false) != 0) return false;
+  int n = Wire.requestFrom((int)mpuAddr, (int)len, (int)1);
+  if (n != len) return false;
+  for (uint8_t i = 0; i < len; i++) buf[i] = Wire.read();
   return true;
 }
 
-/**
- * Read 14 consecutive registers starting at 0x3B:
- * Accel(X,Y,Z) [6 bytes] + Temp [2 bytes] + Gyro(X,Y,Z) [6 bytes]
- */
-void readMPU() {
-  Wire.beginTransmission(mpuAddress);
-  Wire.write(0x3B); // Register 0x3B (ACCEL_XOUT_H)
-  Wire.endTransmission(false);
-  Wire.requestFrom(mpuAddress, 14, true);
-
-  if (Wire.available() >= 14) {
-    rawAccX  = (Wire.read() << 8) | Wire.read();
-    rawAccY  = (Wire.read() << 8) | Wire.read();
-    rawAccZ  = (Wire.read() << 8) | Wire.read();
-    rawTemp  = (Wire.read() << 8) | Wire.read();
-    rawGyroX = (Wire.read() << 8) | Wire.read();
-    rawGyroY = (Wire.read() << 8) | Wire.read();
-    rawGyroZ = (Wire.read() << 8) | Wire.read();
+static bool findMpu() {
+  for (int i = 0; i < NUM_PAIRS; i++) {
+    Wire.end();
+    Wire.begin(PAIRS[i].sda, PAIRS[i].scl, 100000);
+    delay(20);
+    if (probe(0x68)) {
+      mpuAddr = 0x68;
+    } else if (probe(0x69)) {
+      mpuAddr = 0x69;
+    } else {
+      continue;
+    }
+    Serial.printf("MPU6050 found at 0x%02X on %s\n", mpuAddr, PAIRS[i].name);
+    return true;
   }
+  Wire.end();
+  return false;
 }
 
-/**
- * Average 300 samples to find zero-rate offsets
- */
-void calibrateMPU() {
-  const int samples = 300;
-  long sumAx = 0, sumAy = 0, sumAz = 0;
-  long sumGx = 0, sumGy = 0, sumGz = 0;
+static bool initMpu() {
+  if (!writeReg(0x6B, 0x00)) return false;   // wake up
+  delay(100);
+  writeReg(0x1A, 0x03);                      // low-pass filter
+  writeReg(0x1B, 0x00);                      // gyro  +-250 deg/s
+  writeReg(0x1C, 0x00);                      // accel +-2 g
+  return true;
+}
 
-  for (int i = 0; i < samples; i++) {
-    readMPU();
-    sumAx += rawAccX;
-    sumAy += rawAccY;
-    sumAz += (rawAccZ - (int16_t)ACC_SCALE); // Leave 1G (16384) on Z axis for gravity
-    sumGx += rawGyroX;
-    sumGy += rawGyroY;
-    sumGz += rawGyroZ;
-    delay(5);
+static bool readMpu() {
+  uint8_t b[14];
+  if (!readRegs(0x3B, b, 14)) return false;
+
+  bool allSame = true;
+  for (int i = 1; i < 14; i++) {
+    if (b[i] != b[0]) { allSame = false; break; }
+  }
+  if (allSame) return false;
+
+  int16_t rax = (int16_t)((b[0]  << 8) | b[1]);
+  int16_t ray = (int16_t)((b[2]  << 8) | b[3]);
+  int16_t raz = (int16_t)((b[4]  << 8) | b[5]);
+  int16_t rt  = (int16_t)((b[6]  << 8) | b[7]);
+  int16_t rgx = (int16_t)((b[8]  << 8) | b[9]);
+  int16_t rgy = (int16_t)((b[10] << 8) | b[11]);
+  int16_t rgz = (int16_t)((b[12] << 8) | b[13]);
+
+  ax = rax / 16384.0f;
+  ay = ray / 16384.0f;
+  az = raz / 16384.0f;
+  gx = rgx / 131.0f;
+  gy = rgy / 131.0f;
+  gz = rgz / 131.0f;
+  tempC = rt / 340.0f + 36.53f;
+  pitchDeg = atan2f(-ax, sqrtf(ay * ay + az * az)) * 180.0f / (float)M_PI;
+  rollDeg  = atan2f(ay, az) * 180.0f / (float)M_PI;
+  return true;
+}
+
+// ---------------- JSON ----------------
+static String buildJson() {
+  char buf[400];
+  snprintf(buf, sizeof(buf),
+           "{\"device\":\"esp32-mpu6050\",\"mpu_ok\":%s,"
+           "\"ax\":%.3f,\"ay\":%.3f,\"az\":%.3f,"
+           "\"gx\":%.2f,\"gy\":%.2f,\"gz\":%.2f,"
+           "\"temp\":%.2f,\"pitch\":%.2f,\"roll\":%.2f,"
+           "\"rssi\":%d,\"uptime_ms\":%lu}",
+           mpuOk ? "true" : "false",
+           ax, ay, az, gx, gy, gz, tempC, pitchDeg, rollDeg,
+           (int)WiFi.RSSI(), (unsigned long)millis());
+  return String(buf);
+}
+
+// ---------------- Push to dashboard server ----------------
+static bool pushReading() {
+  if (WiFi.status() != WL_CONNECTED) {
+    lastHttpCode = -100;
+    return false;
   }
 
-  offsetAccX = (float)sumAx / samples;
-  offsetAccY = (float)sumAy / samples;
-  offsetAccZ = (float)sumAz / samples;
+  String url = String("http://") + pushServerHost + ":" + String(pushServerPort) + pushServerPath;
+  http.begin(client, url);
+  http.addHeader("Content-Type", "application/json");
+  int code = http.POST(buildJson());
+  lastHttpCode = code;
 
-  offsetGyroX = (float)sumGx / samples;
-  offsetGyroY = (float)sumGy / samples;
-  offsetGyroZ = (float)sumGz / samples;
+  bool ok = (code >= 200 && code < 300);
+  if (!ok) {
+    if (code < 0) {
+      Serial.printf("PUSH FAILED: %s (cannot reach %s:%d - wrong port, server not running, firewall, or different network)\n",
+                    http.errorToString(code).c_str(), pushServerHost, pushServerPort);
+    } else if (code == 404) {
+      Serial.printf("PUSH FAILED: HTTP 404 - server is reachable but has no route %s\n", pushServerPath);
+    } else {
+      Serial.printf("PUSH FAILED: HTTP %d - server replied: %s\n", code, http.getString().substring(0, 120).c_str());
+    }
+  } else if (!lastPushOk) {
+    Serial.printf("PUSH OK: server accepted the data (HTTP %d). Check your dashboard now.\n", code);
+  }
+  http.end();
+  lastPushOk = ok;
+  return ok;
+}
 
-  // Initialize initial pitch & roll from resting accelerometer
-  readMPU();
-  float ax = (rawAccX - offsetAccX) / ACC_SCALE;
-  float ay = (rawAccY - offsetAccY) / ACC_SCALE;
-  float az = (rawAccZ - offsetAccZ) / ACC_SCALE;
-  pitch = atan2(ay, sqrt(ax * ax + az * az)) * 180.0 / PI;
-  roll  = atan2(-ax, az) * 180.0 / PI;
+// ---------------- Startup helpers ----------------
+static void printNearbyNetworks() {
+  int n = WiFi.scanNetworks();
+  Serial.printf("2.4 GHz networks this ESP32 can see (%d):\n", n);
+  for (int i = 0; i < n && i < 15; i++) {
+    Serial.printf("  %s  (signal %d dBm)\n", WiFi.SSID(i).c_str(), WiFi.RSSI(i));
+  }
+  Serial.println("If your WiFi name is not in this list, it is 5 GHz-only, out of range, or spelled differently.");
+}
+
+static void checkServerPorts() {
+  Serial.printf("Checking the server at %s ...\n", pushServerHost);
+
+  WiFiClient c;
+  if (c.connect(pushServerHost, (uint16_t)pushServerPort, 1500)) {
+    Serial.printf("  configured port %d: REACHABLE\n", pushServerPort);
+    c.stop();
+  } else {
+    Serial.printf("  configured port %d: NOT reachable\n", pushServerPort);
+  }
+
+  const uint16_t ports[] = {3000, 3001, 4000, 5000, 5173, 8000, 8080};
+  Serial.println("  other common ports that answer:");
+  bool any = false;
+  for (int i = 0; i < 7; i++) {
+    WiFiClient t;
+    if (t.connect(pushServerHost, ports[i], 600)) {
+      Serial.printf("    port %u: OPEN\n", ports[i]);
+      any = true;
+      t.stop();
+    }
+  }
+  if (!any) Serial.println("    none (server not running, firewall blocking, or ESP32 is on a different network)");
+}
+
+// ---------------- Setup / loop ----------------
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+  Serial.println();
+  Serial.println("=== MPU6050 -> WiFi -> dashboard ===");
+
+  connected = findMpu() && initMpu();
+  Serial.println(connected ? "MPU6050 ready."
+                           : "MPU6050 NOT FOUND - will keep searching. Check VCC=3.3V, GND, SDA, SCL.");
+
+  WiFi.mode(WIFI_STA);
+  WiFi.setAutoReconnect(true);
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  Serial.printf("Connecting to WiFi \"%s\"", WIFI_SSID);
+  unsigned long startMs = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - startMs < 20000) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println();
+
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.printf("WiFi FAILED (status %d). Check the name/password and that the network is 2.4 GHz.\n", (int)WiFi.status());
+    printNearbyNetworks();
+    Serial.println("Restarting in 5 seconds...");
+    delay(5000);
+    ESP.restart();
+  }
+
+  Serial.println("WiFi connected.");
+  Serial.println("ESP32 IP : " + WiFi.localIP().toString());
+  Serial.println("Server   : " + String(pushServerHost) + ":" + String(pushServerPort) + String(pushServerPath));
+  Serial.println("(The ESP32 IP and the server host should normally share the same first three numbers.)");
+
+  checkServerPorts();
+
+  http.setReuse(true);
+  http.setConnectTimeout(1500);
+  http.setTimeout(2000);
+}
+
+void loop() {
+  unsigned long now = millis();
+
+  if (now - lastRead >= READ_INTERVAL_MS) {
+    lastRead = now;
+    if (connected) {
+      if (readMpu()) {
+        mpuOk = true;
+        failCount = 0;
+      } else {
+        failCount++;
+        if (failCount >= 3) {
+          connected = false;
+          mpuOk = false;
+          Serial.println("Lost MPU6050. Searching again...");
+        }
+      }
+    } else if (now - lastSearch >= 3000) {
+      lastSearch = now;
+      if (findMpu() && initMpu()) {
+        connected = true;
+        failCount = 0;
+      } else {
+        Serial.println("MPU6050 NOT FOUND - check VCC=3.3V, GND, SDA, SCL wires.");
+      }
+    }
+  }
+
+  if (now - lastPost >= postDelay) {
+    lastPost = now;
+    bool ok = pushReading();
+    postDelay = ok ? POST_INTERVAL_MS : RETRY_INTERVAL_MS;
+  }
+
+  if (now - lastPrint >= 1000) {
+    lastPrint = now;
+    Serial.printf("mpu_ok=%d  ax=%.2f ay=%.2f az=%.2f  gx=%.1f gy=%.1f gz=%.1f  temp=%.1fC  | last push HTTP=%d\n",
+                  mpuOk, ax, ay, az, gx, gy, gz, tempC, lastHttpCode);
+  }
+
+  if (WiFi.status() != WL_CONNECTED && now - lastWifi >= 10000) {
+    lastWifi = now;
+    WiFi.disconnect();
+    WiFi.begin(WIFI_SSID, WIFI_PASS);
+  }
+
+  delay(1);
 }

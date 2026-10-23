@@ -1223,16 +1223,16 @@
           <!-- 1. Direct Push Drawer (Recommended - NO ESP32 IP NEEDED) -->
           <div id="drawerPush" class="config-inputs" style="width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-              <span class="tag-level" style="font-size: 0.72rem; padding: 4px 10px;">★ NO ESP32 IP NEEDED</span>
-              <span style="font-size: 0.76rem; color: var(--text-muted);">In your ESP32 Arduino code, set:</span>
+              <span class="tag-level" style="font-size: 0.72rem; padding: 4px 10px;">★ DIRECT WI-FI PUSH ACTIVE</span>
+              <span style="font-size: 0.76rem; color: var(--text-muted);">ESP32 Target:</span>
               <code style="background: #f4f9fd; padding: 5px 12px; border-radius: 6px; border: 1px solid #BDD8E9; color: #001D39; font-family: var(--font-mono); font-size: 0.82rem;">
-                pushServerHost = "<span id="pushHostIpText">10.169.71.221</span>";
+                pushServerHost = "<span id="pushHostIpText">10.169.71.221</span>"; pushServerPort = 3000;
               </code>
               <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.74rem;" onclick="copyPushIp()" title="Copy host IP to clipboard">
                 📋 Copy IP
               </button>
             </div>
-            <span style="color: var(--text-muted); font-size: 0.74rem;">The ESP32 pushes sensor readings straight to your dashboard over Wi-Fi!</span>
+            <span style="color: var(--text-muted); font-size: 0.74rem;">Ready on Port 3000 & 5050 at <code style="color:#0A4174;">/api/sensor</code></span>
           </div>
 
           <!-- 2. Wi-Fi Pull via ESP32 IP Form -->
@@ -2704,6 +2704,26 @@
       // 7. Diagnostics
       if (typeof data.packets_received === 'number') {
         document.getElementById('packetsReceivedCount').innerText = `${data.packets_received.toLocaleString()} pkts`;
+      }
+
+      const linkQuality = document.getElementById('linkQualityText');
+      if (linkQuality) {
+        if (!isConn) {
+          linkQuality.innerText = 'Disconnected';
+          linkQuality.style.color = 'var(--text-muted)';
+        } else if (typeof cur.rssi === 'number') {
+          const dbm = cur.rssi;
+          let qualityLabel = 'Solid';
+          if (dbm > -60) qualityLabel = 'Excellent';
+          else if (dbm > -75) qualityLabel = 'Good';
+          else if (dbm > -85) qualityLabel = 'Fair';
+          else qualityLabel = 'Weak';
+          linkQuality.innerText = `${dbm} dBm (${qualityLabel})`;
+          linkQuality.style.color = '#0A4174';
+        } else {
+          linkQuality.innerText = data.source ? `${data.source}` : 'Active (Direct)';
+          linkQuality.style.color = '#0A4174';
+        }
       }
 
       // 8. Viewfinder Mini HUD

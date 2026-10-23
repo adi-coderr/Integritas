@@ -156,6 +156,10 @@ class MPU6050Manager:
                     "shock": shock,
                     "total_g": round(total_g, 3),
                     "timestamp": now,
+                    "rssi": data.get("rssi"),
+                    "uptime_ms": data.get("uptime_ms"),
+                    "device": data.get("device", "ESP32"),
+                    "mpu_ok": data.get("mpu_ok", True),
                 }
                 self.packets_received += 1
                 self.last_update = now
@@ -464,7 +468,7 @@ class MPU6050Manager:
     def get_status(self) -> dict:
         with self.lock:
             now = time.time()
-            stale = (now - self.last_update) > 2.5 if self.connected else True
+            stale = (now - self.last_update) > 4.0 if self.connected else True
             return {
                 "success": True,
                 "connected": self.connected and not stale,
@@ -563,6 +567,7 @@ def get_info():
         "samples": samples,
         "local_ip": get_local_ip(),
         "push_url": f"http://{get_local_ip()}:5050/api/mpu/feed",
+        "push_url_sensor": f"http://{get_local_ip()}:3000/api/sensor",
     })
 
 
@@ -916,6 +921,8 @@ def get_local_ip() -> str:
     return ip
 
 
+@app.route("/api/sensor", methods=["POST", "GET"])
+@app.route("/api/sensor/feed", methods=["POST", "GET"])
 @app.route("/api/mpu/feed", methods=["POST", "GET"])
 def feed_mpu():
     """
@@ -951,6 +958,78 @@ def feed_mpu():
     })
 
 
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from socketserver import ThreadingMixIn
+
+
+class ThreadedBridgeServer(ThreadingMixIn, HTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+
+class Port3000BridgeHandler(BaseHTTPRequestHandler):
+    """
+    Lightweight threaded bridge listener on port 3000 for ESP32 Wi-Fi HTTP client.
+    Handles POST requests to /api/sensor seamlessly with keep-alive support.
+    """
+    protocol_version = "HTTP/1.1"
+
+    def do_POST(self):
+        try:
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_length).decode("utf-8", errors="ignore")
+            data = None
+            if body:
+                try:
+                    data = json.loads(body)
+                except Exception:
+                    data = mpu_manager.parse_line(body)
+            if data:
+                client_ip = self.client_address[0] if self.client_address else "unknown"
+                mpu_manager.update_reading(data, source=f"ESP32 Wi-Fi ({client_ip}:3000)")
+                resp = b'{"success":true,"message":"Reading ingested"}'
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(resp)))
+                self.send_header("Connection", "keep-alive")
+                self.end_headers()
+                self.wfile.write(resp)
+                return
+        except Exception:
+            pass
+        self.send_response(400)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def do_GET(self):
+        resp = b'{"status":"ready","bridge":"port-3000","endpoint":"/api/sensor"}'
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(resp)))
+        self.end_headers()
+        self.wfile.write(resp)
+
+    def log_message(self, format, *args):
+        # Suppress high-frequency push request logs in terminal
+        pass
+
+    def handle_one_request(self):
+        try:
+            super().handle_one_request()
+        except (ConnectionResetError, BrokenPipeError, TimeoutError, OSError):
+            self.close_connection = True
+
+
+def start_port_3000_bridge(bridge_port: int = 3000):
+    try:
+        server = ThreadedBridgeServer(("0.0.0.0", bridge_port), Port3000BridgeHandler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        print(f"👉 ESP32 Wi-Fi Port 3000 Bridge active: http://0.0.0.0:{bridge_port}/api/sensor")
+    except Exception as e:
+        print(f"[Notice] Port {bridge_port} bridge skipped: {e}")
+
+
 def find_open_port(starting_port: int = 5050, max_attempts: int = 20) -> int:
     import socket
     for p in range(starting_port, starting_port + max_attempts):
@@ -971,6 +1050,10 @@ if __name__ == "__main__":
     print(f"\n🚀 UNet Crack Inspection Studio starting:")
     print(f"👉 Local Browser : http://localhost:{port}")
     print(f"👉 Network / ESP32: http://{local_ip}:{port}")
-    print(f"👉 ESP32 Push URL: http://{local_ip}:{port}/api/mpu/feed\n")
-    print(f"💡 TIP: In your ESP32 code, set pushServerHost = \"{local_ip}\" to stream data without knowing ESP32's IP!\n")
+    print(f"👉 ESP32 Push (Port 5050): http://{local_ip}:{port}/api/sensor")
+    print(f"👉 ESP32 Push (Port 3000): http://{local_ip}:3000/api/sensor\n")
+
+    # Start the port 3000 bridge in the background so the ESP32 can connect directly
+    start_port_3000_bridge(3000)
+
     app.run(host="0.0.0.0", port=port, debug=False)
